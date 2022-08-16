@@ -1,0 +1,183 @@
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@media (prefers-color-scheme: dark) {
+    html {
+        --link: #ff9100;
+        --background: #272727;
+        --footer: #00000070;
+        --scrollbar: #2b2b2b;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+    }
+}
+@media (prefers-color-scheme: light) {
+    html {
+        --link: #ff4800;
+        --background: #fefefe;
+        --footer: #00000041;
+        --scrollbar: #2b2b2b;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+    }
+}
+html {
+    --welcome-bg: url("https://tenntruth.com/wp-content/uploads/usat-images/2016/04/9777318-ncaa-football-music-city-bowl-tennessee-vs-nebraska.jpeg");
+    --about-us-bg: url("https://wallpapercave.com/wp/wp1930110.jpg");
+    --sign-up-bg: url("https://wallpapercave.com/wp/wp1930110.jpg");
+}
+::-webkit-scrollbar {
+    width: var(--scrollbar-WH);
+    height: var(--scrollbar-WH);
+    background-color: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 0.2em solid var(--scrollbar);
+    background-color: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+body {
+    margin: 0px;
+    font-family: system-ui;
+    background-color: var(--background);
+}
+input {
+    color: #333;
+    background-color: #fff;
+}
+a {
+   color: var(--link); 
+   text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+body>main {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100vw - var(--scrollbar-WH));
+}
+body>main>section {
+    flex-grow: 1;
+}
+/***************************/
+#doc-wrapper {
+    width: 100%;
+    height: 100vh;
+}
+#doc-header {
+    padding: 0.4em 0em 0.4em 0em;
+    display: flex;
+    width: 100%;
+    position: fixed;
+    box-shadow: 0rem 0.2rem 1em var(--footer);
+    background-color: var(--background);
+}
+#logo-image {
+    height: 2rem;
+    margin: auto;
+    margin-left: 0.5em;
+}
+ul {
+    display: flex;
+    margin: 0.2rem;
+    list-style: none;
+    justify-content: space-around;
+}
+nav {
+    width: 100%;
+}
+.links {
+    text-decoration: none;
+}
+.links:hover {
+    text-decoration: underline;
+}
+#welcome-section {
+    width: 100%;
+    height: 35em;
+    display: flex;
+    background: var(--welcome-bg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0em 0.3em 0.8em var(--footer);
+}
+#about-us-section {
+    width: 100%;
+    height: 30em;
+    display: flex;
+    background: var(--about-us-bg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0em 1em 1em var(--footer);
+}
+.sign-up-form {
+    width: 70vw;
+    margin: auto;
+    padding: 1.8em;
+    max-width: 500px;
+    text-align: center;
+    margin-bottom: 10em;
+    border-radius: 0.5em;
+    background-color: #ffffffe5;
+    box-shadow: 0.1em 0.1em 1em var(--footer);
+}
+.sign-up-form * {
+    outline: none;
+    border-radius: 0.3em;
+}
+.user-input {
+    padding: 8px;
+    width: 400px;
+    max-width: 80%;
+    border-radius: 2%;
+    margin-bottom: 5px;
+    border: 2px solid gray;
+}
+#submit {
+    width: 200px;
+    padding: 10px;
+    max-width: 80%;
+    margin-top: 5px;
+    border-radius: 2%;
+    border: 2px solid gray;
+}
+#video-wrapper {
+    width: 70vw;
+    height: 100%;
+    margin: auto;
+    max-width: 500px;
+    padding: 0em 1em 0em 1em;
+    border: 0.15em solid var(--footer);
+    background-color: var(--background);
+}
+/***************************/
+body>main footer {
+    display: flex;
+    min-height: 40px;
+    max-height: 40px;
+    overflow-x: auto;
+    user-select: none;
+    white-space: nowrap;
+    background-color: var(--footer);
+}
+body>main footer>div {
+    display: flex;
+    margin: auto;
+}
+body>main footer>div>p {
+    margin: auto 2px;
+}
+/************************************************************************************/
+/************************************************************************************/

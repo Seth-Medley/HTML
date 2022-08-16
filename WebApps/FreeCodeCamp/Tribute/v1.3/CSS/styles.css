@@ -1,0 +1,120 @@
+
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@media (prefers-color-scheme: dark) {
+    html {
+        --link: #ff8800;
+        --shadow: #ffffff;
+        --scrollbar-WH: 0.8em;
+        --select: #ffa60057;
+        --footer: #0000007e;
+        --scrollbar: #2b2b2b;
+        --background: #161616;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+    }
+}
+@media (prefers-color-scheme: light) {
+    html {
+        --link: #ff3604;
+        --shadow: #000000;
+        --scrollbar-WH: 0.8em;
+        --select: #ffa600a9;
+        --footer: #00000030;
+        --scrollbar: #2b2b2b;
+        --background: #e9e6e6;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+    }
+}
+body {
+    margin: 0px;
+    font-family: system-ui;
+    background-color: var(--background);
+}
+::-webkit-scrollbar {
+    width: var(--scrollbar-WH);
+    height: var(--scrollbar-WH);
+    background-color: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 0.2em solid var(--scrollbar);
+    background-color: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+::selection {
+    background-color: var(--select);
+}
+a {
+    color: var(--link);
+    font-weight: 600;
+    user-select: none;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+    flex-direction: column;
+}
+main>div {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+main h1,
+main h4,
+main img,
+main p,
+main a:not(footer a) {
+    margin: 1em auto;
+}
+.text p {
+    margin: 1em 10vw;
+    text-indent: 1.5em;
+    line-height: 1.5em;
+    text-align: justify;
+}
+main img {
+    width: 60vw;
+    cursor: pointer;
+    min-width: 100px;
+    max-width: 400px;
+    transition: 0.2s;
+    user-select: none;
+    border-radius: 8px;
+    box-shadow: 0em 0em 0.2em var(--shadow);
+}
+main img:hover {
+    transform: scale(1.05);
+    box-shadow: 0em 0em 0.5em var(--shadow);
+}
+body>main>footer {
+    display: flex;
+    min-height: 40px;
+    max-height: 40px;
+    overflow-x: auto;
+    user-select: none;
+    white-space: nowrap;
+    background-color: var(--footer);
+}
+body>main>footer>div {
+    display: flex;
+    margin: auto;
+}
+body>main>footer>div>p {
+    margin: auto 2px;
+}
+/************************************************************************************/
+/************************************************************************************/

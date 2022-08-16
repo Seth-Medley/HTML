@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML Editor v1.5</title>
+    <link rel="stylesheet" href="CSS/styles.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/web-design.png" type="image/gif" sizes="16x16">
+</head>
+<body class="dark">
+    <main>
+        <header>
+            <div id="toggle__sidenav" class="wrapper__svg" style="position: absolute; top:8px; left: 5px;">
+                <svg aria-label="Menu" version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" stroke="none">
+                    <path d="M132 4349 c-47 -14 -109 -79 -123 -131 -23 -89 12 -182 88 -229 l38 -24 2425 0 2425 0 38 24 c21 13 50 42 65 64 23 34 27 52 27 107 0 55 -4 73 -27 107 -15 22 -44 51 -65 64 l-38 24 -2410 2 c-1502 1 -2422 -2 -2443 -8z"></path>
+                    <path d="M132 2749 c-47 -14 -109 -79 -123 -131 -23 -89 12 -182 88 -229 l38 -24 2425 0 2425 0 38 24 c21 13 50 42 65 64 23 34 27 52 27 107 0 55 -4 73 -27 107 -15 22 -44 51 -65 64 l-38 24 -2410 2 c-1502 1 -2422 -2 -2443 -8z"></path>
+                    <path d="M132 1149 c-47 -14 -109 -79 -123 -131 -23 -89 12 -182 88 -229 l38 -24 2425 0 2425 0 38 24 c21 13 50 42 65 64 23 34 27 52 27 107 0 55 -4 73 -27 107 -15 22 -44 51 -65 64 l-38 24 -2410 2 c-1502 1 -2422 -2 -2443 -8z"></path>
+                </svg>
+            </div>
+            <p>HTML Editor</p>
+        </header>
+        <section>
+            <nav>
+                <div class="menu__wrapper extra" tabindex="-1">
+                    <div class="scrollbox" tabindex="-1">
+                        <button class="menu__button" id="toggleProfile">
+                            <div class="wrapper__img">
+                                <img alt="Profile" src="https://assets.codepen.io/3309848/internal/avatars/users/default.png?format=auto&version=1561688588&width=80&height=80">
+                            </div>
+                            <p style="margin: auto 20px;">Profile</p>
+                        </button>
+                    </div>
+                </div>
+                <div class="menu__wrapper" tabindex="-1">
+                    <div class="scrollbox" tabindex="-1">
+                        <button class="menu__button" id="toggleEditor">
+                            <div id="editor__svg" class="wrapper__svg">
+                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                                                <path d="M352.459,220c0-11.046-8.954-20-20-20h-206c-11.046,0-20,8.954-20,20s8.954,20,20,20h206
+                                                    C343.505,240,352.459,231.046,352.459,220z"></path>
+                                                <path d="M126.459,280c-11.046,0-20,8.954-20,20c0,11.046,8.954,20,20,20H251.57c11.046,0,20-8.954,20-20c0-11.046-8.954-20-20-20
+                                                    H126.459z"></path>
+                                                <path d="M173.459,472H106.57c-22.056,0-40-17.944-40-40V80c0-22.056,17.944-40,40-40h245.889c22.056,0,40,17.944,40,40v123
+                                                    c0,11.046,8.954,20,20,20c11.046,0,20-8.954,20-20V80c0-44.112-35.888-80-80-80H106.57c-44.112,0-80,35.888-80,80v352
+                                                    c0,44.112,35.888,80,80,80h66.889c11.046,0,20-8.954,20-20C193.459,480.954,184.505,472,173.459,472z"></path>
+                                                <path d="M467.884,289.572c-23.394-23.394-61.458-23.395-84.837-0.016l-109.803,109.56c-2.332,2.327-4.052,5.193-5.01,8.345
+                                                    l-23.913,78.725c-2.12,6.98-0.273,14.559,4.821,19.78c3.816,3.911,9,6.034,14.317,6.034c1.779,0,3.575-0.238,5.338-0.727
+                                                    l80.725-22.361c3.322-0.92,6.35-2.683,8.79-5.119l109.573-109.367C491.279,351.032,491.279,312.968,467.884,289.572z
+                                                     M333.776,451.768l-40.612,11.25l11.885-39.129l74.089-73.925l28.29,28.29L333.776,451.768z M439.615,346.13l-3.875,3.867
+                                                    l-28.285-28.285l3.862-3.854c7.798-7.798,20.486-7.798,28.284,0C447.399,325.656,447.399,338.344,439.615,346.13z"></path>
+                                                <path d="M332.459,120h-206c-11.046,0-20,8.954-20,20s8.954,20,20,20h206c11.046,0,20-8.954,20-20S343.505,120,332.459,120z"></path>
+                                </svg>
+                            </div>
+                            <p>Editor</p>
+                        </button>
+                        <button class="menu__button" id="toggleCopy">
+                            <div id="copy__svg" class="wrapper__svg">
+                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 210.107 210.107" style="enable-background:new 0 0 210.107 210.107;" xml:space="preserve">
+                               <path d="M168.506,0H80.235C67.413,0,56.981,10.432,56.981,23.254v2.854h-15.38
+                                   c-12.822,0-23.254,10.432-23.254,23.254v137.492c0,12.822,10.432,23.254,23.254,23.254h88.271
+                                   c12.822,0,23.253-10.432,23.253-23.254V184h15.38c12.822,0,23.254-10.432,23.254-23.254V23.254C191.76,10.432,181.328,0,168.506,0z
+                                    M138.126,186.854c0,4.551-3.703,8.254-8.253,8.254H41.601c-4.551,0-8.254-3.703-8.254-8.254V49.361
+                                   c0-4.551,3.703-8.254,8.254-8.254h88.271c4.551,0,8.253,3.703,8.253,8.254V186.854z M176.76,160.746
+                                   c0,4.551-3.703,8.254-8.254,8.254h-15.38V49.361c0-12.822-10.432-23.254-23.253-23.254H71.981v-2.854
+                                   c0-4.551,3.703-8.254,8.254-8.254h88.271c4.551,0,8.254,3.703,8.254,8.254V160.746z"></path>
+                           </svg>
+                            </div>
+                            <p>Copy</p>
+                        </button>
+                        <button class="menu__button" id="toggleClear">
+                            <div id="clear__svg" class="wrapper__svg">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M17 6V5C17 3.89543 16.1046 3 15 3H9C7.89543 3 7 3.89543 7 5V6H4C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8H5V19C5 20.6569 6.34315 22 8 22H16C17.6569 22 19 20.6569 19 19V8H20C20.5523 8 21 7.55228 21 7C21 6.44772 20.5523 6 20 6H17ZM15 5H9V6H15V5ZM17 8H7V19C7 19.5523 7.44772 20 8 20H16C16.5523 20 17 19.5523 17 19V8Z" fill="currentColor" style="--darkreader-inline-fill: currentColor;" data-darkreader-inline-fill=""></path>
+                                  </svg>
+                            </div>
+                            <p>Clear</p>
+                        </button>
+                        <button class="menu__button" id="toggleRefresh">
+                            <div id="refresh__svg" class="wrapper__svg">
+                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 489.533 489.533" style="enable-background:new 0 0 489.533 489.533;" xml:space="preserve">
+                                    <path d="M268.175,488.161c98.2-11,176.9-89.5,188.1-187.7c14.7-128.4-85.1-237.7-210.2-239.1v-57.6c0-3.2-4-4.9-6.7-2.9
+                                    l-118.6,87.1c-2,1.5-2,4.4,0,5.9l118.6,87.1c2.7,2,6.7,0.2,6.7-2.9v-57.5c87.9,1.4,158.3,76.2,152.3,165.6
+                                    c-5.1,76.9-67.8,139.3-144.7,144.2c-81.5,5.2-150.8-53-163.2-130c-2.3-14.3-14.8-24.7-29.2-24.7c-17.9,0-31.9,15.9-29.1,33.6
+                                    C49.575,418.961,150.875,501.261,268.175,488.161z"></path>
+                                </svg>
+                            </div>
+                            <p>Refresh</p>
+                        </button>
+                        <button class="menu__button" id="toggleThemes">
+                            <div id="theme__svg" class="wrapper__svg">
+                                <svg enable-background="new 0 0 512.001 512.001" viewBox="0 0 512.001 512.001" xmlns="http://www.w3.org/2000/svg"><path d="m153.616 485.616c17.015-17.015 26.386-39.607 26.385-63.615 0-17.983 29.222-54.182 59.105-66.561 8.643-3.579 20.426-6.366 27.48.688 7.406 7.404 8.171 8.171 8.197 8.196.028.029.057.059.086.087 11.298 11.298 26.365 17.52 42.428 17.52 16.06-.001 31.128-6.224 42.426-17.522l147.885-147.885c2.814-2.813 4.394-6.628 4.394-10.606s-1.58-7.794-4.394-10.606l-190.918-190.918c-5.858-5.858-15.355-5.858-21.213 0l-147.886 147.885c-11.298 11.298-17.521 26.365-17.521 42.428 0 16.061 6.222 31.128 17.535 42.442.042.042.632.63 8.27 8.267 2.996 2.997 4.393 6.674 4.393 11.572 0 29.428-46.683 75.013-70.267 75.013-49.624 0-89.999 40.373-90.001 89.999v.002c.001 24.009 9.372 46.601 26.387 63.613 17.015 17.016 39.607 26.386 63.614 26.386s46.601-9.371 63.615-26.385zm152.467-449.402 169.705 169.705-63.64 63.641-169.705-169.708zm-258.483 428.187c-11.349-11.347-17.599-26.405-17.6-42.399.002-33.085 26.918-60.001 60.001-60.001 19.504 0 44.011-13.273 65.558-35.508 10.436-10.769 34.709-39.099 34.709-69.505 0-12.826-4.558-24.163-13.181-32.786-7.593-7.592-8.254-8.252-8.284-8.282-5.631-5.632-8.732-13.165-8.732-21.213 0-8.049 3.102-15.583 8.733-21.215l52.427-52.427 169.705 169.707-52.426 52.425c-5.632 5.632-13.166 8.733-21.215 8.734-8.048 0-15.581-3.102-21.213-8.733-.311-.313-1.744-1.747-8.283-8.285-14.643-14.644-36.013-17.197-60.173-7.189-35.898 14.869-77.625 59.29-77.625 94.276 0 15.995-6.249 31.053-17.598 42.401-11.349 11.349-26.407 17.599-42.402 17.599-15.994.001-31.053-6.249-42.401-17.599z"></path><circle cx="90" cy="422.001" r="15"></circle></svg>
+                            </div>
+                            <p>Themes</p>
+                        </button>
+                        <button class="menu__button" id="toggleDevices">
+                            <div id="devices__svg" class="wrapper__svg">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-7v2h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2H4a2 2 0 0 1-2-2V5zm18 11V5H4v11h16z" fill="currentColor" style="--darkreader-inline-fill: currentColor;" data-darkreader-inline-fill=""></path></svg>                            </div>
+                            <p>Devices</p>
+                        </button>
+                        <button class="menu__button" id="toggleUpload">
+                            <form id="upload_form" method="GET" action="" style="width: 100%; margin: auto;">
+                                <label id="upload-wrapper" style="display: flex; height: 100%;">
+                                    <div class="wrapper__svg">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M 12 1.5859375 L 4.5859375 9 L 9 9 L 9 15.5 C 9 16.317063 9.6829372 17 10.5 17 L 13.5 17 C 14.317063 17 15 16.317063 15 15.5 L 15 9 L 19.414062 9 L 12 1.5859375 z M 12 4.4140625 L 14.585938 7 L 13 7 L 13 15 L 11 15 L 11 7 L 9.4140625 7 L 12 4.4140625 z M 2 20 L 2 22 L 22 22 L 22 20 L 2 20 z"></path></svg>
+                                    </div>
+                                    <p>Import</p>
+                                  <input type="file" name="fileToUpload" id="fileToUpload" size="1" accept=".html">
+                                </label>
+                            </form>
+                        </button>
+                        <button class="menu__button" id="toggleDownload">
+                            <div id="download__svg" class="wrapper__svg">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M 10.5 2 C 9.6829372 2 9 2.6829372 9 3.5 L 9 10 L 4.5859375 10 L 12 17.414062 L 19.414062 10 L 15 10 L 15 3.5 C 15 2.6829372 14.317063 2 13.5 2 L 10.5 2 z M 11 4 L 13 4 L 13 12 L 14.585938 12 L 12 14.585938 L 9.4140625 12 L 11 12 L 11 4 z M 2 20 L 2 22 L 22 22 L 22 20 L 2 20 z"></path></svg>
+                            </div>
+                            <p>Export</p>
+                        </button>
+                    </div>
+                </div>  
+                <div class="menu__wrapper extra" tabindex="-1">
+                    <div class="scrollbox" tabindex="-1">
+                        <button class="menu__button" id="toggleSettings">
+                            <div id="settings__svg" class="wrapper__svg">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M 9.6660156 2 L 9.1757812 4.5234375 C 8.3516137 4.8342536 7.5947862 5.2699307 6.9316406 5.8144531 L 4.5078125 4.9785156 L 2.171875 9.0214844 L 4.1132812 10.708984 C 4.0386488 11.16721 4 11.591845 4 12 C 4 12.408768 4.0398071 12.832626 4.1132812 13.291016 L 4.1132812 13.292969 L 2.171875 14.980469 L 4.5078125 19.021484 L 6.9296875 18.1875 C 7.5928951 18.732319 8.3514346 19.165567 9.1757812 19.476562 L 9.6660156 22 L 14.333984 22 L 14.824219 19.476562 C 15.648925 19.165543 16.404903 18.73057 17.068359 18.185547 L 19.492188 19.021484 L 21.826172 14.980469 L 19.886719 13.291016 C 19.961351 12.83279 20 12.408155 20 12 C 20 11.592457 19.96113 11.168374 19.886719 10.710938 L 19.886719 10.708984 L 21.828125 9.0195312 L 19.492188 4.9785156 L 17.070312 5.8125 C 16.407106 5.2676813 15.648565 4.8344327 14.824219 4.5234375 L 14.333984 2 L 9.6660156 2 z M 11.314453 4 L 12.685547 4 L 13.074219 6 L 14.117188 6.3945312 C 14.745852 6.63147 15.310672 6.9567546 15.800781 7.359375 L 16.664062 8.0664062 L 18.585938 7.40625 L 19.271484 8.5917969 L 17.736328 9.9277344 L 17.912109 11.027344 L 17.912109 11.029297 C 17.973258 11.404235 18 11.718768 18 12 C 18 12.281232 17.973259 12.595718 17.912109 12.970703 L 17.734375 14.070312 L 19.269531 15.40625 L 18.583984 16.59375 L 16.664062 15.931641 L 15.798828 16.640625 C 15.308719 17.043245 14.745852 17.36853 14.117188 17.605469 L 14.115234 17.605469 L 13.072266 18 L 12.683594 20 L 11.314453 20 L 10.925781 18 L 9.8828125 17.605469 C 9.2541467 17.36853 8.6893282 17.043245 8.1992188 16.640625 L 7.3359375 15.933594 L 5.4140625 16.59375 L 4.7285156 15.408203 L 6.265625 14.070312 L 6.0878906 12.974609 L 6.0878906 12.972656 C 6.0276183 12.596088 6 12.280673 6 12 C 6 11.718768 6.026742 11.404282 6.0878906 11.029297 L 6.265625 9.9296875 L 4.7285156 8.59375 L 5.4140625 7.40625 L 7.3359375 8.0683594 L 8.1992188 7.359375 C 8.6893282 6.9567546 9.2541467 6.6314701 9.8828125 6.3945312 L 10.925781 6 L 11.314453 4 z M 12 8 C 9.8034768 8 8 9.8034768 8 12 C 8 14.196523 9.8034768 16 12 16 C 14.196523 16 16 14.196523 16 12 C 16 9.8034768 14.196523 8 12 8 z M 12 10 C 13.111477 10 14 10.888523 14 12 C 14 13.111477 13.111477 14 12 14 C 10.888523 14 10 13.111477 10 12 C 10 10.888523 10.888523 10 12 10 z"></path></svg>
+                            </div>
+                            <p>Settings</p>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+            <div>
+                <textarea spellcheck="false" title="Editor" placeholder="Your Code Goes Here...."></textarea>
+                <iframe title="Preview"></iframe>
+            </div>
+        </section>
+        <footer><div class="tag"><p id="textarea__tag">N/A</p></div><p>@Seth Medley (2022)</p><div class="tag"><p id="iframe__tag">N/A</p></div></footer>
+    </main>
+    <div class="dialogs__wrapper">
+        <div class="dialog" id="profileDialog">
+            <div class="dialog__backdrop"></div>
+            <div class="dialog__card">
+                <div class="dialog__header"><p>Profile</p><span class="dialog__close">X</span></div>
+                <div class="dialog__content__wrapper">
+                    <div class="dialog__content">                        
+                    <div class="scrollbox" id="profileDialogContents">
+                        <div class="profile__info">
+                            <div class="profile_wrapper__img">
+                                <img alt="Profile" src="https://assets.codepen.io/3309848/internal/avatars/users/default.png?format=auto&version=1561688588&width=80&height=80">
+                            </div>
+                            <div class="profile__wrapper__txt">
+                                <h4>Seth Medley</h4>
+                            <p>Front-End Web Developer</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="social__card__wrapper">
+                                <a href="https://codepen.io/Seth_Medley" target="_blank"><div class="social__card">
+                                    <div class="social__card__img">
+                                        <img alt="Codepen" src="https://cpwebassets.codepen.io/assets/social/facebook-default-05cf522ae1d4c215ae0f09d866d97413a2204b6c9339c6e7a1b96ab1d4a7340f.png">
+                                    </div>
+                                    <p>Codepen</p>
+                                </div>
+                                </a>
+                                <a href="https://github.com/HD-Dev1" target="_blank"><div class="social__card">
+                                    <div class="social__card__img">
+                                        <img alt="Github" src="data:image/jpeg;base64,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">
+                                    </div>
+                                    <p>Github</p>
+                                </div>
+                                </a>
+                                <a href="https://www.facebook.com/seth.medley.1/" target="_blank"><div class="social__card">
+                                    <div class="social__card__img">
+                                        <img alt="Facebook" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9FzHTVWPwdWoVpD3SqfDFHU94X43xtcR-9g&usqp=CAU">
+                                    </div>
+                                    <p>Facebook</p>
+                                </div>
+                                </a>
+                                <a href="https://www.instagram.com/sethmedley18/" target="_blank"><div class="social__card">
+                                    <div class="social__card__img">
+                                        <img alt="Instagram" src="data:image/jpeg;base64,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">
+                                    </div>
+                                    <p>Instagram</p>
+                                </div>
+                                </a>
+                                <a href="https://discord.com/users/766214296350752789" target="_blank"><div class="social__card">
+                                    <div class="social__card__img">
+                                        <img alt="Discord" src="data:image/jpeg;base64,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">
+                                    </div>
+                                    <p>Discord</p>
+                                </div>
+                                </a>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="dialog__buttons">
+                        <input type="button" value="Close" class="dialog__close">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dialog" id="themesDialog">
+            <div class="dialog__backdrop"></div>
+            <div class="dialog__card">
+                <div class="dialog__header"><p>Themes</p><span class="dialog__close">X</span></div>
+                <div class="dialog__content__wrapper">
+                    <div class="dialog__content">
+                        <div class="list__wrapper">
+                            <div class="scrollbox">
+                                <div class="list__option">
+                                    <div class="wrapper__svg">
+                                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512">
+                                            <path d="m256,105.5c-83.9,0-152.2,68.3-152.2,152.2 0,83.9 68.3,152.2 152.2,152.2 83.9,0 152.2-68.3 152.2-152.2 0-84-68.3-152.2-152.2-152.2zm0,263.5c-61.4,0-111.4-50-111.4-111.4 0-61.4 50-111.4 111.4-111.4 61.4,0 111.4,50 111.4,111.4 0,61.4-50,111.4-111.4,111.4z"></path>
+                                            <path d="m256,74.8c11.3,0 20.4-9.1 20.4-20.4v-23c0-11.3-9.1-20.4-20.4-20.4-11.3,0-20.4,9.1-20.4,20.4v23c2.84217e-14,11.3 9.1,20.4 20.4,20.4z"></path>
+                                            <path d="m256,437.2c-11.3,0-20.4,9.1-20.4,20.4v22.9c0,11.3 9.1,20.4 20.4,20.4 11.3,0 20.4-9.1 20.4-20.4v-22.9c0-11.2-9.1-20.4-20.4-20.4z"></path>
+                                            <path d="m480.6,235.6h-23c-11.3,0-20.4,9.1-20.4,20.4 0,11.3 9.1,20.4 20.4,20.4h23c11.3,0 20.4-9.1 20.4-20.4 0-11.3-9.1-20.4-20.4-20.4z"></path>
+                                            <path d="m54.4,235.6h-23c-11.3,0-20.4,9.1-20.4,20.4 0,11.3 9.1,20.4 20.4,20.4h22.9c11.3,0 20.4-9.1 20.4-20.4 0.1-11.3-9.1-20.4-20.3-20.4z"></path>
+                                            <path d="M400.4,82.8L384.1,99c-8,8-8,20.9,0,28.9s20.9,8,28.9,0l16.2-16.2c8-8,8-20.9,0-28.9S408.3,74.8,400.4,82.8z"></path>
+                                            <path d="m99,384.1l-16.2,16.2c-8,8-8,20.9 0,28.9 8,8 20.9,8 28.9,0l16.2-16.2c8-8 8-20.9 0-28.9s-20.9-7.9-28.9,0z"></path>
+                                            <path d="m413,384.1c-8-8-20.9-8-28.9,0-8,8-8,20.9 0,28.9l16.2,16.2c8,8 20.9,8 28.9,0 8-8 8-20.9 0-28.9l-16.2-16.2z"></path>
+                                            <path d="m99,127.9c8,8 20.9,8 28.9,0 8-8 8-20.9 0-28.9l-16.2-16.2c-8-8-20.9-8-28.9,0-8,8-8,20.9 0,28.9l16.2,16.2z"></path>
+                                      </svg>
+                                    </div>
+                                    <p>Light</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Switch" id="light__option__btn">
+                                    </div>
+                                </div>
+                                <div class="list__option">
+                                    <div class="wrapper__svg">
+                                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512">
+                                            <path d="m275.4,500.7c-135,0-244.7-109.8-244.7-244.7 1.06581e-14-134.9 109.8-244.7 244.7-244.7 8.2,0 16.4,0.4 24.6,1.2 7.2,0.7 13.5,5.2 16.5,11.7s2.4,14.2-1.6,20.2c-23,33.8-35.2,73.3-35.2,114.2 0,105 78.7,192.2 183.2,202.6 7.2,0.7 13.5,5.2 16.5,11.7 3.1,6.5 2.4,14.2-1.6,20.2-45.8,67.4-121.4,107.6-202.4,107.6zm-12.5-448c-106.5,6.5-191.2,95.2-191.2,203.3 1.42109e-14,112.3 91.4,203.7 203.7,203.7 56.4,0 109.6-23.4 147.8-63.7-46.2-11.7-88.1-36.8-120.8-72.6-41.1-45.2-63.8-103.6-63.8-164.6 0.1-37.1 8.4-73.2 24.3-106.1z"></path>
+                                      </svg>
+                                    </div>
+                                    <p>Dark</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Switch" id="dark__option__btn">
+                                    </div>
+                                </div>
+                                <div class="list__option">
+                                    <div class="wrapper__svg">
+                                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512">
+                                            <path d="m500,113.1c-2.4-7.5-8.9-13-16.8-14.1l-55.2-7.9-24.6-48.9c-3.5-7-10.7-11.4-18.5-11.4-7.8,0-15,4.4-18.5,11.4l-24.6,48.9-55.2,7.9c-7.8,1.1-14.3,6.6-16.8,14.1-2.4,7.5-0.3,15.8 5.4,21.3l39.7,37.9-9.4,53.4c-1.4,7.7 1.8,15.6 8.1,20.2 6.3,4.7 14.7,5.3 21.7,1.7l49.5-25.5 49.5,25.5c3,1.5 6.2,2.3 9.5,2.3 4.3,0 8.6-1.4 12.2-4 6.3-4.6 9.5-12.5 8.1-20.2l-9.4-53.4 39.7-37.9c5.9-5.5 8-13.8 5.6-21.3zm-81.6,36.9c-5,4.8-7.3,11.7-6.1,18.5l4.1,23.3-22-11.3c-5.9-3-13-3-18.9,0l-22,11.3 4.1-23.3c1.2-6.8-1.1-13.7-6.1-18.5l-16.9-16.2 23.8-3.4c6.7-1 12.5-5.1 15.5-11.2l11-21.9 11,21.9c3,6 8.8,10.2 15.5,11.2l23.8,3.4-16.8,16.2z"></path>
+                                            <path d="m442,361c-14.9,3.4-30.3,5.1-45.7,5.1-113.8,0-206.4-92.6-206.4-206.3 0-41.8 12.4-82 35.9-116.3 4.8-7 4.8-16.3 0-23.4-4.8-7.1-13.4-10.5-21.8-8.6-54,12.2-103,42.7-138,86-35.4,43.8-55,99.2-55,155.7 0,66.2 25.8,128.4 72.6,175.2 46.8,46.8 109.1,72.6 175.3,72.6 81.9,0 158.4-40.4 204.8-108.1 4.8-7 4.8-16.3 0-23.4-4.8-7-13.4-10.4-21.7-8.5zm-183.1,98.5c-113.8,0-206.4-92.6-206.4-206.3 0-78.2 45.3-149.1 112.8-183.8-11.2,28.6-17,59.1-17,90.4 0,66.2 25.8,128.4 72.6,175.2 46.7,46.7 108.8,72.5 174.9,72.6-37.3,33.1-85.8,51.9-136.9,51.9z"></path>
+                                      </svg>
+                                    </div>
+                                    <p>Midnight</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Switch" id="midnight__option__btn">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog__buttons">
+                        <input type="button" value="Close" class="dialog__close">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dialog" id="devicesDialog">
+            <div class="dialog__backdrop"></div>
+            <div class="dialog__card">
+                <div class="dialog__header"><p>Devices</p><span class="dialog__close">X</span></div>
+                <div class="dialog__content__wrapper">
+                    <div class="dialog__content" id="deviceList">
+                        <div class="resizeMsg" style="display: none;"><p>You need a larger device...</p></div>
+                        <div class="list__wrapper">
+                            <div class="scrollbox">
+                                <div class="list__option">
+                                    <div class="wrapper__svg">
+                                        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-phone" style="--darkreader-inline-fill: currentColor;" data-darkreader-inline-fill="">
+                                            <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z"></path>
+                                            <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path>
+                                          </svg>
+                                    </div>
+                                    <p>Mobile</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Switch" id="mobile__option__btn">
+                                    </div>
+                                </div>
+                                <div class="list__option">
+                                    <div class="wrapper__svg">
+                                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 291.826 291.826" style="enable-background:new 0 0 291.826 291.826;" xml:space="preserve">
+                                            <path d="M233.795,0H58.031C41.602,0,28.236,13.366,28.236,29.795v232.236c0,16.429,13.366,29.795,29.795,29.795h175.764
+                                                c16.429,0,29.795-13.366,29.795-29.795V29.795C263.59,13.366,250.224,0,233.795,0z M245.59,262.031
+                                                c0,6.504-5.292,11.795-11.795,11.795H58.031c-6.504,0-11.795-5.291-11.795-11.795V29.795C46.236,23.291,51.527,18,58.031,18
+                                                h175.764c6.504,0,11.795,5.291,11.795,11.795V262.031z"></path>
+                                            <path d="M225.342,27.913H66.484c-4.971,0-9,4.029-9,9v197c0,4.971,4.029,9,9,9h158.857c4.971,0,9-4.029,9-9v-197
+                                                C234.342,31.942,230.313,27.913,225.342,27.913z M216.342,224.913H75.484v-179h140.857V224.913z"></path>
+                                            <path d="M161.913,248.913h-32c-4.971,0-9,4.029-9,9s4.029,9,9,9h32c4.971,0,9-4.029,9-9S166.884,248.913,161.913,248.913z"></path>
+                                        </svg>
+                                    </div>
+                                    <p>Tablet</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Switch" id="tablet__option__btn">
+                                    </div>
+                                </div>
+                                <div class="list__option">
+                                    <div class="wrapper__svg">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-7v2h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2H4a2 2 0 0 1-2-2V5zm18 11V5H4v11h16z" fill="currentColor" style="--darkreader-inline-fill: currentColor;" data-darkreader-inline-fill=""></path></svg>
+                                    </div>
+                                    <p>Laptop</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Switch" id="laptop__option__btn">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog__buttons">
+                        <input type="button" value="Close" class="dialog__close">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dialog" id="downloadDialog">
+            <div class="dialog__backdrop"></div>
+            <div class="dialog__card">
+                <div class="dialog__header"><p>Export</p><span class="dialog__close">X</span></div>
+                <div class="dialog__content__wrapper">
+                    <div class="dialog__content">                        
+                        <form onsubmit="download(this['name'].value, this['text'].value);">
+                                <input type="text" name="name" value="index.html" id="fileName" style="width: 25%; text-align: center; cursor: auto;" title="File Name" placeholder="index.html">
+                                <textarea spellcheck="false" readonly="" name="text" id="preview_code" style="width: 70%; height: 13rem; resize: none;" title="Preview" placeholder="Get ready for blast off!"></textarea>
+                            </div>
+                    <div class="dialog__buttons">
+                        <input type="submit" value="Export">
+                        <input type="button" value="Close" class="dialog__close">
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="dialog" id="settingsDialog">
+            <div class="dialog__backdrop"></div>
+            <div class="dialog__card">
+                <div class="dialog__header"><p>Settings</p><span class="dialog__close">X</span></div>
+                <div class="dialog__content__wrapper">
+                    <div class="dialog__content">
+                        <div class="list__wrapper">
+                            <div class="scrollbox">
+                                <div class="list__option">
+                                    <div class="wrapper__svg" style="margin: auto 12px;">
+                                        <svg enable-background="new 0 0 512.001 512.001" viewBox="0 0 512.001 512.001" xmlns="http://www.w3.org/2000/svg"><path d="m153.616 485.616c17.015-17.015 26.386-39.607 26.385-63.615 0-17.983 29.222-54.182 59.105-66.561 8.643-3.579 20.426-6.366 27.48.688 7.406 7.404 8.171 8.171 8.197 8.196.028.029.057.059.086.087 11.298 11.298 26.365 17.52 42.428 17.52 16.06-.001 31.128-6.224 42.426-17.522l147.885-147.885c2.814-2.813 4.394-6.628 4.394-10.606s-1.58-7.794-4.394-10.606l-190.918-190.918c-5.858-5.858-15.355-5.858-21.213 0l-147.886 147.885c-11.298 11.298-17.521 26.365-17.521 42.428 0 16.061 6.222 31.128 17.535 42.442.042.042.632.63 8.27 8.267 2.996 2.997 4.393 6.674 4.393 11.572 0 29.428-46.683 75.013-70.267 75.013-49.624 0-89.999 40.373-90.001 89.999v.002c.001 24.009 9.372 46.601 26.387 63.613 17.015 17.016 39.607 26.386 63.614 26.386s46.601-9.371 63.615-26.385zm152.467-449.402 169.705 169.705-63.64 63.641-169.705-169.708zm-258.483 428.187c-11.349-11.347-17.599-26.405-17.6-42.399.002-33.085 26.918-60.001 60.001-60.001 19.504 0 44.011-13.273 65.558-35.508 10.436-10.769 34.709-39.099 34.709-69.505 0-12.826-4.558-24.163-13.181-32.786-7.593-7.592-8.254-8.252-8.284-8.282-5.631-5.632-8.732-13.165-8.732-21.213 0-8.049 3.102-15.583 8.733-21.215l52.427-52.427 169.705 169.707-52.426 52.425c-5.632 5.632-13.166 8.733-21.215 8.734-8.048 0-15.581-3.102-21.213-8.733-.311-.313-1.744-1.747-8.283-8.285-14.643-14.644-36.013-17.197-60.173-7.189-35.898 14.869-77.625 59.29-77.625 94.276 0 15.995-6.249 31.053-17.598 42.401-11.349 11.349-26.407 17.599-42.402 17.599-15.994.001-31.053-6.249-42.401-17.599z"></path><circle cx="90" cy="422.001" r="15"></circle></svg>
+                                    </div>
+                                    <p>Theme</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Open" id="theme__option__btn">
+                                    </div>
+                                </div>
+                                <div class="list__option">
+                                    <div class="wrapper__svg" style="margin: auto 12px;">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-7v2h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2H4a2 2 0 0 1-2-2V5zm18 11V5H4v11h16z" fill="currentColor" style="--darkreader-inline-fill: currentColor;" data-darkreader-inline-fill=""></path></svg>
+                                    </div>
+                                    <p>Devices</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Open" id="devices__option__btn">
+                                    </div>
+                                </div>
+                                <div class="list__option">
+                                    <div class="wrapper__svg" style="margin: auto 12px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M 10.5 2 C 9.6829372 2 9 2.6829372 9 3.5 L 9 10 L 4.5859375 10 L 12 17.414062 L 19.414062 10 L 15 10 L 15 3.5 C 15 2.6829372 14.317063 2 13.5 2 L 10.5 2 z M 11 4 L 13 4 L 13 12 L 14.585938 12 L 12 14.585938 L 9.4140625 12 L 11 12 L 11 4 z M 2 20 L 2 22 L 22 22 L 22 20 L 2 20 z"></path></svg>
+                                    </div>
+                                    <p>Export</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Open" id="download__option__btn">
+                                    </div>
+                                </div>
+                                <div class="list__option">
+                                    <div class="wrapper__svg" style="margin: auto 12px;">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M10.5427323,2 C11.3316142,2 12.0881856,2.31338213 12.6460093,2.87120589 L21.1287941,11.3539907 C22.290402,12.5155985 22.290402,14.398937 21.1287941,15.5605448 L15.5605448,21.1287941 C14.398937,22.290402 12.5155985,22.290402 11.3539907,21.1287941 L2.87120589,12.6460093 C2.31338213,12.0881856 2,11.3316142 2,10.5427323 L2,4.97448297 C2,3.33172139 3.33172139,2 4.97448297,2 L10.5427323,2 Z M10.5427323,4 L4.97448297,4 C4.43629089,4 4,4.43629089 4,4.97448297 L4,10.5427323 C4,10.8011812 4.10266845,11.0490448 4.28541945,11.2317958 L12.7682042,19.7145805 C13.1487635,20.0951398 13.765772,20.0951398 14.1463313,19.7145805 L19.7145805,14.1463313 C20.0951398,13.765772 20.0951398,13.1487635 19.7145805,12.7682042 L11.2317958,4.28541945 C11.0490448,4.10266845 10.8011812,4 10.5427323,4 Z M8,6 C9.1045695,6 10,6.8954305 10,8 C10,9.1045695 9.1045695,10 8,10 C6.8954305,10 6,9.1045695 6,8 C6,6.8954305 6.8954305,6 8,6 Z"></path>
+                                          </svg>
+                                    </div>
+                                    <p>Tags</p>
+                                    <div class="dialog__buttons">
+                                        <input type="button" value="Disable" id="tags__option__btn">
+                                    </div>
+                                </div>
+                                <div class="list__option">
+                                    <div class="wrapper__svg" style="margin: auto 12px;">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h4m4 0h-4m0 0v12M4 11h3m3 0H7m0 0v7" style="--darkreader-inline-stroke: currentColor;" data-darkreader-inline-stroke=""></path></svg>
+                                    </div>
+                                    <p>Font Size</p>
+                                    <div class="dialog__buttons">
+                                        <input type="text" id="fontSize__option__box" title="Font Size" placeholder="Eg. 16px">
+                                        <input type="button" value="Apply" id="fontSize__option__btn">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog__buttons">
+                        <input type="button" value="Close" class="dialog__close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="JS/index.js"></script>
+</body>
+</html>

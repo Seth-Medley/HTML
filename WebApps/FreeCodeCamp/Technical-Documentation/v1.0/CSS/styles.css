@@ -1,0 +1,189 @@
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@media screen and (max-width: 700px) and (orientation: portrait),
+      (orientation: landscape) {
+        body {
+          background-color: wheat;
+        }
+  
+        #main-doc {
+          height: 100%;
+          width: 100%;
+        }
+  
+        #navbar {
+          position: fixed;
+          width: 300px;
+          height: 100%;
+          display: none;
+        }
+  
+        #technical-doc-writing {
+          width: 75%;
+          margin-left: 15%;
+          font-family: Arial;
+        }
+  
+        header {
+          font-weight: bold;
+          font-size: 20px;
+        }
+  
+        #navbar {
+          text-align: center;
+          font-family: Arial;
+        }
+  
+        p {
+          font-size: 17px;
+        }
+  
+        pre {
+          width: 100%;
+        }
+  
+        .nav-link {
+          margin-top: 10px;
+          margin-bottom: 10px;
+          font-size: 20px;
+        }
+  
+        a {
+          text-decoration: none;
+          color: blue;
+        }
+  
+        a:hover {
+          text-decoration: underline;
+        }
+  
+        #Nav-Header {
+          text-decoration: underline;
+        }
+      }
+  
+      @media screen and (min-width: 701px) and (orientation: portrait),
+      (orientation: landscape) {
+        body {
+          background-color: wheat;
+        }
+  
+        #main-doc {
+          height: 100%;
+          width: 100%;
+        }
+  
+        #navbar {
+          position: fixed;
+          width: 300px;
+          height: 100%;
+          display: none;
+        }
+  
+        #technical-doc-writing {
+          width: 75%;
+          margin-left: 10%;
+          font-family: Arial;
+        }
+  
+        header {
+          font-weight: bold;
+          font-size: 20px;
+        }
+  
+        #navbar {
+          text-align: center;
+          font-family: Arial;
+        }
+  
+        p {
+          font-size: 17px;
+        }
+  
+        pre {
+          width: 100%;
+        }
+  
+        .nav-link {
+          margin-top: 10px;
+          margin-bottom: 10px;
+          font-size: 20px;
+        }
+  
+        a {
+          text-decoration: none;
+          color: blue;
+        }
+  
+        a:hover {
+          text-decoration: underline;
+        }
+  
+        #Nav-Header {
+          text-decoration: underline;
+        }
+    }
+  
+      @media screen and (min-width: 1024px) {
+        body {
+          background-color: wheat;
+        }
+  
+        #main-doc {
+          height: 100%;
+          width: 100%;
+        }
+  
+        #navbar {
+          position: fixed;
+          width: 300px;
+          height: 100%;
+          display: block;
+        }
+  
+        #technical-doc-writing {
+          width: 75%;
+          margin-left: 320px;
+          font-family: Arial;
+        }
+  
+        header {
+          font-weight: bold;
+          font-size: 20px;
+        }
+  
+        #navbar {
+          text-align: center;
+          font-family: Arial;
+        }
+  
+        p {
+          font-size: 17px;
+        }
+  
+        pre {
+          width: 100%;
+        }
+  
+        .nav-link {
+          margin-top: 10px;
+          margin-bottom: 10px;
+          font-size: 20px;
+        }
+  
+        a {
+          text-decoration: none;
+          color: blue;
+        }
+  
+        a:hover {
+          text-decoration: underline;
+        }
+  
+        #Nav-Header {
+          text-decoration: underline;
+        }
+}
+/************************************************************************************/
+/************************************************************************************/

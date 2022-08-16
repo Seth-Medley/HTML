@@ -1,0 +1,74 @@
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&display=swap');
+body {
+    background:black;
+    color: white;
+    font-family: Space Mono;
+}
+.topnav {
+  overflow: hidden;
+  background-color: black;
+  position: relative;
+}
+.profile-links {
+    display: flex;
+}
+.topnav #myLinks {
+  display: none;
+}
+.topnav a {
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  display: block;
+}
+.topnav a.icon {
+  background: black;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.topnav a {
+    display: flex;
+}
+.active {
+  background-color: black;
+  color: white;
+}
+h1 {
+    font-size: 35px;
+}
+p {
+    font-size: 25px;
+}
+#welcome-section {
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image:  url("https://cdn.pixabay.com/photo/2016/11/23/15/23/cosmos-1853491_1280.jpg");
+}
+#projects {
+    height: 500px;
+    text-align: center;
+}
+.row {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    margin-left: 90px;
+    margin-bottom: 30px;
+}
+.column {
+    display: flex;
+    margin-left: 90px;
+    flex-direction: column;
+    flex: 1;
+}
+/************************************************************************************/
+/************************************************************************************/

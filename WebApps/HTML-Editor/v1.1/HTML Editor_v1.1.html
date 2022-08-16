@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>HTML Editor v1.1</title>
+    <link rel="stylesheet" href="CSS/styles.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/web-design.png" type="image/gif" sizes="16x16">
+</head>
+<body id="body">
+    <div class="main" id="main">
+        <textarea id="editor-textarea" onkeyup="refresh()" placeholder="Type Code Here...">
+        </textarea>
+        <iframe id="viewer"></iframe>
+    </div>
+    <img src="https://img.icons8.com/ios-glyphs/30/000000/more-than.png" id="Menu" title="Controls"
+        style="display: none;" onclick="Menu()">
+
+    <div id="Options" class="controlOpt" style="display: none;">
+        <img src="https://img.icons8.com/material-rounded/24/000000/copy.png" class="optContent" id="Copy"
+            onclick="copyToClip()" title="Copy">
+        <img src="https://img.icons8.com/metro/26/000000/recurring-appointment.png" class="optContent" id="Refresh"
+            onclick="resetEditor()" title="Refresh">
+        <img src="https://img.icons8.com/metro/26/000000/multiple-devices.png" class="optContent" id="ViewPort"
+            onclick="viewSize()" title="ViewPort">
+        <img src="https://img.icons8.com/metro/26/000000/color-dropper.png" class="optContent" id="Color"
+            onclick="backgroundChange()" title="Background Color">
+    </div>
+    <div id="ViewPort-Container" style="display: none;">
+        <img src="https://img.icons8.com/ios/50/000000/android.png" class="view-size" id="mobile" onclick="mobileView()"
+            title="Mobile (450px | 590px)">
+        <img src="https://img.icons8.com/ios/50/000000/android-tablet.png" class=" view-size" id="tablet"
+            onclick="tabletView()" title="Tablet (730px | 590px)">
+        <img src="https://img.icons8.com/ios/50/000000/monitor.png" class="view-size" id="pc" onclick="computerView()"
+            title="PC (930px  | 590px)">
+    </div>
+    <div id="Color-Palette" style="display: none;">
+        <button style="background-color: #ecf0f1;" class="colorBtn" id="LightBlue" title="Light Grey [Default]"
+            onclick="colorGrey()"></button>
+        <button style="background-color: #333;" class="colorBtn" id="DarkGrey" title="Dark Grey"
+            onclick="colorDarkGrey()"></button>
+        <button style="background-color: white;" class="colorBtn" id="White" title="White"
+            onclick="colorWhite()"></button>
+        <button style="background-color: wheat;" class="colorBtn" id="Wheat" title="Wheat"
+            onclick="colorWheat()"></button>
+    </div>
+    <img src="https://img.icons8.com/material-sharp/24/000000/pencil--v1.png" id="MobileMP" onclick="mobileEdit()"
+        title="Edit" style="display:none;">
+    <footer class="footer" style="display: none;">
+        <div class="footer-bottom" id="footer-bottom"><p>@Seth Medley (2018) |<a href="https://codepen.io/Seth_Medley" target="_">Codepen</a>|</p></div>
+    </footer>
+    <script src="JS/index.js"></script>
+</body>
+</html>

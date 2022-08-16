@@ -1,0 +1,184 @@
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@media (prefers-color-scheme: dark) {
+    html {
+        --link: #ff9100;
+        --background: #272727;
+        --footer: #00000041;
+        --scrollbar: #2b2b2b;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+        --empty-cell: #00000093;
+    }
+}
+@media (prefers-color-scheme: light) {
+    html {
+        --link: #ff0800;
+        --background: #fefefe;
+        --footer: #00000023;
+        --scrollbar: #2b2b2b;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+        --empty-cell: #00000093;
+    }
+    svg {
+        fill: #000000 !important;
+    }
+    body>main>section.starter__page * {
+        color: #fff;
+    }
+}
+@media (max-width: 800px) and (orientation: portrait){
+    main  {
+        max-width: calc(99vw) !important;
+        overflow: hidden;
+    }
+    #footer>div {
+        min-height: 50px !important;
+        max-height: 50px !important;
+    }
+}
+::-webkit-scrollbar {
+    width: var(--scrollbar-WH);
+    height: var(--scrollbar-WH);
+    background-color: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 0.2em solid var(--scrollbar);
+    background-color: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    margin: 0px;
+    font-weight: 600;
+    font-family: system-ui;
+    background-color: var(--background);
+}
+a {
+   color: var(--link); 
+   text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+.svg__wrapper {
+    width: 1.5em;
+    height: 100%;
+    display: flex;
+    margin: auto 5px;
+}
+svg {
+    fill: #fff;
+    margin: auto;
+}
+body>main {
+    display: flex;
+    height: auto;
+    flex-direction: column;
+    width: calc(100vw - var(--scrollbar-WH));
+}
+body>main>header {
+    display: flex;
+    min-height: 45px;
+    max-height: 45px;
+    overflow-x: auto;
+    user-select: none;
+    white-space: nowrap;
+    background-color: var(--footer);
+}
+body>main>header> *:not(a) {
+    margin: auto;
+}
+body>main>section {
+    width: 100%;
+    height: 100vh;
+}
+body>main>section.starter__page {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 0px 4px black;
+    background: url("https://greatbigstorm.com/wp-content/uploads/2016/06/SEO-Hero-Pic-2000x1000-1.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: calc(100vh - 120px);
+}
+body>main>section.starter__page>h1 {
+    margin: 6em auto 1em auto;
+}
+body>main>section.starter__page>p {
+    margin: 0em auto;
+}
+body>main>section.projects__page {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+body>main>section.projects__page>h1 {
+    margin: 1em auto;
+}
+.project {
+    max-width: calc(100vw - var(--scrollbar-WH));
+}
+.project.empty {
+    background-color: var(--empty-cell);
+    max-width: calc(99vw - var(--scrollbar-WH));
+}
+body>main>section.projects__page>section>div {
+    display: grid;
+    padding: 0.2em;
+    max-width: 100%;
+    grid-gap: 0.2em;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(auto-fit, minmax(500px,auto));
+}
+#footer {
+    display: flex;
+    user-select: none;
+    white-space: nowrap;
+    flex-direction: column;
+    background-color: var(--footer);
+}
+#footer>section {
+    display: grid;
+    padding: 0.2em;
+    max-width: 100%;
+    grid-gap: 0.2em;
+    border: 3px solid var(--footer);
+    grid-template-rows: auto;
+    background-color: var(--footer);
+    grid-template-columns: repeat(auto-fit, minmax(200px, auto));
+}
+#footer>section>.grid__cell>.grid__cell__content {
+    display: flex;
+    user-select:text;
+    flex-direction: column;
+}
+#footer>section>div * {
+    margin: 0.5em auto;
+}
+#footer>div {
+    margin: auto;
+    display: flex;
+    overflow-x: auto;
+    min-height: 40px;
+    max-height: 40px;
+    max-width: 100vw;
+}
+#footer>div>p,
+#footer>div>a {
+    margin: auto 2px;
+}
+/************************************************************************************/
+/************************************************************************************/

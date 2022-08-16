@@ -1,0 +1,195 @@
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@media (prefers-color-scheme: dark) {
+  html {
+      --link: #ff9100;
+      --background: #272727;
+      --footer: #00000070;
+      --scrollbar: #2b2b2b;
+      --scrollbar-thumb: #161616;
+      --scrollbar-hover: #7c7c7c;
+      --scrollbar-WH: 0.8em;
+  }
+}
+@media (prefers-color-scheme: light) {
+  html {
+      --link: #ff4800;
+      --background: #fefefe;
+      --footer: #00000041;
+      --scrollbar: #2b2b2b;
+      --scrollbar-thumb: #161616;
+      --scrollbar-hover: #7c7c7c;
+      --scrollbar-WH: 0.8em;
+  }
+}
+::-webkit-scrollbar {
+  width: var(--scrollbar-WH);
+  height: var(--scrollbar-WH);
+  background-color: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  border: 0.2em solid var(--scrollbar);
+  background-color: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+body {
+  margin: 0px;
+  font-family: system-ui;
+  background-color: var(--background);
+}
+a {
+ color: var(--link); 
+ text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+body>main {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  max-width: calc(100vw - var(--scrollbar-WH));
+}
+body>main>section {
+  flex-grow: 1;
+}
+/********************/
+html {
+  --text-color: white;
+  --footer-color: #d3d3d3;
+  --border-color: black;
+  --main-bg-color: #494949;
+  --footer-bg-color: #303036;
+  --footer-bottom-color: #686868;
+  --footer-bottom-bg-color: #262b30;
+}
+body {
+  margin: 0px;
+  font-family: sans-serif;
+  color: var(--text-color);
+  background-color: var(--main-bg-color);
+}
+h1 {
+  font-size: 35px;
+  text-align: center;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+p {
+  text-shadow: 0px 0px var(--border-color);
+}
+.NavBar {
+  height: wrap;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--main-bg-color);
+  box-shadow: 0px 2px 8px var(--border-color);
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.NavBar #myLinks {
+  display: none;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.NavBar #myLinks a {
+  font-size: 14px;
+  background-color: #5f5e5e;
+  border: 1px solid rgba(0, 0, 0, 0.384);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.NavBar a {
+  display: block;
+  font-size: 18px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: var(--text-color);
+  box-shadow: 1px 2px 1px var(--main-bg-color);
+}
+.NavBar a.icon {
+  top: 5px;
+  right: 0px;
+  display: block;
+  position: absolute;
+  border-radius: 10px;
+  background: var(--main-bg-color);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.384);
+}
+.NavBarContents {
+  height: 20px;
+  cursor: auto;
+  color: var(--text-color);
+  background-color: var(--main-bg-color);
+  border-bottom: 3px solid var(--main-bg-color);
+}
+#Profile {
+  border: 1px solid black;
+  border-radius: 100%;
+  width: 100%;
+  height: auto;
+  position: relative;
+  top: -3px;
+  left: -3px;
+}
+#ProfileLink {
+  width: 30px;
+}
+#ProfileLink:hover {
+  cursor: pointer;
+}
+#welcome-section {
+  height: 500px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  background-image: url("https://greatbigstorm.com/wp-content/uploads/2016/06/SEO-Hero-Pic-2000x1000-1.jpg")
+}
+#projects {
+  height: 500px;
+}
+#project-head {
+  font-size: 25px;
+  margin-top: 0px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 0px;
+  box-shadow: 0px -2px 8px var(--border-color);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--main-bg-color);
+}
+/********************/
+body>main footer {
+  display: flex;
+  min-height: 40px;
+  max-height: 40px;
+  overflow-x: auto;
+  user-select: none;
+  white-space: nowrap;
+  background-color: var(--footer);
+}
+body>main footer>div {
+  display: flex;
+  margin: auto;
+}
+body>main footer>div>p {
+  margin: auto 2px;
+}
+/************************************************************************************/
+/************************************************************************************/

@@ -1,0 +1,43 @@
+{
+  "manifest_version": 2,
+  "name": "Web Extension",
+  "version": "1.0",
+  "description": "",
+  "browser_action": {
+    "default_popup": "/HTML/popup.html",
+    "default_title": "Web Extension",
+    "default_icon": {
+      "16": "/Icons/icon16.png",
+      "32": "/Icons/icon32.png",
+      "48": "/Icons/icon48.png",
+      "128": "/Icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "/Icons/icon16.png",
+    "32": "/Icons/icon32.png",
+    "48": "/Icons/icon48.png",
+    "128": "/Icons/icon128.png"
+  },
+  "options_ui": {
+    "page": "/HTML/options.html",
+    "open_in_tab": false
+  },
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+  "background": {
+    "scripts": ["/JS/background.js"],
+    "persistent": false
+  },
+    "content_scripts": [{
+      "run_at": "document_idle",
+      "css": ["/CSS/style.css"],
+      "js": [],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

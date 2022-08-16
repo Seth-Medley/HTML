@@ -1,0 +1,163 @@
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@media (prefers-color-scheme: dark) {
+    html {
+        --link: #ff9100;
+        --background: #272727;
+        --footer: #00000070;
+        --scrollbar: #2b2b2b;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+    }
+}
+@media (prefers-color-scheme: light) {
+    html {
+        --link: #ff4800;
+        --background: #fefefe;
+        --footer: #00000041;
+        --scrollbar: #2b2b2b;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+    }
+}
+* {
+    user-select: none;
+    outline: none;
+}
+::-webkit-scrollbar {
+    width: var(--scrollbar-WH);
+    height: var(--scrollbar-WH);
+    background-color: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 0.2em solid var(--scrollbar);
+    background-color: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+body {
+    margin: 0px;
+    font-family: system-ui;
+    background-color: var(--background);
+}
+a {
+   color: var(--link); 
+   text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+body>main {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100vw - var(--scrollbar-WH));
+}
+body>main>section {
+    flex-grow: 1;
+}
+/****************************/
+#doc-header {
+    padding: 8px;
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    box-shadow: 0px 4px 8px black;
+    background: var(--background);
+}
+#toggleMenu {
+    width: 20px;
+    fill: #fff;
+}
+#welcome-section {
+    height: 84vh;
+    background: url("https://greatbigstorm.com/wp-content/uploads/2016/06/SEO-Hero-Pic-2000x1000-1.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#welcome-section * {
+    margin: auto;
+    width: 100%;
+    position: relative;
+    top: 80px;
+    text-align: center;
+    text-shadow: 2px 2px var(--footer);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#list-menu {
+    overflow: hidden;
+    margin-top: 2px;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    transition: 0.5s;
+    background-color: var(--background);
+    box-shadow: 0px 4px 10px var(--footer);
+}
+#list-menu.active {
+    height: 117px;
+}
+#list-menu.inactive {
+    max-height: 0px;
+}
+.menu-link {
+    padding: 9px;
+    margin-bottom: 2px;
+    background: var(--background);
+    text-align: center;
+}
+.menu-link a {
+    color: var(--link);
+    margin-left: 5px;
+    text-decoration: none;
+}
+.menu-link a:hover {
+    text-decoration: underline;
+}
+#projects {
+    box-shadow: 0px -2px 10px black;
+}
+#projects h1 {
+    margin: auto;
+    padding: 16px;
+    text-align: center;
+    background: var(--background);
+}
+.row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--footer);
+}
+/****************************/
+body>main>footer {
+    display: flex;
+    min-height: 40px;
+    max-height: 40px;
+    overflow-x: auto;
+    user-select: none;
+    white-space: nowrap;
+    background-color: var(--footer);
+}
+body>main>footer>div {
+    display: flex;
+    margin: auto;
+}
+body>main>footer>div>p {
+    margin: auto 2px;
+}
+/************************************************************************************/
+/************************************************************************************/

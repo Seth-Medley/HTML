@@ -1,0 +1,189 @@
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@media (prefers-color-scheme: dark) {
+  html {
+      --link: #ff9100;
+      --background: #272727;
+      --footer: #00000070;
+      --scrollbar: #2b2b2b;
+      --scrollbar-thumb: #161616;
+      --scrollbar-hover: #7c7c7c;
+      --scrollbar-WH: 0.8em;
+  }
+}
+@media (prefers-color-scheme: light) {
+  html {
+      --link: #ff4800;
+      --background: #fefefe;
+      --footer: #00000041;
+      --scrollbar: #2b2b2b;
+      --scrollbar-thumb: #161616;
+      --scrollbar-hover: #7c7c7c;
+      --scrollbar-WH: 0.8em;
+  }
+}
+::-webkit-scrollbar {
+  width: var(--scrollbar-WH);
+  height: var(--scrollbar-WH);
+  background-color: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  border: 0.2em solid var(--scrollbar);
+  background-color: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+html {
+  --card1-image-src:  url("https://tenntruth.com/wp-content/uploads/usat-images/2016/04/9777318-ncaa-football-music-city-bowl-tennessee-vs-nebraska.jpeg");
+  --card2-image-src:  url("https://wallpapercave.com/wp/wp1930110.jpg");
+}
+body {
+  margin: 0px;
+  font-family: system-ui;
+  background-color: var(--background);
+}
+h2 {
+  color: #333 !important;
+}
+input {
+  color: #000;
+  background-color: #fff;
+}
+a {
+ color: var(--link); 
+ text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+body>main {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100vw - var(--scrollbar-WH));
+}
+body>main>section {
+  flex-grow: 1;
+}
+/**********************/
+header {
+  z-index: 1;
+  height: 7%;
+  width: 100vw;
+  display: flex;
+  position: fixed;
+  min-height: 40px;
+  max-height: 100px;
+  align-items: center;
+  background: var(--background);
+  box-shadow: black -2px 2px 10px;
+}
+.logo-image {
+  height: 70%;
+  margin: 0.5% 5px 5px 5px;
+}
+ul {
+  display: flex;
+  list-style: none;
+  justify-content: space-around;
+}
+nav {
+  width: 100%;
+}
+.links {
+  color: white;
+  text-decoration: none;
+}
+#contentBox {
+  width: 100%;
+  height: 1000px;
+}
+#sign-up {
+  width: 100%;
+  height: 550px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  background:var(--card1-image-src), orange;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-bottom: 1px solid black;
+}
+.sign-up-form {
+  width: 70vw;
+  padding: 30px;
+  max-width: 500px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-radius: 0.5%;
+  border: 1px solid black;
+  background-color: white;
+}
+.user-input {
+  padding: 8px;
+  width: 400px;
+  max-width: 80%;
+  border-radius: 2%;
+  margin-bottom: 5px;
+  border: 2px solid gray;
+}
+#submit {
+  width: 200px;
+  padding: 10px;
+  max-width: 80%;
+  margin-top: 5px;
+  border-radius: 2%;
+  border: 2px solid gray;
+}
+#about-us {
+  height: 450px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  background: var(--card2-image-src), #141111;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-bottom: 1px solid black;
+}
+.video {
+  width: 600px;
+  height: 98.9%;
+  color: white;
+  text-align: center;
+  font-family: sans-serif;
+  border: 2px solid black;
+  background-color: #2b2424;
+}
+iframe {
+  width: 80%;
+  height: 60%;
+  margin-top: 3%;
+}
+/***********************/
+body>main>footer {
+  display: flex;
+  min-height: 40px;
+  max-height: 40px;
+  overflow-x: auto;
+  user-select: none;
+  white-space: nowrap;
+  background-color: var(--footer);
+}
+body>main>footer>div {
+  display: flex;
+  margin: auto;
+}
+body>main>footer>div>p {
+  margin: auto 2px;
+}
+/************************************************************************************/
+/************************************************************************************/

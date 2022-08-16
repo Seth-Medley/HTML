@@ -1,0 +1,118 @@
+
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+@media (prefers-color-scheme: dark) {
+    html {
+        --link: #ff9100;
+        --background: #272727;
+        --footer: #00000070;
+        --scrollbar: #2b2b2b;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+    }
+}
+@media (prefers-color-scheme: light) {
+    html {
+        --link: #ff4800;
+        --background: #fefefe;
+        --footer: #00000041;
+        --scrollbar: #2b2b2b;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+    }
+}
+::-webkit-scrollbar {
+    width: var(--scrollbar-WH);
+    height: var(--scrollbar-WH);
+    background-color: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 0.2em solid var(--scrollbar);
+    background-color: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+body {
+    margin: 0px;
+    font-family: system-ui;
+    background-color: var(--background);
+}
+a {
+   color: var(--link); 
+   text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+body>main {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100vw - var(--scrollbar-WH));
+}
+body>main>section {
+    flex-grow: 1;
+}
+/**********************/
+#doc-title {
+    margin: auto;
+    font-size: 2em;
+    text-align: center;
+}
+#doc-pretitle {
+    font-size: 1.1em;
+    text-align: center;
+}
+#doc-img {
+    width: 80%;
+    margin: auto;
+    max-width: 300px;
+    transition: 0.8s;
+    box-shadow: 0em 0.05em 0.3em var(--text);
+}
+  #doc-img:hover {
+    transform: scale(1.075);
+  }
+  #img-src {
+    font-size: 0.93em;
+    text-align: center;
+  }
+  #content-wrapper {
+    margin: 0em 2em 0em 2em;
+  }
+  .tribute-info {
+    text-indent: 20px;
+    text-align: justify;
+    word-wrap: break-word;
+    margin: 0em 0em 1em 0em;
+  }
+#tribute-link {
+    text-align: center;
+  }
+/*********************/
+body>main>footer {
+    display: flex;
+    min-height: 40px;
+    max-height: 40px;
+    overflow-x: auto;
+    user-select: none;
+    white-space: nowrap;
+    background-color: var(--footer);
+}
+body>main>footer>div {
+    display: flex;
+    margin: auto;
+}
+body>main>footer>div>p {
+    margin: auto 2px;
+}
+/************************************************************************************/
+/************************************************************************************/

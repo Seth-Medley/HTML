@@ -1,0 +1,139 @@
+/************************************************************************************/
+/***************************************[ CSS ]**************************************/
+/************************************************************************************/
+html {
+    scroll-behavior: smooth;
+}
+@media (prefers-color-scheme: dark) {
+    html {
+        --UI: #181818;
+        --link: #ff9100;
+        --footer: #0000009f;
+        --scrollbar: #2b2b2b;
+        --background: #272727;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+    }
+}
+@media (prefers-color-scheme: light) {
+    html {
+        --UI: #bbbbbb;
+        --link: #c03a04;
+        --footer: #00000041;
+        --scrollbar: #2b2b2b;
+        --background: #f1efef;
+        --scrollbar-thumb: #161616;
+        --scrollbar-hover: #7c7c7c;
+        --scrollbar-WH: 0.8em;
+    }
+}
+@media (max-width: 900px) {
+    nav {
+        display: none !important;
+    }
+}
+::-webkit-scrollbar {
+    width: var(--scrollbar-WH);
+    height: var(--scrollbar-WH);
+    background-color: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 0.2em solid var(--scrollbar);
+    background-color: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+body {
+    margin: 0px;
+    font-family: system-ui;
+    background-color: var(--background);
+}
+a {
+    font-weight: 600;
+    color: var(--link);
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+body>main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+body>main>section {
+    flex-grow: 1;
+}
+body>main>header,
+body>main>footer {
+    display: flex;
+    min-height: 40px;
+    max-height: 40px;
+    overflow-x: auto;
+    user-select: none;
+    white-space: nowrap;
+    background-color: var(--footer);
+}
+body>main>header>h3 {
+    margin: auto;
+}
+body>main>section {
+    display: flex;
+    max-height: calc(100vh - 80px);
+}
+body>main>section>nav {
+    width: 200px;
+    display: flex;
+    overflow: auto;
+    flex-direction: column;
+    margin: 2px 0px 2px 2px;
+    height: calc(100% - 3px);
+    background-color: var(--UI);
+}
+body>main>section>nav>a {
+    margin: 10px auto;
+}
+body>main>section>div>section {
+    display: flex;
+    flex-direction: column;
+}
+body>main>section>div {
+    margin: 2px;
+    width: 200px;
+    flex-grow: 1;
+    text-indent: 1em;
+    overflow: auto;
+    padding: 0em 1em;
+    text-align: justify;
+    line-height: 1.5em;
+    height: calc(100% - 3px);
+    background-color: var(--UI);
+}
+body>main>section>div>section>header {
+    padding: 8px;
+    width: 90%;
+    margin: 8px auto;
+    max-width: 600px;
+    text-align: center;
+    border-radius: 3px;
+    background-color: var(--background);
+}
+body>main>section>div>section#Where_can_I_get_some>ul {
+    margin: auto;
+}
+body>main>footer>div {
+    display: flex;
+    margin: auto;
+}
+body>main>footer>div>p {
+    margin: auto 2px;
+}
+/************************************************************************************/
+/************************************************************************************/
