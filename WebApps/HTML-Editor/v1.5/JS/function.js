@@ -3,7 +3,7 @@
 /*****************************************************************/
 function loadDoc() { // Loads HTML Template
     var client = new XMLHttpRequest();
-    client.open('GET','https://raw.githubusercontent.com/HD-Dev1/HTML-Projects/master/Template.txt');
+    client.open('GET','https://raw.githubusercontent.com/Seth-Medley/HTML/master/Template.txt');
     client.onreadystatechange = function () {
         const textarea = document.querySelector('textarea');
         const iframe = document.querySelector('iframe');

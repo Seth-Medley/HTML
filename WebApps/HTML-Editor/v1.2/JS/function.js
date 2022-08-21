@@ -109,7 +109,7 @@ function refresh() {
 function loadDoc() {
     var client = new XMLHttpRequest();
     client.open('GET',
-        'https://raw.githubusercontent.com/HD-Dev1/HTML-Projects/master/Template.txt');
+        'https://raw.githubusercontent.com/Seth-Medley/HTML/master/Template.txt');
     client.onreadystatechange = function () {
         document.getElementById("editor").value = client.responseText;
 

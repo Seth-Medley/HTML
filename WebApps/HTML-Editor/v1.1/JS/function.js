@@ -1,6 +1,6 @@
 function loadDoc() {
     var client = new XMLHttpRequest();
-    client.open('GET', 'https://raw.githubusercontent.com/HD-Dev1/HTML-Projects/master/Template.txt');
+    client.open('GET', 'https://raw.githubusercontent.com/Seth-Medley/HTML/master/Template.txt');
     client.onreadystatechange = function () {
         document.getElementById("editor-textarea").value = client.responseText;
 
@@ -45,7 +45,7 @@ function copyToClip() {
 }
 function resetEditor() {
     var client = new XMLHttpRequest();
-    client.open('GET', 'https://raw.githubusercontent.com/HD-Dev1/HTML-Projects/master/Template.txt');
+    client.open('GET', 'https://raw.githubusercontent.com/Seth-Medley/HTML/master/Template.txt');
     client.onreadystatechange = function () {
         document.getElementById("editor-textarea").value = client.responseText;
 

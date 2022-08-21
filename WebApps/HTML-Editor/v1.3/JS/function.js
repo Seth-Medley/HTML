@@ -30,7 +30,7 @@ $(document).ready(function(){
     })
     $(document).ready(function() { // Loads HTML Template
        var client = new XMLHttpRequest();
-                client.open('GET', 'https://raw.githubusercontent.com/HD-Dev1/HTML-Projects/master/Template.txt');
+                client.open('GET', 'https://raw.githubusercontent.com/Seth-Medley/HTML/master/Template.txt');
                 client.onreadystatechange = function () {
                     document.getElementById("texteditor").value = client.responseText;
                 }
@@ -54,7 +54,7 @@ $(document).ready(function(){
         $("#deviceSelector").removeClass("active"); $("#themeSelector").removeClass("active");
         //
         var client = new XMLHttpRequest(); // Refreshes Textarea
-                client.open('GET', 'https://raw.githubusercontent.com/HD-Dev1/HTML-Projects/master/Template.txt');
+                client.open('GET', 'https://raw.githubusercontent.com/Seth-Medley/HTML/master/Template.txt');
                 client.onreadystatechange = function () {
                     document.getElementById("texteditor").value = client.responseText;
                 }
