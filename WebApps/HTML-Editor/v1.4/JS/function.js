@@ -36,7 +36,7 @@ const notifcation_alert_text_p = document.getElementById("notifcation-alert-text
 
 function loadDoc() { // Loads HTML Template
     var client = new XMLHttpRequest();
-    client.open('GET','https://raw.githubusercontent.com/Seth-Medley/HTML/master/Template.txt
+    client.open('GET','https://raw.githubusercontent.com/Seth-Medley/HTML/master/Template.txt');
     client.onreadystatechange = function () {
         text_editor_textarea.value = client.responseText;
         viewer_iframe.srcdoc = text_editor_textarea.value;
