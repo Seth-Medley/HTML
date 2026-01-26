@@ -1,0 +1,226 @@
+:root {
+    --primary-color: #202020;
+    --secondary-color: #2f2f2f;
+    --third-color: #2c2c2c;
+    --foruth-color: #1d1d1d;
+    --fifth-color: #0e0e0e;
+
+    --box-color: #1f1f1f;
+    --box-shadow-color: #1b1b1b;
+    --text-color: #ffffff;
+    --link-color: #ff8000;
+    --scrollbar-color: #1e1d1d;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+::-webkit-scrollbar {
+    width: 0.6em;
+    height: 1em;
+    background-color: var(--scrollbar-color);
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 0.2em solid var(--scrollbar-color);
+    background-color: var(--secondary-color);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondary-color);
+}
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+/********************************************
+                GLOBAL STYLES
+********************************************/
+*, html {
+    user-select: none;
+    scroll-behavior: smooth;
+}
+body {
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-width: 100vw;
+    min-height: 100vh;
+    align-items: center;
+    flex-direction: column;
+    color: var(--text-color);
+    font-family: var(--font-family);
+}
+main {
+    flex-grow: 1;
+    display: flex;
+    overflow: auto;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    flex-direction: column;
+}
+main .photo {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    box-shadow: 0px 0px 4px var(--box-shadow-color);
+    background: url("https://greatbigstorm.com/wp-content/uploads/2016/06/SEO-Hero-Pic-2000x1000-1.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: calc(100vh - 120px);
+}
+main .photo .photo_border {
+    margin-top: 40px;
+    border: 5px solid var(--box-shadow-color);
+    border-radius: 50%;
+    padding: 0px;
+    width: 260px;
+    height: 260px;
+    background: url("https://lh3.googleusercontent.com/pw/AP1GczMquD4ciWnZa7BcjAyKIdzh054Cdfp7E_9cB11Hjg-8tWfEcNykE9ZW8QTftLQFQcaim_2gCfV8jD3Te9l8UpqWKpxGguIbpieOjqkduOb1DcLhzle9KAVp_E_3KtRxJb_K9_AisT_9zcFDiu_5rIAdAA=w555-h987-s-no-gm?authuser=0");
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 0px 0px 10px var(--box-shadow-color);
+}
+main .photo .photo_border:hover {
+    box-shadow: 0px 0px 15px var(--box-shadow-color);
+    transform: scale(1.02);
+    transition: all 0.3s ease-in-out;
+}
+main .photo span {
+    font-size: 1.2em;
+    font-weight: bold;
+    font-family: "Fancy Font", cursive;
+}
+main .projecttab {
+    min-width: 100vw;
+    max-width: 100vw;
+    min-height: 5rem;
+    max-height: 5rem;
+    text-align: center;
+    background-color: var(--primary-color);
+}
+main .projecttab span p {
+    margin: 20px;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+main .projects {
+    min-width: 100vw;
+    max-width: 100vw;
+    min-height: wrap;
+    max-height: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    background-color: var(--third-color);
+}
+main .projects div:hover {
+    box-shadow: 0px 0px 10px var(--box-shadow-color);
+    transform: scale(1.02);
+    transition: all 0.3s ease-in-out;
+}
+main .projects span {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+main .projects .cp_embed_wrapper{
+    border: 5px solid var(--box-shadow-color);
+    border-radius: 10px;
+}
+main .projects div {
+    margin: 20px;
+    padding: 1em;
+    height: 30rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    border: 2px solid var(--box-shadow-color);
+    background-color: var(--box-color);
+}
+/********************************************
+                HEADER/FOOTER
+********************************************/
+header, footer {
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 3em;
+    text-align: center;
+    color: var(--text-color);
+    font-family: var(--font-family);
+    background-color: var(--primary-color);
+}
+header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+header p, footer p {
+    margin: 10px;
+}
+header span.hamburger {
+   margin: 0px 0px 0px 10px;
+   width: 1.5em;
+   fill: var(--text-color) !important;
+}
+header span.title {
+    flex-grow: 1;
+}
+footer {
+    display: flex;
+    flex-direction: column;
+}
+footer section {
+    justify-content: center;
+    align-items: center;
+    min-width: 100vw;
+    max-width: 100vw;
+    min-height: 15rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    background-color: var(--fifth-color);
+}
+footer section div {
+    margin: 20px 20px 20px 10px;
+    padding: 2em;
+    height: wrap;
+    min-height: 200px;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-wrap:break-word;
+    width: wrap;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    border: 2px solid var(--box-shadow-color);
+    background-color:var(--box-color);
+}
+footer section div:hover {
+    box-shadow: 0px 0px 10px var(--box-shadow-color);
+    transform: scale(1.02);
+    transition: all 0.3s ease-in-out;
+}
+footer section div span.links {
+    text-align: center;
+    display: grid;
+    font-weight: bold;
+    grid-template-columns: repeat(auto-fit,minmax(80px, 1fr));
+}
+footer section div span.links a {
+    color: var(--link-color);
+    text-decoration: none;
+    padding: 8px;
+    font-size: 0.9rem;
+}
+footer section div span.links a:hover {
+    text-decoration: underline;
+}
+/*********************************************************/
+
+.cp_embed_wrapper {
+    width: 90%;
+    height: 100%;
+    margin-top: 0px;
+}
