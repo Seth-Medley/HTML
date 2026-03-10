@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Rewards Pro: Elite",
-  "version": "3.7",
-  "description": "Natural language search automation with stealth jitter and mission logging.",
+  "name": "Rewards Pro: Elite v4",
+  "version": "4.0",
+  "description": "Clean Dashboard with Settings Overlay, Natural Language Queries, and Stealth Jitter.",
   "permissions": [
     "tabs",
     "storage",
