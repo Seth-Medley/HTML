@@ -1,0 +1,51 @@
+==================================================
+REWARDS PRO: ELITE - PROJECT LOG
+==================================================
+Project Owner: Seth Medley
+Current Version: 3.7
+Release Date: March 9, 2026
+==================================================
+
+[VERSION 3.7] - THE "PURE STEALTH" BUILD (CURRENT)
+--------------------------------------------------
+* FEATURE: Added "Mission Complete" UI Overlay. A check-mark 
+  screen now locks the dashboard when 30 searches are finished.
+* FEATURE: Added "Final Summary Report." Log now displays 
+  total runtime and average search delay upon completion.
+* FIX: Corrected "Search Gatekeeper" logic to prevent the 
+  counter from overrunning the target (e.g., fixed the 5/3 bug).
+* REFACTOR: Cleaned up Icon directory to /Icon/Icon.png.
+
+[VERSION 3.6] - NATURAL LANGUAGE & LOGGING
+--------------------------------------------------
+* FEATURE: Replaced random word strings with a "Natural Language 
+  Query Generator." Now forms human-like questions using a 
+  200-word bank (Starters, Subjects, Actions, Contexts).
+* FEATURE: Restored the "Mission Log" activity box to the 
+  popup for real-time status monitoring.
+* FEATURE: Integrated "Human Jitter" (random page scrolling) 
+  and "Adaptive Typing Jitter" (variable ms delays per character).
+* SECURITY: Completely removed all point-tracking and rewards 
+  scraping logic to bypass Bing's anti-bot/shadow-dom measures.
+
+[VERSION 3.5] - THE "NUCLEAR" EXPERIMENT (DEPRECATED)
+--------------------------------------------------
+* EXPERIMENT: Attempted background API fetching and passive 
+  header monitoring to track PC/Mobile points.
+* RESULT: Removed due to Bing's security headers and UI 
+  instability. Features were stripped to maintain stealth.
+
+[VERSION 3.4] - THE "ELITE" REDESIGN
+------------------------------------
+* UI: Overhauled CSS to the "GitHub Dark" aesthetic.
+* FEATURE: Added HH:MM:SS persistent mission clock.
+* FEATURE: Added Startup Tab Cleanup (kills old Bing tabs 
+  to prevent session logic overlap).
+
+==================================================
+DEVELOPER NOTES:
+- Version 3.7 is the most stable "Pure Automation" build.
+- Avoid re-introducing reward-scraping to prevent 
+  shadow-ban triggers.
+- Next target: Automated scheduling and tab multi-tasking.
+==================================================

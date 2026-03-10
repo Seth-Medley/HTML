@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Rewards Pro: Elite",
+  "version": "3.7",
+  "description": "Natural language search automation with stealth jitter and mission logging.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "scripting",
+    "declarativeNetRequest",
+    "notifications"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "Icon/Icon.png"
+  },
+  "icons": {
+    "16": "Icon/Icon.png",
+    "48": "Icon/Icon.png",
+    "128": "Icon/Icon.png"
+  },
+  "background": {
+    "service_worker": "JS/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.bing.com/*"],
+      "js": ["JS/content.js"],
+      "css": ["CSS/hud.css"]
+    }
+  ],
+  "host_permissions": [
+    "https://www.bing.com/*"
+  ]
+}
