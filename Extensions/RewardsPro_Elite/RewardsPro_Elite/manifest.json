@@ -1,35 +1,41 @@
 {
   "manifest_version": 3,
-  "name": "Rewards Pro: Elite v4",
-  "version": "4.0",
-  "description": "Clean Dashboard with Settings Overlay, Natural Language Queries, and Stealth Jitter.",
+  "name": "RewardsPro: Elite",
+  "version": "4.1",
+  "description": "Premium automation suite with NPA (Neural-Pattern Automation) Stealth Technology.",
   "permissions": [
-    "tabs",
     "storage",
+    "alarms",
     "scripting",
-    "declarativeNetRequest",
+    "tabs",
     "notifications"
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": "Icon/Icon.png"
-  },
-  "icons": {
-    "16": "Icon/Icon.png",
-    "48": "Icon/Icon.png",
-    "128": "Icon/Icon.png"
-  },
+  "host_permissions": [
+    "https://www.bing.com/*",
+    "https://www.google.com/*"
+  ],
   "background": {
     "service_worker": "JS/background.js"
   },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "Icon/icon.png"
+  },
+  "icons": {
+    "128": "Icon/icon.png"
+  },
   "content_scripts": [
     {
-      "matches": ["https://www.bing.com/*"],
-      "js": ["JS/content.js"],
-      "css": ["CSS/hud.css"]
+      "matches": [
+        "https://www.bing.com/*",
+        "https://www.google.com/*"
+      ],
+      "js": [
+        "JS/content.js"
+      ],
+      "css": [
+        "CSS/hud.css"
+      ]
     }
-  ],
-  "host_permissions": [
-    "https://www.bing.com/*"
   ]
 }
