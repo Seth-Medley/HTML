@@ -2,50 +2,48 @@
 REWARDS PRO: ELITE - PROJECT LOG
 ==================================================
 Project Owner: Seth Medley
-Current Version: 3.7
-Release Date: March 9, 2026
+Current Version: 4.0
+Release Date: March 10, 2026
 ==================================================
 
-[VERSION 3.7] - THE "PURE STEALTH" BUILD (CURRENT)
+[VERSION 4.0] - THE "GENESIS" OVERHAUL (CURRENT)
 --------------------------------------------------
-* FEATURE: Added "Mission Complete" UI Overlay. A check-mark 
-  screen now locks the dashboard when 30 searches are finished.
-* FEATURE: Added "Final Summary Report." Log now displays 
-  total runtime and average search delay upon completion.
-* FIX: Corrected "Search Gatekeeper" logic to prevent the 
-  counter from overrunning the target (e.g., fixed the 5/3 bug).
+* UI: Total architectural redesign with a reactive 
+  "Ghost Engine" dashboard.
+* FEATURE: Added "Daily Pulse" inspiration engine to 
+  the main popup view.
+* FEATURE: Integrated "Engine Settings" overlay to 
+  keep the primary interface clean.
+* REFACTOR: Natural Language Dictionary expanded for 
+  higher-fidelity query generation.
+* FIX: Added connection safety checks to prevent 
+  runtime errors during tab initialization.
+
+[VERSION 3.7] - THE "PURE STEALTH" BUILD
+--------------------------------------------------
+* FEATURE: Added "Mission Complete" UI Overlay. 
+  A check-mark screen now locks the dashboard when 
+  30 searches are finished.
+* FEATURE: Added "Final Summary Report." Log now 
+  displays total runtime and average search delay.
+* FIX: Corrected "Search Gatekeeper" logic to prevent 
+  the counter from overrunning the target.
 * REFACTOR: Cleaned up Icon directory to /Icon/Icon.png.
 
 [VERSION 3.6] - NATURAL LANGUAGE & LOGGING
 --------------------------------------------------
-* FEATURE: Replaced random word strings with a "Natural Language 
-  Query Generator." Now forms human-like questions using a 
-  200-word bank (Starters, Subjects, Actions, Contexts).
-* FEATURE: Restored the "Mission Log" activity box to the 
-  popup for real-time status monitoring.
-* FEATURE: Integrated "Human Jitter" (random page scrolling) 
-  and "Adaptive Typing Jitter" (variable ms delays per character).
-* SECURITY: Completely removed all point-tracking and rewards 
-  scraping logic to bypass Bing's anti-bot/shadow-dom measures.
-
-[VERSION 3.5] - THE "NUCLEAR" EXPERIMENT (DEPRECATED)
---------------------------------------------------
-* EXPERIMENT: Attempted background API fetching and passive 
-  header monitoring to track PC/Mobile points.
-* RESULT: Removed due to Bing's security headers and UI 
-  instability. Features were stripped to maintain stealth.
+* FEATURE: Replaced random word strings with a "Natural 
+  Language Query Generator."
+* FEATURE: Restored the "Mission Log" activity box to 
+  the popup for real-time monitoring.
+* FEATURE: Integrated "Human Jitter" (smooth scrolling) 
+  and "Adaptive Typing Jitter."
+* SECURITY: Removed point-tracking logic to bypass 
+  Bing's shadow-dom security measures.
 
 [VERSION 3.4] - THE "ELITE" REDESIGN
 ------------------------------------
 * UI: Overhauled CSS to the "GitHub Dark" aesthetic.
 * FEATURE: Added HH:MM:SS persistent mission clock.
-* FEATURE: Added Startup Tab Cleanup (kills old Bing tabs 
-  to prevent session logic overlap).
-
-==================================================
-DEVELOPER NOTES:
-- Version 3.7 is the most stable "Pure Automation" build.
-- Avoid re-introducing reward-scraping to prevent 
-  shadow-ban triggers.
-- Next target: Automated scheduling and tab multi-tasking.
+* FEATURE: Added Startup Tab Cleanup.
 ==================================================

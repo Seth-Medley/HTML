@@ -1,23 +1,38 @@
 # Rewards Pro: Elite v4.0
-**The Clean Dashboard Update**
+**The Genesis Overhaul**
 
-Version 4.0 represents a complete architectural overhaul of the Rewards Pro suite, focusing on a "Ghost Engine" philosophy: maximum stealth with a minimalist, reactive interface.
+Rewards Pro: Elite is a high-fidelity browser automation suite designed for stealth and efficiency. Version 4.0 represents a complete architectural redesign, moving toward a "Ghost Engine" philosophy: maximum stealth with a minimalist, reactive interface.
 
-## 🚀 Key Features
-* **Dynamic UI Logic**: A reactive dashboard that hides irrelevant controls. The 'START' button vanishes during missions, replaced by a grid-adaptive 'STOP/PAUSE' layout.
-* **Engine Settings Overlay**: Heavy technical components (Mission Logs, Mode Toggles, Delay Sliders) are tucked away in a slide-up "Engine Room" to keep the main view clean.
-* **Inspirational Pulse**: High-fidelity tech-centric quotes served on launch to keep the user focused.
-* **Natural Language Engine**: Formulates logical, human-like questions (e.g., "How does quantum energy impact modern science?") using a 200+ word dictionary.
+## 🚀 What's New in v4.0
+The "Genesis" update introduces a total reimagining of the extension's core logic and user interface.
+
+### 🧠 Advanced Logic & Stealth
+* **Natural Language Engine**: Formulates logical, human-like questions (e.g., "How does quantum energy impact modern science?") using an expanded 200+ word dictionary.
+* **Connection Stability**: Implemented state-based messaging (`isContentReady`) to resolve "Could not establish connection" errors during tab initialization.
 * **Ghost Jitter**: Integrated smooth-scrolling and adaptive typing rhythms to mimic authentic human browsing behavior.
-* **Mission Intelligence**: A strict "Gatekeeper" logic prevents search overruns, ending precisely at the target goal with a full performance report.
+
+### 🖥️ Reactive Dashboard
+* **Engine Settings Overlay**: Technical components like Mission Logs and Delay Sliders are now tucked away in a slide-up "Engine Room" to keep the primary view clean.
+* **Daily Pulse**: A high-fidelity tech-centric inspiration engine served on launch to keep the user focused.
+* **Dynamic UI Logic**: A reactive dashboard that adapts its controls based on the mission status.
+
+---
+
+## 🕒 Version History
+
+### **v3.7 — The "Pure Stealth" Build**
+Focuses on mission completion and reporting. Introduced the "Mission Complete" check-mark overlay and a Final Summary Report displaying total runtime and average delay.
+
+### **v3.6 — Natural Language & Logging**
+Replaced random character strings with the first iteration of the Natural Language Query Generator. Restored the Mission Log activity box for real-time monitoring.
+
+### **v3.5 — The "Nuclear" Experiment (Deprecated)**
+An experimental build that tested background API fetching and passive header monitoring. These features were ultimately stripped to maintain maximum stealth and stability.
+
+### **v3.4 — The "Elite" Redesign**
+The aesthetic turning point for the project. Overhauled the CSS to a "GitHub Dark" theme and added the persistent HH:MM:SS mission clock and startup tab cleanup.
+
+---
 
 ## 🛠 Installation
-1.  Download and extract the `RewardsPro_Elite_v4.zip`.
-2.  Open Chrome/Edge and navigate to `chrome://extensions`.
-3.  Enable **Developer Mode**.
-4.  Click **Load Unpacked** and select the project folder.
-
-## 🖱 Usage
-* **START**: Initiates the automation sequence and opens a new Bing tab.
-* **SETTINGS**: Access the mission log and toggle between PC and Mobile simulation.
-* **DISMISS**: Closes the "Mission Complete" overlay once the 30-search goal is reached.
+1. Download and extract the `RewardsPro_Elite

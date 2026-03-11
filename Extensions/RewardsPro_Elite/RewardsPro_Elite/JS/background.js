@@ -219,13 +219,13 @@ function startTick() {
       if (state.timeLeft > 0) {
         state.timeLeft--;
         
-        // Human Jitter simulation trigger
-        if (state.timeLeft % 7 === 0 && state.bingTabId) {
+        // FIX: Added state.isContentReady check to prevent connection error
+        if (state.timeLeft % 7 === 0 && state.bingTabId && state.isContentReady) {
           chrome.tabs.sendMessage(state.bingTabId, { action: "HUMAN_JITTER" }).catch(function() {});
         }
 
-        // Typing simulation trigger (5s mark)
-        if (state.timeLeft === 5 && state.isTypingStarted === false && state.bingTabId !== null) {
+        // FIX: Added state.isContentReady check to prevent connection error
+        if (state.timeLeft === 5 && state.isTypingStarted === false && state.bingTabId !== null && state.isContentReady) {
           state.isTypingStarted = true;
           addLog(`Formulating: "${state.pendingTerm}"`);
           chrome.tabs.sendMessage(state.bingTabId, { action: "TYPE_WITH_FOCUS", term: state.pendingTerm }).catch(function() {
