@@ -1,6 +1,6 @@
 /**
- * Rewards Pro: Elite v4 - Popup Controller
- * FULL-LENGTH: Dynamic Visibility, Log Sync, and Inspiration Engine
+ * Rewards Pro: Elite v4.1 - Popup Controller
+ * FULL-LENGTH: Dynamic Visibility, Log Sync, and Heartbeat Engine
  */
 
 const quoteBank = [
@@ -38,17 +38,21 @@ function updateUI(state) {
     activeContainer: document.getElementById('activeActions'),
     stop: document.getElementById('stopBtn'),
     pause: document.getElementById('pauseBtn'),
-    resume: document.getElementById('resumeBtn')
+    resume: document.getElementById('resumeBtn'),
+    wave: document.getElementById('wave-path'),
+    tag: document.getElementById('engine-mode-tag')
   };
 
   if (!els.runtime) return;
 
+  // Sync Global Settings
   els.mobile.checked = state.isMobile;
   els.stealth.checked = state.isStealth;
   els.slider.value = state.minWait;
   els.sVal.innerText = `${state.minWait}s`;
   els.runtime.innerText = formatTime(state.runtime);
 
+  // Status Check
   if (state.isFinished) {
     els.overlay.classList.remove('hidden');
     els.statText.innerText = `Finished in ${formatTime(state.runtime)}. Total searches: ${state.currentSearch}.`;
@@ -56,14 +60,20 @@ function updateUI(state) {
     els.overlay.classList.add('hidden');
   }
 
+  // Progress Sync
   if (state.logs?.length > 0) els.log.innerHTML = state.logs.map(l => `<div class="log-entry">${l}</div>`).join('');
   els.progress.innerText = `${state.currentSearch}/${state.totalSearches}`;
   els.pBar.style.width = `${(state.currentSearch / state.totalSearches) * 100}%`;
 
+  // Heartbeat & Timer Logic
   if (!state.isRunning) {
     els.dot.className = "dot-idle"; els.timerText.innerText = "--s"; els.tBar.style.width = "0%";
     els.idleContainer.classList.remove('hidden');
     els.activeContainer.classList.add('hidden');
+    
+    // Heartbeat Offline
+    els.tag.innerText = "ENGINE: OFFLINE";
+    els.wave.setAttribute('d', "M 0 30 Q 100 30 200 30 T 400 30");
   } else {
     els.dot.className = state.isPaused ? "dot-paused" : "dot-active";
     els.timerText.innerText = `${state.timeLeft}s`;
@@ -71,11 +81,31 @@ function updateUI(state) {
     els.idleContainer.classList.add('hidden');
     els.activeContainer.classList.remove('hidden');
 
-    if (state.isPaused) { els.pause.classList.add('hidden'); els.resume.classList.remove('hidden'); }
-    else { els.pause.classList.remove('hidden'); els.resume.classList.add('hidden'); }
+    if (state.isPaused) { 
+      els.pause.classList.add('hidden'); els.resume.classList.remove('hidden'); 
+      els.tag.innerText = "ENGINE: PAUSED";
+      els.wave.setAttribute('d', "M 0 30 Q 100 30 200 30 T 400 30");
+    } else { 
+      els.pause.classList.remove('hidden'); els.resume.classList.add('hidden'); 
+      updateHeartbeat(state, els.wave, els.tag);
+    }
   }
 }
 
+function updateHeartbeat(state, wave, tag) {
+  const time = Date.now() / 200;
+  if (state.timeLeft <= 5 && state.isTypingStarted) {
+    tag.innerText = "ENGINE: FORMULATING";
+    const d = `M 0 30 Q 10 ${30 + Math.sin(time) * 15} 20 30 T 40 30 T 60 30 T 80 30 T 100 30 T 120 30 T 140 30 T 160 30 T 180 30 T 200 30 T 220 30 T 240 30 T 260 30 T 280 30 T 300 30 T 320 30 T 340 30 T 360 30 T 380 30 T 400 30`;
+    wave.setAttribute('d', d);
+  } else {
+    tag.innerText = "ENGINE: STEADY";
+    const d = `M 0 30 Q 50 ${30 + Math.sin(time) * 12} 100 30 T 200 30 T 300 30 T 400 30`;
+    wave.setAttribute('d', d);
+  }
+}
+
+// Button Events
 document.getElementById('openSettingsBtn').onclick = () => document.getElementById('settingsPage').classList.remove('hidden');
 document.getElementById('backBtn').onclick = () => document.getElementById('settingsPage').classList.add('hidden');
 document.getElementById('closeOverlayBtn').onclick = () => chrome.runtime.sendMessage({ action: "DISMISS_OVERLAY" });
@@ -91,9 +121,7 @@ document.getElementById('pauseBtn').onclick = () => chrome.runtime.sendMessage({
 document.getElementById('resumeBtn').onclick = () => chrome.runtime.sendMessage({ action: "RESUME" });
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Random Quote
     const q = quoteBank[Math.floor(Math.random() * quoteBank.length)];
     document.getElementById('quoteDisplay').innerText = `"${q}"`;
-    
     chrome.runtime.sendMessage({ action: "GET_STATE" }, s => { if (s) updateUI(s); });
 });

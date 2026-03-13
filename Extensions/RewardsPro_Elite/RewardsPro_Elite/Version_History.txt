@@ -2,23 +2,31 @@
 REWARDS PRO: ELITE - PROJECT LOG
 ==================================================
 Project Owner: Seth Medley
-Current Version: 4.0
-Release Date: March 10, 2026
+Current Version: 4.1
+Release Date: March 12, 2026
 ==================================================
 
-[VERSION 4.0] - THE "GENESIS" OVERHAUL (CURRENT)
+[VERSION 4.1] - THE "HEARTBEAT" UPDATE (CURRENT)
+--------------------------------------------------
+* UI: Integrated Engine Heartbeat extender between 
+  Daily Pulse and Mission Progress.
+* UI: Implemented flex-grow architecture to fill the 
+  dashboard void and push SETTINGS to the bottom.
+* UI: Fixed scrollbar issue by locking popup height 
+  to 580px and removing action-section auto-margins.
+* LOGIC: Heartbeat reacts in real-time to NPA phases:
+  - Breathing (Steady)
+  - Jitter (Formulating)
+  - Flat (Paused/Offline)
+
+[VERSION 4.0] - THE "GENESIS" OVERHAUL
 --------------------------------------------------
 * UI: Total architectural redesign with a reactive 
   "Ghost Engine" dashboard.
-* FEATURE: Added "Daily Pulse" inspiration engine to 
-  the main popup view.
-* FEATURE: Integrated "Engine Settings" overlay to 
-  keep the primary interface clean.
-* REFACTOR: Natural Language Dictionary expanded for 
-  higher-fidelity query generation.
-* FIX: Added connection safety checks to prevent 
-  runtime errors during tab initialization.
-
+* FEATURE: Added "Daily Pulse" inspiration engine.
+* FEATURE: Integrated "Engine Settings" overlay.
+* FIX: Added connection safety checks for background messaging.
+==================================================
 [VERSION 3.7] - THE "PURE STEALTH" BUILD
 --------------------------------------------------
 * FEATURE: Added "Mission Complete" UI Overlay. 
