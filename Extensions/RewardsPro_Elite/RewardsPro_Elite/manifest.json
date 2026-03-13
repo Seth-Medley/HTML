@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Rewards Pro: Elite v4.1",
-  "version": "4.1",
-  "description": "Ghost Engine with Reactive Heartbeat Visualizer and Natural Language Automation.",
+  "name": "Rewards Pro: Elite v4.2",
+  "version": "4.2",
+  "description": "Ghost Engine v4.2 with Advanced NPA Human-Error Typing Simulation.",
   "permissions": [
     "tabs",
     "storage",

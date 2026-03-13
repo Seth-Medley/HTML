@@ -1,5 +1,5 @@
 /**
- * Rewards Pro: Elite v4.1 - Popup Controller
+ * Rewards Pro: Elite v4.2 - Popup Controller
  * FULL-LENGTH: Dynamic Visibility, Log Sync, and Heartbeat Engine
  */
 
@@ -45,14 +45,12 @@ function updateUI(state) {
 
   if (!els.runtime) return;
 
-  // Sync Global Settings
   els.mobile.checked = state.isMobile;
   els.stealth.checked = state.isStealth;
   els.slider.value = state.minWait;
   els.sVal.innerText = `${state.minWait}s`;
   els.runtime.innerText = formatTime(state.runtime);
 
-  // Status Check
   if (state.isFinished) {
     els.overlay.classList.remove('hidden');
     els.statText.innerText = `Finished in ${formatTime(state.runtime)}. Total searches: ${state.currentSearch}.`;
@@ -60,24 +58,20 @@ function updateUI(state) {
     els.overlay.classList.add('hidden');
   }
 
-  // Progress Sync
   if (state.logs?.length > 0) els.log.innerHTML = state.logs.map(l => `<div class="log-entry">${l}</div>`).join('');
   els.progress.innerText = `${state.currentSearch}/${state.totalSearches}`;
-  els.pBar.style.width = `${(state.currentSearch / state.totalSearches) * 100}%`;
+  els.pBar.style.width = `${((state.currentSearch / state.totalSearches) * 100)}%`;
 
-  // Heartbeat & Timer Logic
   if (!state.isRunning) {
     els.dot.className = "dot-idle"; els.timerText.innerText = "--s"; els.tBar.style.width = "0%";
     els.idleContainer.classList.remove('hidden');
     els.activeContainer.classList.add('hidden');
-    
-    // Heartbeat Offline
     els.tag.innerText = "ENGINE: OFFLINE";
     els.wave.setAttribute('d', "M 0 30 Q 100 30 200 30 T 400 30");
   } else {
     els.dot.className = state.isPaused ? "dot-paused" : "dot-active";
     els.timerText.innerText = `${state.timeLeft}s`;
-    els.tBar.style.width = `${((state.totalWait - state.timeLeft) / state.totalWait) * 100}%`;
+    els.tBar.style.width = `${(((state.totalWait - state.timeLeft) / state.totalWait) * 100)}%`;
     els.idleContainer.classList.add('hidden');
     els.activeContainer.classList.remove('hidden');
 
@@ -105,7 +99,6 @@ function updateHeartbeat(state, wave, tag) {
   }
 }
 
-// Button Events
 document.getElementById('openSettingsBtn').onclick = () => document.getElementById('settingsPage').classList.remove('hidden');
 document.getElementById('backBtn').onclick = () => document.getElementById('settingsPage').classList.add('hidden');
 document.getElementById('closeOverlayBtn').onclick = () => chrome.runtime.sendMessage({ action: "DISMISS_OVERLAY" });

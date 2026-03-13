@@ -1,6 +1,6 @@
 /**
- * Rewards Pro: Elite - Content Script
- * FULL-LENGTH: Jitter, HUD, and Stealth Input
+ * Rewards Pro: Elite v4.2 - Content Script
+ * FULL-RESTORE: HUD Logic & Advanced NPA Human Error
  */
 
 let hudElement = null;
@@ -25,17 +25,24 @@ async function simulateTyping(searchTerm) {
   inputField.click();
   inputField.focus();
   inputField.value = "";
-  
-  await new Promise(function(resolve) { setTimeout(resolve, 500); });
+  await new Promise(r => setTimeout(r, 800));
 
   for (let i = 0; i < searchTerm.length; i++) {
+    // V4.2 HUMAN ERROR ENGINE
+    if (Math.random() < 0.05 && i > 3 && i < searchTerm.length - 2) {
+      const chars = "abcdefghijklmnopqrstuvwxyz";
+      inputField.value += chars.charAt(Math.floor(Math.random() * chars.length));
+      inputField.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 150)); 
+      inputField.value = inputField.value.slice(0, -1);
+      inputField.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 200)); 
+    }
+
     inputField.value += searchTerm.charAt(i);
     inputField.dispatchEvent(new Event('input', { bubbles: true }));
     inputField.dispatchEvent(new Event('change', { bubbles: true }));
-    
-    // ADAPTIVE JITTER: Simulates human typing rhythm
-    const jitter = Math.floor(Math.random() * 80) + 40; 
-    await new Promise(function(resolve) { setTimeout(resolve, jitter); });
+    await new Promise(r => setTimeout(r, Math.floor(Math.random() * 80) + 40));
   }
 }
 
@@ -49,9 +56,7 @@ function triggerSearch() {
 }
 
 function executeHumanJitter() {
-  // Random smooth scroll up or down
-  const scrollAmt = Math.floor(Math.random() * 320) - 160;
-  window.scrollBy({ top: scrollAmt, behavior: 'smooth' });
+  window.scrollBy({ top: Math.floor(Math.random() * 320) - 160, behavior: 'smooth' });
 }
 
 function signalReady() {

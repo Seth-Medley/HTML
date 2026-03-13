@@ -2,48 +2,59 @@
 REWARDS PRO: ELITE - PROJECT LOG
 ==================================================
 Project Owner: Seth Medley
-Current Version: 4.1
+Current Version: 4.2
 Release Date: March 12, 2026
 ==================================================
 
-[VERSION 4.1] - THE "HEARTBEAT" UPDATE (CURRENT)
+[VERSION 4.2] - THE "COGNITIVE" UPDATE (FINAL)
 --------------------------------------------------
-* UI: Integrated Engine Heartbeat extender between 
-  Daily Pulse and Mission Progress.
-* UI: Implemented flex-grow architecture to fill the 
-  dashboard void and push SETTINGS to the bottom.
-* UI: Fixed scrollbar issue by locking popup height 
-  to 580px and removing action-section auto-margins.
-* LOGIC: Heartbeat reacts in real-time to NPA phases:
-  - Breathing (Steady)
-  - Jitter (Formulating)
-  - Flat (Paused/Offline)
+* CORE: Advanced NPA v2 officially initialized.
+* FEATURE: Topic Affinity (Themed Missions).
+  - Picks a mission research theme at start: 
+    (Astronomy, Tech, Nature, or Cinema & Arts).
+* FEATURE: Human Error Engine.
+  - 5% probability of simulated typos and immediate 
+    backspace corrections during typing.
+* LOGIC: Variable Formulation window (randomized 
+  trigger between 4-7s).
+* UI: Integrated "Mission Theme" badge into the 
+  Bing Content HUD.
+* UI: Optimized Dashboard with a reactive flex-grow 
+  heartbeat extender.
+* UI: Locked popup height to 580px and used Flexbox 
+  to remove scrollbars and gap issues.
+* FIX: Restored full HUD sync logic and expanded 
+  natural language dictionaries.
+
+[VERSION 4.1] - THE "HEARTBEAT" UPDATE
+--------------------------------------------------
+* UI: Integrated Engine Heartbeat Sine Wave visualizer.
+* UI: Heartbeat reacts in real-time to engine states 
+  (Breathing, Formulating, or Flat).
+* UI: Layout refined to place visualizer between 
+  Daily Pulse and Progress cards.
 
 [VERSION 4.0] - THE "GENESIS" OVERHAUL
 --------------------------------------------------
 * UI: Total architectural redesign with a reactive 
   "Ghost Engine" dashboard.
 * FEATURE: Added "Daily Pulse" inspiration engine.
-* FEATURE: Integrated "Engine Settings" overlay.
-* FIX: Added connection safety checks for background messaging.
-==================================================
+* FEATURE: Integrated "Engine Settings" overlay to 
+  keep the primary interface clean.
+* FIX: Added connection safety checks to prevent 
+  runtime errors during tab initialization.
+
 [VERSION 3.7] - THE "PURE STEALTH" BUILD
 --------------------------------------------------
-* FEATURE: Added "Mission Complete" UI Overlay. 
-  A check-mark screen now locks the dashboard when 
-  30 searches are finished.
-* FEATURE: Added "Final Summary Report." Log now 
-  displays total runtime and average search delay.
+* FEATURE: Added "Mission Complete" UI Overlay.
+* FEATURE: Added "Final Summary Report."
 * FIX: Corrected "Search Gatekeeper" logic to prevent 
-  the counter from overrunning the target.
-* REFACTOR: Cleaned up Icon directory to /Icon/Icon.png.
+  overrunning the target.
 
 [VERSION 3.6] - NATURAL LANGUAGE & LOGGING
 --------------------------------------------------
-* FEATURE: Replaced random word strings with a "Natural 
-  Language Query Generator."
-* FEATURE: Restored the "Mission Log" activity box to 
-  the popup for real-time monitoring.
+* FEATURE: Replaced random word strings with a 
+  "Natural Language Query Generator."
 * FEATURE: Integrated "Human Jitter" (smooth scrolling) 
   and "Adaptive Typing Jitter."
 * SECURITY: Removed point-tracking logic to bypass 
