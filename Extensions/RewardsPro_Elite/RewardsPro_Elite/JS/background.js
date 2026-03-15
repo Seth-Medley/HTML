@@ -1,63 +1,72 @@
 /**
- * Rewards Pro: Elite v4.2 - Master Background Logic
- * FULL-LENGTH: Topic Affinity (4 Themes), NPA v2 Timing, and HUD Sync
+ * Rewards Pro: Elite v4.3 - Master Background Logic
+ * FIX: DeclarativeNetRequest for Mobile Mode & SW Stability
  */
 
 let tickInterval = null; 
-let safetyObserver = null;
-
-chrome.tabs.query({ url: "*://*.bing.com/*" }, function(tabs) {
-  for (let i = 0; i < tabs.length; i++) {
-    chrome.tabs.remove(tabs[i].id).catch(function() {});
-  }
-});
-
 let state = {
-  isRunning: false,
-  isPaused: false,
-  isMobile: false,
-  isStealth: false,
-  isFinished: false,
-  currentSearch: 0,
-  totalSearches: 30, 
-  timeLeft: 0,
-  totalWait: 0,
-  minWait: 20,
-  bingTabId: null,
-  isContentReady: false,
-  pendingTerm: null,
-  isTypingStarted: false,
-  isTimerLocked: false,
-  runtime: 0,
-  logs: [],
-  activeTheme: "General"
+  isRunning: false, isPaused: false, isMobile: false, isStealth: false,
+  currentSearch: 0, totalSearches: 30, timeLeft: 0, totalWait: 0,
+  minWait: 20, maxWait: 45, jitterFreq: 7, 
+  accentColor: "#58a6ff", heartbeatSkin: "pulse",
+  bingTabId: null, isContentReady: false, pendingTerm: null,
+  isTypingStarted: false, runtime: 0, logs: [], activeTheme: "General"
 };
 
-const researchThemes = {
-  "Astronomy": {
-    starters: ["Discovery of", "Distance to", "History of", "Effects of"],
-    subjects: ["nebula", "exoplanet", "quasar", "supernova", "black hole", "galaxy"],
-    actions: ["rotation", "orbit", "expansion", "radiation", "magnetic field"],
-    contexts: ["in space", "near the sun", "visualized", "vs dark matter"]
-  },
-  "Technology": {
-    starters: ["Future of", "Understanding", "Benefits of", "Risks of"],
-    subjects: ["neural network", "blockchain", "encryption", "nanotech", "automation"],
-    actions: ["processing", "security", "integration", "efficiency", "data sync"],
-    contexts: ["in modern era", "simplified", "for developers", "vs legacy systems"]
-  },
-  "Nature": {
-    starters: ["Evolution of", "Impact of", "Protection of", "Research on"],
-    subjects: ["ecosystem", "glacier", "coral reef", "rainforest", "tectonic plate"],
-    actions: ["stability", "erosion", "vibration", "cycles", "migration"],
-    contexts: ["on earth", "globally", "locally", "for students"]
-  },
-  "Cinema & Arts": {
-    starters: ["History of", "Development of", "Review of", "Influence of"],
-    subjects: ["cinematography", "digital editing", "sound design", "visual effects", "script writing"],
-    actions: ["evolution", "composition", "logic", "patterns", "oscillation"],
-    contexts: ["in Hollywood", "worldwide", "today", "for beginners"]
+// --- MOBILE SPOOFING LOGIC (DNR) ---
+const MOBILE_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1";
+
+async function updateMobileHeaders() {
+  if (!chrome.declarativeNetRequest) return;
+
+  // Clear existing rules
+  const oldRules = await chrome.declarativeNetRequest.getDynamicRules();
+  const oldRuleIds = oldRules.map(rule => rule.id);
+  
+  let newRules = [];
+  if (state.isMobile) {
+    newRules.push({
+      id: 1,
+      priority: 1,
+      action: {
+        type: "modifyHeaders",
+        requestHeaders: [{ header: "user-agent", operation: "set", value: MOBILE_UA }]
+      },
+      condition: { urlFilter: "||bing.com", resourceTypes: ["main_frame", "sub_frame"] }
+    });
   }
+
+  await chrome.declarativeNetRequest.updateDynamicRules({
+    removeRuleIds: oldRuleIds,
+    addRules: newRules
+  });
+}
+
+// --- INITIALIZATION ---
+function initialize() {
+  chrome.tabs.query({ url: "*://*.bing.com/*" }, function(tabs) {
+    if (chrome.runtime.lastError) return;
+    if (tabs) {
+      for (let i = 0; i < tabs.length; i++) {
+        chrome.tabs.remove(tabs[i].id).catch(() => {});
+      }
+    }
+  });
+  updateMobileHeaders(); // Set initial UA state
+}
+
+// Run initialization safely
+try {
+  initialize();
+} catch (e) {
+  console.error("Initialization failed, but SW is alive.", e);
+}
+
+const researchThemes = {
+  "Astronomy": { starters: ["Distance to", "History of"], subjects: ["nebula", "black hole"], actions: ["rotation", "orbit"], contexts: ["in space", "explained"] },
+  "Technology": { starters: ["Future of", "Guide to"], subjects: ["neural network", "blockchain"], actions: ["logic", "security"], contexts: ["in modern era", "for developers"] },
+  "Nature": { starters: ["Evolution of", "Patterns in"], subjects: ["ecosystem", "glacier"], actions: ["cycles", "stability"], contexts: ["on earth", "globally"] },
+  "Cinema & Arts": { starters: ["Review of", "Influence of"], subjects: ["sound design", "cinematography"], actions: ["evolution", "composition"], contexts: ["in Hollywood", "worldwide"] }
 };
 
 function selectMissionTheme() {
@@ -75,86 +84,84 @@ function generateThemedQuery() {
 }
 
 function addLog(message) {
-  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const time = new Date().toLocaleTimeString([], { hour12: false });
   state.logs.unshift(`[${time}] ${message}`);
   if (state.logs.length > 25) state.logs.pop();
 }
 
-function stopAutomation(reason) {
-  const isGoalMet = state.currentSearch >= state.totalSearches;
-  if (isGoalMet) state.isFinished = true;
-  else addLog(`MISSION HALTED: ${reason || "User Command"}`);
+function stopAutomation() {
   state.isRunning = false; state.isPaused = false; state.timeLeft = 0;
   if (tickInterval) clearInterval(tickInterval);
-  if (safetyObserver) clearTimeout(safetyObserver);
-  if (state.bingTabId) { chrome.tabs.remove(state.bingTabId).catch(function() {}); state.bingTabId = null; }
-  chrome.runtime.sendMessage({ type: "SYNC", state: state }).catch(function() {});
+  if (state.bingTabId) { chrome.tabs.remove(state.bingTabId).catch(() => {}); state.bingTabId = null; }
+  sync();
 }
 
 function resetTimer() {
-  if (state.isRunning === false || state.isTimerLocked === true || state.timeLeft > 0 || state.currentSearch >= state.totalSearches) {
-    if (state.currentSearch >= state.totalSearches) stopAutomation("Target Goal Reached.");
-    return;
-  }
-  state.isTimerLocked = true;
-  state.totalWait = Math.floor(Math.random() * 25) + parseInt(state.minWait);
+  if (!state.isRunning || state.currentSearch >= state.totalSearches) return;
+  const range = Math.max(1, parseInt(state.maxWait) - parseInt(state.minWait) + 1);
+  state.totalWait = Math.floor(Math.random() * range) + parseInt(state.minWait);
   state.timeLeft = state.totalWait;
   state.isTypingStarted = false;
   state.pendingTerm = generateThemedQuery();
-  if (safetyObserver) clearTimeout(safetyObserver);
-  setTimeout(() => { state.isTimerLocked = false; }, 3000);
+  sync();
 }
 
 function startTick() {
   if (tickInterval) clearInterval(tickInterval);
   tickInterval = setInterval(function() {
-    if (state.isRunning === true && state.isPaused === false) {
+    if (state.isRunning && !state.isPaused) {
       state.runtime++;
       if (state.timeLeft > 0) {
         state.timeLeft--;
-        if (state.timeLeft % 7 === 0 && state.bingTabId && state.isContentReady) {
-          chrome.tabs.sendMessage(state.bingTabId, { action: "HUMAN_JITTER" }).catch(function() {});
+        if (state.timeLeft % state.jitterFreq === 0 && state.bingTabId) {
+          chrome.tabs.sendMessage(state.bingTabId, { action: "HUMAN_JITTER" }).catch(() => {});
         }
+        
         const trigger = Math.floor(Math.random() * 4) + 4; 
-        if (state.timeLeft === trigger && state.isTypingStarted === false && state.bingTabId !== null && state.isContentReady) {
+        if (state.timeLeft === trigger && state.isTypingStarted === false && state.bingTabId !== null) {
           state.isTypingStarted = true;
-          addLog(`Formulating (${state.activeTheme}): "${state.pendingTerm}"`);
-          chrome.tabs.sendMessage(state.bingTabId, { action: "TYPE_WITH_FOCUS", term: state.pendingTerm }).catch(function() {
+          chrome.tabs.sendMessage(state.bingTabId, { action: "TYPE_WITH_FOCUS", term: state.pendingTerm }).catch(() => {
             state.isTypingStarted = false;
           });
         }
-        if (state.timeLeft <= 0 && state.isContentReady) {
+        
+        if (state.timeLeft <= 0) {
           state.currentSearch++;
-          chrome.tabs.sendMessage(state.bingTabId, { action: "EXECUTE_SEARCH" }).catch(function() {});
-          if (state.currentSearch >= state.totalSearches) {
-              setTimeout(function() { stopAutomation("Target Reached!"); }, 2500);
-          } else {
-              safetyObserver = setTimeout(function() { if (state.timeLeft <= 0 && state.isRunning) resetTimer(); }, 10000);
-          }
+          if (state.bingTabId) chrome.tabs.sendMessage(state.bingTabId, { action: "EXECUTE_SEARCH" }).catch(() => {});
+          if (state.currentSearch >= state.totalSearches) stopAutomation();
+          else resetTimer();
         }
       }
     }
-    chrome.runtime.sendMessage({ type: "SYNC", state: state }).catch(function() {});
-    if (state.bingTabId && state.isContentReady) {
-      chrome.tabs.sendMessage(state.bingTabId, { type: "SYNC", state: state }).catch(function() {});
-    }
+    sync();
   }, 1000);
+}
+
+function sync() {
+  if (!chrome.runtime?.id) return;
+  chrome.runtime.sendMessage({ type: "SYNC", state: state }).catch(() => {});
+  if (state.bingTabId) {
+    chrome.tabs.sendMessage(state.bingTabId, { type: "SYNC", state: state }).catch(() => {});
+  }
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   if (msg.action === "START") {
-    state.isRunning = true; state.isPaused = false; state.isFinished = false; state.currentSearch = 0; state.runtime = 0; state.logs = [];
+    state.isRunning = true; state.isPaused = false; state.currentSearch = 0; state.runtime = 0; state.logs = [];
     selectMissionTheme();
-    addLog(`Elite Engine Online. Theme: ${state.activeTheme}`);
+    addLog(`Engine v4.3 Active. Theme: ${state.activeTheme}`);
     startTick();
-    chrome.tabs.create({ url: "https://www.bing.com/", active: true }, function(tab) { state.bingTabId = tab.id; });
-  } else if (msg.action === "STOP") stopAutomation("Manual Stop.");
-  else if (msg.action === "PAUSE") state.isPaused = true;
-  else if (msg.action === "RESUME") state.isPaused = false;
-  else if (msg.action === "CONTENT_READY") { state.isContentReady = true; if (state.timeLeft <= 0) resetTimer(); }
-  else if (msg.action === "GET_STATE") sendResponse(state);
-  else if (msg.action === "DISMISS_OVERLAY") state.isFinished = false;
-  else if (msg.action === "UPDATE_WAIT") state.minWait = msg.value;
-  else if (msg.action === "TOGGLE_MOBILE") { state.isMobile = msg.value; state.totalSearches = msg.value ? 20 : 30; }
-  else if (msg.action === "TOGGLE_STEALTH") state.isStealth = msg.value;
+    chrome.tabs.create({ url: "https://www.bing.com/" }, function(tab) { state.bingTabId = tab.id; });
+  } 
+  else if (msg.action === "STOP") stopAutomation();
+  else if (msg.action === "PAUSE") { state.isPaused = true; sync(); }
+  else if (msg.action === "RESUME") { state.isPaused = false; sync(); }
+  else if (msg.action === "UPDATE_STATE") { 
+    Object.assign(state, msg.data); 
+    if (msg.data.hasOwnProperty('isMobile')) updateMobileHeaders();
+    sync(); 
+  }
+  else if (msg.action === "GET_STATE") { sendResponse(state); }
+  else if (msg.action === "CONTENT_READY") { state.isContentReady = true; resetTimer(); }
+  else if (msg.action === "DISMISS_OVERLAY") { state.isFinished = false; sync(); }
 });

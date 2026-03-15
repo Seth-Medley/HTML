@@ -1,61 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Rewards Pro: Elite v4.2</title>
+  <meta charset="UTF-8">
+  <title>Rewards Pro: Elite v4.3</title>
   <link rel="stylesheet" href="CSS/popup.css">
 </head>
 <body>
   <div class="dashboard">
     <div id="settingsPage" class="settings-overlay hidden">
-      <div class="overlay-header">
-        <button id="backBtn" class="btn-icon">&larr; Back</button>
-        <h2>ENGINE SETTINGS</h2>
-      </div>
-      
-      <div class="card settings">
-        <div class="toggle-row">
-          <span>Mobile Mode</span>
-          <label class="switch">
-            <input type="checkbox" id="mobileToggle">
-            <span class="slider round"></span>
-          </label>
+      <div class="overlay-header"><h2>ENGINE ROOM</h2></div>
+      <div class="settings-scroll-area">
+        <div class="card log-card">
+          <label>Mission Log</label>
+          <div id="missionLog" class="log-container"><div class="log-entry">Waiting...</div></div>
         </div>
-        <div class="toggle-row">
-          <span>Stealth Mode</span>
-          <label class="switch">
-            <input type="checkbox" id="stealthToggle">
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="range-group">
-          <div class="range-label" style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px;">
-            <span>Min Delay</span>
-            <span id="sliderValue">20s</span>
+        <div class="card settings">
+          <label>Delay & Jitter Range</label>
+          <div class="range-group">
+            <div class="range-label"><span>Min Delay</span><span id="minVal">20s</span></div>
+            <input type="range" id="minWait" min="15" max="40" value="20">
           </div>
-          <input type="range" id="waitSlider" min="15" max="60" value="20">
+          <div class="range-group">
+            <div class="range-label"><span>Max Delay</span><span id="maxVal">45s</span></div>
+            <input type="range" id="maxWait" min="41" max="120" value="45">
+          </div>
+          <div class="range-group">
+            <div class="range-label"><span>Jitter Freq</span><span id="jitVal">7s</span></div>
+            <input type="range" id="jitterFreq" min="5" max="30" value="7">
+          </div>
+        </div>
+        <div class="card settings">
+          <label>Mission Controls</label>
+          <div class="toggle-row">
+            <span>Mobile Mode</span>
+            <label class="switch"><input type="checkbox" id="mobileToggle"><span class="slider round"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Hide HUD</span>
+            <label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label>
+          </div>
+          <div class="input-group">
+            <span>Search Goal</span>
+            <input type="number" id="customCountInput" min="1" max="100" value="30">
+          </div>
+        </div>
+        <div class="card settings">
+          <label>Ghost Personalization</label>
+          <div class="input-group">
+            <span>Accent Color</span>
+            <input type="color" id="accentPicker" value="#58a6ff">
+          </div>
+          <div class="input-group">
+            <span>Heartbeat Skin</span>
+            <select id="skinSelector">
+              <option value="pulse">Neon Pulse</option>
+              <option value="osc">Oscilloscope</option>
+            </select>
+          </div>
         </div>
       </div>
-
-      <div class="card log-card">
-        <label>Mission Log</label>
-        <div id="missionLog" class="log-container">
-          <div class="log-entry">Waiting for mission start...</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="completeOverlay" class="overlay hidden">
-      <div class="overlay-content">
-        <div class="check-icon">✓</div>
-        <h2>MISSION COMPLETE</h2>
-        <p id="finalStatText">All searches finished.</p>
-        <button id="closeOverlayBtn" class="btn-secondary">DISMISS</button>
-      </div>
+      <button id="backBtn" class="btn-secondary">CLOSE ENGINE ROOM</button>
     </div>
 
     <header>
       <h1>REWARDS<span>PRO</span></h1>
-      <div class="header-right" style="display:flex; align-items:center; gap:10px;">
+      <div class="header-right">
         <span id="runtimeDisplay">00:00:00</span>
         <div id="status-dot" class="dot-idle"></div>
       </div>
@@ -63,51 +72,36 @@
 
     <div class="card quote-card">
       <label>Daily Pulse</label>
-      <div id="quoteDisplay" class="quote-text">"Initializing inspiration engine..."</div>
+      <div id="quoteDisplay" class="quote-text">Initializing inspiration engine...</div>
     </div>
 
     <div id="heartbeat-container" class="card heartbeat-extender">
       <svg id="heartbeat-wave" viewBox="0 0 400 60" preserveAspectRatio="none">
-        <path id="wave-path" d="M 0 30 Q 100 30 200 30 T 400 30" 
-              fill="none" stroke="#58a6ff" stroke-width="2" />
+        <path id="wave-path" d="M 0 30 Q 100 30 200 30 T 400 30" fill="none" stroke-width="2" />
       </svg>
       <div id="engine-mode-tag">ENGINE: OFFLINE</div>
     </div>
 
     <div class="card">
-      <div class="progress-info">
-        <label>Searches Completed</label>
-        <span id="sessionProgress">0/30</span>
-      </div>
-      <div class="progress-bar-bg">
-        <div id="searchProgressBar" class="progress-fill"></div>
-      </div>
+      <div class="progress-info"><label>Mission Progress</label><span id="sessionProgress">0/30</span></div>
+      <div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div>
     </div>
 
     <div class="card timer-card">
       <label>Next Action In</label>
       <div id="timerDisplay">--s</div>
-      <div class="timer-bar-bg">
-        <div id="timerBarFill" class="timer-fill"></div>
-      </div>
+      <div class="timer-bar-bg"><div id="timerBarFill" class="timer-fill"></div></div>
     </div>
 
     <div class="action-section">
-      <div id="idleActions">
-        <button id="startBtn" class="btn-primary">START</button>
-      </div>
-      
+      <div id="idleActions"><button id="startBtn" class="btn-primary">START</button></div>
       <div id="activeActions" class="hidden grid-container">
         <button id="stopBtn" class="btn-danger">STOP</button>
-        <div class="grid-container" style="display:grid; grid-template-columns: 1fr;">
-          <button id="pauseBtn" class="btn-secondary">PAUSE</button>
-          <button id="resumeBtn" class="btn-secondary hidden">RESUME</button>
-        </div>
+        <button id="pauseBtn" class="btn-secondary">PAUSE</button>
+        <button id="resumeBtn" class="btn-secondary hidden">RESUME</button>
       </div>
-
-      <button id="openSettingsBtn" class="btn-outline">SETTINGS</button>
+      <button id="openSettingsBtn" class="btn-outline">ENGINE ROOM</button>
     </div>
-
   </div>
   <script src="JS/popup.js"></script>
 </body>

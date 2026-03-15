@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Rewards Pro: Elite v4.2",
-  "version": "4.2",
-  "description": "Ghost Engine v4.2 with Advanced NPA Human-Error Typing Simulation.",
+  "name": "Rewards Pro: Elite v4.3",
+  "version": "4.3",
+  "description": "Ghost Engine v4.3 with Dynamic Jitter Range, Mobile Spoofing, and Advanced NPA.",
   "permissions": [
     "tabs",
     "storage",
@@ -12,12 +12,12 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "Icon/Icon.png"
+    "default_icon": "Icon/icon.png"
   },
   "icons": {
-    "16": "Icon/Icon.png",
-    "48": "Icon/Icon.png",
-    "128": "Icon/Icon.png"
+    "16": "Icon/icon.png",
+    "48": "Icon/icon.png",
+    "128": "Icon/icon.png"
   },
   "background": {
     "service_worker": "JS/background.js"
