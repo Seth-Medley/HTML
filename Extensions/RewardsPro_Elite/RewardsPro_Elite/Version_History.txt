@@ -1,68 +1,33 @@
-==================================================
-REWARDS PRO: ELITE - PROJECT LOG
-==================================================
-Project Owner: Seth Medley
-Current Version: 4.2
-Release Date: March 12, 2026
-==================================================
+Rewards Pro: Elite - Version History
 
-[VERSION 4.2] - THE "COGNITIVE" UPDATE (FINAL)
---------------------------------------------------
-* CORE: Advanced NPA v2 officially initialized.
-* FEATURE: Topic Affinity (Themed Missions).
-  - Picks a mission research theme at start: 
-    (Astronomy, Tech, Nature, or Cinema & Arts).
-* FEATURE: Human Error Engine.
-  - 5% probability of simulated typos and immediate 
-    backspace corrections during typing.
-* LOGIC: Variable Formulation window (randomized 
-  trigger between 4-7s).
-* UI: Integrated "Mission Theme" badge into the 
-  Bing Content HUD.
-* UI: Optimized Dashboard with a reactive flex-grow 
-  heartbeat extender.
-* UI: Locked popup height to 580px and used Flexbox 
-  to remove scrollbars and gap issues.
-* FIX: Restored full HUD sync logic and expanded 
-  natural language dictionaries.
+v4.4.0 - Current Stable
+- [Engine] Overhauled animation system using requestAnimationFrame for 60fps performance.
+- [Visuals] Redesigned Oscilloscope skin with hospital-style sweep-line logic.
+- [Visuals] Implemented liquid-smooth Neon Pulse animation.
+- [UI] Perfectly realigned header elements (Status Dot and Runtime Timer).
+- [UI] Applied primary button design logic to the "Close Engine Room" action.
+- [Bug Fix] Resolved animation stuttering caused by high-frequency interval sync.
+- [Bug Fix] Fixed "sliding" effect on EKG blips for a realistic monitor feel.
 
-[VERSION 4.1] - THE "HEARTBEAT" UPDATE
---------------------------------------------------
-* UI: Integrated Engine Heartbeat Sine Wave visualizer.
-* UI: Heartbeat reacts in real-time to engine states 
-  (Breathing, Formulating, or Flat).
-* UI: Layout refined to place visualizer between 
-  Daily Pulse and Progress cards.
+v4.3.10
+- Redesigned Mission Log scrollbar for a terminal aesthetic.
+- Updated Engine Room scrollbar with modern webkit styling.
 
-[VERSION 4.0] - THE "GENESIS" OVERHAUL
---------------------------------------------------
-* UI: Total architectural redesign with a reactive 
-  "Ghost Engine" dashboard.
-* FEATURE: Added "Daily Pulse" inspiration engine.
-* FEATURE: Integrated "Engine Settings" overlay to 
-  keep the primary interface clean.
-* FIX: Added connection safety checks to prevent 
-  runtime errors during tab initialization.
+v4.3.8
+- Restored startup tab cleanup logic.
+- Improved mission termination stability.
 
-[VERSION 3.7] - THE "PURE STEALTH" BUILD
---------------------------------------------------
-* FEATURE: Added "Mission Complete" UI Overlay.
-* FEATURE: Added "Final Summary Report."
-* FIX: Corrected "Search Gatekeeper" logic to prevent 
-  overrunning the target.
+v4.3.7
+- Redesigned Delay and Jitter settings card with cockpit-style grid.
+- Added value badges for real-time slider feedback.
 
-[VERSION 3.6] - NATURAL LANGUAGE & LOGGING
---------------------------------------------------
-* FEATURE: Replaced random word strings with a 
-  "Natural Language Query Generator."
-* FEATURE: Integrated "Human Jitter" (smooth scrolling) 
-  and "Adaptive Typing Jitter."
-* SECURITY: Removed point-tracking logic to bypass 
-  Bing's shadow-dom security measures.
+v4.3.5
+- Redesigned dropdown and number input styling.
+- Repositioned Manual & Specs card below Mission Log for better hierarchy.
 
-[VERSION 3.4] - THE "ELITE" REDESIGN
-------------------------------------
-* UI: Overhauled CSS to the "GitHub Dark" aesthetic.
-* FEATURE: Added HH:MM:SS persistent mission clock.
-* FEATURE: Added Startup Tab Cleanup.
-==================================================
+v4.3.1
+- Fixed Content Security Policy (CSP) search violations by switching to form.submit().
+- Added "Manual & Specs" info card to the Engine Room.
+
+v4.3.0
+- Baseline stable release with NPA v2 Engine and Stealth HUD.

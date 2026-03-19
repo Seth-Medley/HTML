@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Rewards Pro: Elite v4.3",
-  "version": "4.3",
-  "description": "Ghost Engine v4.3 with Dynamic Jitter Range, Mobile Spoofing, and Advanced NPA.",
+  "name": "Rewards Pro: Elite",
+  "version": "4.4.0",
+  "description": "An advanced search automation suite featuring behavioral simulation, high-performance EKG animations, and mobile device spoofing for a seamless rewards experience.",
   "permissions": [
     "tabs",
     "storage",

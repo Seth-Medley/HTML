@@ -2,33 +2,48 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Rewards Pro: Elite v4.3</title>
+  <title>Rewards Pro: Elite</title>
   <link rel="stylesheet" href="CSS/popup.css">
 </head>
 <body>
   <div class="dashboard">
     <div id="settingsPage" class="settings-overlay hidden">
       <div class="overlay-header"><h2>ENGINE ROOM</h2></div>
+      
       <div class="settings-scroll-area">
         <div class="card log-card">
           <label>Mission Log</label>
           <div id="missionLog" class="log-container"><div class="log-entry">Waiting...</div></div>
         </div>
-        <div class="card settings">
+
+        <div class="card info-card">
+          <label>Manual & Specs</label>
+          <ul class="settings-guide">
+            <li><strong>Delay:</strong> Cooldown range between search cycles.</li>
+            <li><strong>Jitter:</strong> Frequency of behavioral micro-scrolls.</li>
+            <li><strong>Mobile:</strong> Spoofs iOS device for mobile rewards.</li>
+            <li><strong>Stealth:</strong> Hides the on-page HUD overlay.</li>
+          </ul>
+        </div>
+
+        <div class="card settings range-card">
           <label>Delay & Jitter Range</label>
-          <div class="range-group">
-            <div class="range-label"><span>Min Delay</span><span id="minVal">20s</span></div>
-            <input type="range" id="minWait" min="15" max="40" value="20">
-          </div>
-          <div class="range-group">
-            <div class="range-label"><span>Max Delay</span><span id="maxVal">45s</span></div>
-            <input type="range" id="maxWait" min="41" max="120" value="45">
-          </div>
-          <div class="range-group">
-            <div class="range-label"><span>Jitter Freq</span><span id="jitVal">7s</span></div>
-            <input type="range" id="jitterFreq" min="5" max="30" value="7">
+          <div class="range-grid">
+            <div class="range-item">
+              <div class="range-info"><span>Min Delay</span><span id="minVal" class="val-badge">20s</span></div>
+              <input type="range" id="minWait" min="15" max="40" value="20">
+            </div>
+            <div class="range-item">
+              <div class="range-info"><span>Max Delay</span><span id="maxVal" class="val-badge">45s</span></div>
+              <input type="range" id="maxWait" min="41" max="120" value="45">
+            </div>
+            <div class="range-item">
+              <div class="range-info"><span>Jitter Freq</span><span id="jitVal" class="val-badge">7s</span></div>
+              <input type="range" id="jitterFreq" min="5" max="30" value="7">
+            </div>
           </div>
         </div>
+
         <div class="card settings">
           <label>Mission Controls</label>
           <div class="toggle-row">
@@ -36,14 +51,15 @@
             <label class="switch"><input type="checkbox" id="mobileToggle"><span class="slider round"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Hide HUD</span>
+            <span>Stealth HUD</span>
             <label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label>
           </div>
           <div class="input-group">
             <span>Search Goal</span>
-            <input type="number" id="customCountInput" min="1" max="100" value="30">
+            <input type="number" id="customCountInput" value="30">
           </div>
         </div>
+
         <div class="card settings">
           <label>Ghost Personalization</label>
           <div class="input-group">
@@ -59,14 +75,14 @@
           </div>
         </div>
       </div>
-      <button id="backBtn" class="btn-secondary">CLOSE ENGINE ROOM</button>
+      <button id="backBtn" class="btn-outline full-width">CLOSE ENGINE ROOM</button>
     </div>
 
     <header>
       <h1>REWARDS<span>PRO</span></h1>
       <div class="header-right">
-        <span id="runtimeDisplay">00:00:00</span>
         <div id="status-dot" class="dot-idle"></div>
+        <span id="runtimeDisplay">00:00:00</span>
       </div>
     </header>
 
@@ -94,13 +110,19 @@
     </div>
 
     <div class="action-section">
-      <div id="idleActions"><button id="startBtn" class="btn-primary">START</button></div>
-      <div id="activeActions" class="hidden grid-container">
-        <button id="stopBtn" class="btn-danger">STOP</button>
-        <button id="pauseBtn" class="btn-secondary">PAUSE</button>
-        <button id="resumeBtn" class="btn-secondary hidden">RESUME</button>
+      <div id="idleActions">
+        <button id="startBtn" class="btn-primary full-width">START MISSION</button>
       </div>
-      <button id="openSettingsBtn" class="btn-outline">ENGINE ROOM</button>
+      <div id="activeActions" class="hidden">
+        <div class="button-grid">
+          <button id="stopBtn" class="btn-danger">STOP</button>
+          <div class="state-controls">
+            <button id="pauseBtn" class="btn-secondary">PAUSE</button>
+            <button id="resumeBtn" class="btn-secondary hidden">RESUME</button>
+          </div>
+        </div>
+      </div>
+      <button id="openSettingsBtn" class="btn-outline full-width">ENGINE ROOM</button>
     </div>
   </div>
   <script src="JS/popup.js"></script>

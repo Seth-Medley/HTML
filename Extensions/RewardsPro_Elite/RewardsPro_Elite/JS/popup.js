@@ -1,26 +1,92 @@
 /**
- * Rewards Pro: Elite v4.3 - Popup Controller
- * STABLE: Crash Prevention & Header Alignment
+ * Rewards Pro: Elite v4.4.0 - Popup Controller
+ * ENGINE: Hospital EKG Logic with 60fps Sweep Animation.
  */
 
 const quoteBank = [
-  "Code is like humor. When you have to explain it, it’s bad.",
   "Simplicity is the soul of efficiency.",
   "First, solve the problem. Then, write the code.",
   "Precision is the difference between a tool and a toy.",
-  "Make it work, make it right, make it fast."
+  "Make it work, make it right, make it fast.",
+  "Code is like humor. When you have to explain it, it’s bad."
 ];
 
-function formatTime(seconds) {
-  if (!seconds) return "00:00:00";
-  const h = Math.floor(seconds / 3600), m = Math.floor((seconds % 3600) / 60), s = seconds % 60;
-  return [h, m, s].map(v => v < 10 ? "0" + v : v).join(":");
+let globalState = null;
+
+function formatTime(s) {
+  if (!s) return "00:00:00";
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  return [h, m, sec].map(v => v < 10 ? "0" + v : v).join(":");
+}
+
+/**
+ * EKG WAVEFORM CALCULATOR
+ * Generates hospital-style spikes (P-QRS-T complex)
+ */
+function getEKGHeight(x) {
+  const p = x % 100; // Heartbeat pattern repeats every 100px
+  if (p > 10 && p < 20) return 30 - Math.sin((p-10)/10 * Math.PI) * 3; // P wave
+  if (p >= 20 && p < 23) return 30 + (p-20) * 5; // Q
+  if (p >= 23 && p < 27) return 40 - (p-23) * 17; // R (Major Spike)
+  if (p >= 27 && p < 30) return -10 + (p-27) * 13; // S
+  if (p > 35 && p < 50) return 30 - Math.sin((p-35)/15 * Math.PI) * 4; // T wave
+  return 30; // Isoelectric baseline
+}
+
+/**
+ * HIGH-PERFORMANCE RENDERER
+ */
+function animationLoop() {
+  if (globalState && globalState.isRunning && !globalState.isPaused) {
+    const path = document.getElementById('wave-path');
+    const tag = document.getElementById('engine-mode-tag');
+    
+    tag.innerText = "ENGINE: ACTIVE";
+
+    if (globalState.heartbeatSkin === 'pulse') {
+      // Neon Pulse: Rolling smooth sine wave
+      const t = performance.now() / 150;
+      const y = 30 + Math.sin(t) * 12;
+      path.setAttribute('d', `M 0 30 Q 50 ${y} 100 30 T 200 30 T 300 30 T 400 30`);
+    } else {
+      // Hospital Oscilloscope: Moving sweep-line blip
+      const sweepX = (performance.now() / 5) % 400; 
+      let d = "M 0 30";
+      for (let i = 0; i < sweepX; i += 2) {
+        d += ` L ${i} ${getEKGHeight(i)}`;
+      }
+      path.setAttribute('d', d);
+    }
+  } else if (globalState) {
+    const path = document.getElementById('wave-path');
+    const tag = document.getElementById('engine-mode-tag');
+    tag.innerText = globalState.isPaused ? "ENGINE: PAUSED" : "ENGINE: OFFLINE";
+    path.setAttribute('d', "M 0 30 Q 100 30 200 30 T 400 30");
+  }
+  requestAnimationFrame(animationLoop);
 }
 
 function updateUI(s) {
   if (!s || !chrome.runtime?.id) return;
-
+  globalState = s; 
   document.documentElement.style.setProperty('--accent', s.accentColor);
+
+  const logBox = document.getElementById('missionLog');
+  if (logBox && s.logs) { logBox.innerHTML = s.logs.map(log => `<div class="log-entry">${log}</div>`).join(''); }
+
+  document.getElementById('runtimeDisplay').innerText = formatTime(s.runtime);
+  document.getElementById('status-dot').className = s.isRunning ? (s.isPaused ? 'dot-paused' : 'dot-active') : 'dot-idle';
+
+  document.getElementById('sessionProgress').innerText = `${s.currentSearch}/${s.totalSearches}`;
+  document.getElementById('searchProgressBar').style.width = `${(s.currentSearch / s.totalSearches) * 100}%`;
+  document.getElementById('timerDisplay').innerText = s.isRunning ? s.timeLeft + 's' : '--s';
+  const progress = s.totalWait > 0 ? ((s.totalWait - s.timeLeft) / s.totalWait) * 100 : 0;
+  document.getElementById('timerBarFill').style.width = s.isRunning ? `${progress}%` : '0%';
+
+  document.getElementById('idleActions').classList.toggle('hidden', s.isRunning);
+  document.getElementById('activeActions').classList.toggle('hidden', !s.isRunning);
+  document.getElementById('pauseBtn').classList.toggle('hidden', s.isPaused);
+  document.getElementById('resumeBtn').classList.toggle('hidden', !s.isPaused);
 
   document.getElementById('mobileToggle').checked = s.isMobile;
   document.getElementById('hudToggle').checked = s.isStealth;
@@ -33,72 +99,9 @@ function updateUI(s) {
   document.getElementById('jitVal').innerText = s.jitterFreq + 's';
   document.getElementById('accentPicker').value = s.accentColor;
   document.getElementById('skinSelector').value = s.heartbeatSkin;
-
-  document.getElementById('runtimeDisplay').innerText = formatTime(s.runtime);
-  document.getElementById('sessionProgress').innerText = `${s.currentSearch}/${s.totalSearches}`;
-  document.getElementById('searchProgressBar').style.width = `${((s.currentSearch / s.totalSearches) * 100)}%`;
-
-  if (s.isRunning) {
-    document.getElementById('idleActions').classList.add('hidden');
-    document.getElementById('activeActions').classList.remove('hidden');
-    document.getElementById('timerDisplay').innerText = s.timeLeft + 's';
-    document.getElementById('timerBarFill').style.width = `${(((s.totalWait - s.timeLeft) / s.totalWait) * 100)}%`;
-    document.getElementById('status-dot').className = s.isPaused ? "dot-paused" : "dot-active";
-    
-    if (s.isPaused) {
-      document.getElementById('pauseBtn').classList.add('hidden');
-      document.getElementById('resumeBtn').classList.remove('hidden');
-    } else {
-      document.getElementById('pauseBtn').classList.remove('hidden');
-      document.getElementById('resumeBtn').classList.add('hidden');
-    }
-    updateHeartbeat(s);
-  } else {
-    document.getElementById('idleActions').classList.remove('hidden');
-    document.getElementById('activeActions').classList.add('hidden');
-    document.getElementById('timerDisplay').innerText = '--s';
-    document.getElementById('timerBarFill').style.width = '0%';
-    document.getElementById('status-dot').className = "dot-idle";
-    document.getElementById('engine-mode-tag').innerText = "ENGINE: OFFLINE";
-  }
-  
-  if (s.logs) document.getElementById('missionLog').innerHTML = s.logs.map(l => `<div class="log-entry">${l}</div>`).join('');
 }
 
-function updateHeartbeat(s) {
-  const wave = document.getElementById('wave-path');
-  const tag = document.getElementById('engine-mode-tag');
-  const time = Date.now() / 200;
-  if (s.isPaused) {
-    tag.innerText = "ENGINE: PAUSED";
-    wave.setAttribute('d', "M 0 30 Q 100 30 200 30 T 400 30");
-    return;
-  }
-  if (s.timeLeft <= 5 && s.isTypingStarted) {
-    tag.innerText = "ENGINE: FORMULATING";
-    const d = s.heartbeatSkin === "pulse" 
-      ? `M 0 30 Q 10 ${30 + Math.sin(time) * 20} 20 30 T 40 30 T 60 30 T 80 30 T 100 30 T 400 30`
-      : `M 0 30 L 40 30 L 50 10 L 60 50 L 70 30 L 400 30`;
-    wave.setAttribute('d', d);
-  } else {
-    tag.innerText = "ENGINE: STEADY";
-    const d = `M 0 30 Q 50 ${30 + Math.sin(time) * 10} 100 30 T 200 30 T 300 30 T 400 30`;
-    wave.setAttribute('d', d);
-  }
-}
-
-const send = (data) => {
-  if (chrome.runtime?.id) chrome.runtime.sendMessage({ action: "UPDATE_STATE", data });
-};
-
-document.getElementById('accentPicker').oninput = (e) => send({ accentColor: e.target.value });
-document.getElementById('skinSelector').onchange = (e) => send({ heartbeatSkin: e.target.value });
-document.getElementById('customCountInput').onchange = (e) => send({ totalSearches: parseInt(e.target.value) });
-document.getElementById('minWait').oninput = (e) => send({ minWait: parseInt(e.target.value) });
-document.getElementById('maxWait').oninput = (e) => send({ maxWait: parseInt(e.target.value) });
-document.getElementById('jitterFreq').oninput = (e) => send({ jitterFreq: parseInt(e.target.value) });
-document.getElementById('mobileToggle').onchange = (e) => send({ isMobile: e.target.checked });
-document.getElementById('hudToggle').onchange = (e) => send({ isStealth: e.target.checked });
+const send = (data) => chrome.runtime.sendMessage({ action: "UPDATE_STATE", data });
 
 document.getElementById('startBtn').onclick = () => chrome.runtime.sendMessage({ action: "START" });
 document.getElementById('stopBtn').onclick = () => chrome.runtime.sendMessage({ action: "STOP" });
@@ -107,15 +110,20 @@ document.getElementById('resumeBtn').onclick = () => chrome.runtime.sendMessage(
 document.getElementById('openSettingsBtn').onclick = () => document.getElementById('settingsPage').classList.remove('hidden');
 document.getElementById('backBtn').onclick = () => document.getElementById('settingsPage').classList.add('hidden');
 
-document.addEventListener('DOMContentLoaded', function() {
-  const q = quoteBank[Math.floor(Math.random() * quoteBank.length)];
-  const display = document.getElementById('quoteDisplay');
-  if (display) display.innerText = `"${q}"`;
-  if (chrome.runtime?.id) {
-    chrome.runtime.sendMessage({ action: "GET_STATE" }, function(response) {
-      if (chrome.runtime.lastError) return;
-      if (response) updateUI(response);
-    });
-  }
+document.getElementById('mobileToggle').onchange = (e) => send({ isMobile: e.target.checked });
+document.getElementById('hudToggle').onchange = (e) => send({ isStealth: e.target.checked });
+document.getElementById('minWait').oninput = (e) => send({ minWait: parseInt(e.target.value) });
+document.getElementById('maxWait').oninput = (e) => send({ maxWait: parseInt(e.target.value) });
+document.getElementById('jitterFreq').oninput = (e) => send({ jitterFreq: parseInt(e.target.value) });
+document.getElementById('customCountInput').onchange = (e) => send({ totalSearches: parseInt(e.target.value) });
+document.getElementById('accentPicker').oninput = (e) => send({ accentColor: e.target.value });
+document.getElementById('skinSelector').onchange = (e) => send({ heartbeatSkin: e.target.value });
+
+chrome.runtime.onMessage.addListener(m => { if (m.type === "SYNC") updateUI(m.state); });
+document.addEventListener('DOMContentLoaded', () => {
+  const quote = document.getElementById('quoteDisplay');
+  if (quote) quote.innerText = `"${quoteBank[Math.floor(Math.random() * quoteBank.length)]}"`;
+  chrome.runtime.sendMessage({ action: "GET_STATE" }, updateUI);
+  requestAnimationFrame(animationLoop);
 });
-chrome.runtime.onMessage.addListener(function(m) { if (m.type === "SYNC") updateUI(m.state); });
+setInterval(() => { chrome.runtime.sendMessage({ action: "GET_STATE" }, updateUI); }, 150);
