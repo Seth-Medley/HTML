@@ -1,6 +1,5 @@
 /**
- * Rewards Pro: Elite v4.4.0 - Popup Controller
- * ENGINE: Hospital EKG Logic with 60fps Sweep Animation.
+ * Rewards Pro: Elite v4.4.4 - Popup Controller
  */
 
 const quoteBank = [
@@ -19,42 +18,32 @@ function formatTime(s) {
   return [h, m, sec].map(v => v < 10 ? "0" + v : v).join(":");
 }
 
-/**
- * EKG WAVEFORM CALCULATOR
- * Generates hospital-style spikes (P-QRS-T complex)
- */
 function getEKGHeight(x) {
-  const p = x % 100; // Heartbeat pattern repeats every 100px
-  if (p > 10 && p < 20) return 30 - Math.sin((p-10)/10 * Math.PI) * 3; // P wave
-  if (p >= 20 && p < 23) return 30 + (p-20) * 5; // Q
-  if (p >= 23 && p < 27) return 40 - (p-23) * 17; // R (Major Spike)
-  if (p >= 27 && p < 30) return -10 + (p-27) * 13; // S
-  if (p > 35 && p < 50) return 30 - Math.sin((p-35)/15 * Math.PI) * 4; // T wave
-  return 30; // Isoelectric baseline
+  const p = x % 100;
+  if (p > 10 && p < 20) return 30 - Math.sin((p-10)/10 * Math.PI) * 3;
+  if (p >= 20 && p < 23) return 30 + (p-20) * 5;
+  if (p >= 23 && p < 27) return 40 - (p-23) * 17;
+  if (p >= 27 && p < 30) return -10 + (p-27) * 13;
+  if (p > 35 && p < 50) return 30 - Math.sin((p-35)/15 * Math.PI) * 4;
+  return 30;
 }
 
-/**
- * HIGH-PERFORMANCE RENDERER
- */
 function animationLoop() {
   if (globalState && globalState.isRunning && !globalState.isPaused) {
     const path = document.getElementById('wave-path');
     const tag = document.getElementById('engine-mode-tag');
     
-    tag.innerText = "ENGINE: ACTIVE";
+    if (globalState.timeLeft > 120) tag.innerText = "ENGINE: DEEP SLEEP";
+    else tag.innerText = "ENGINE: ACTIVE";
 
     if (globalState.heartbeatSkin === 'pulse') {
-      // Neon Pulse: Rolling smooth sine wave
       const t = performance.now() / 150;
       const y = 30 + Math.sin(t) * 12;
       path.setAttribute('d', `M 0 30 Q 50 ${y} 100 30 T 200 30 T 300 30 T 400 30`);
     } else {
-      // Hospital Oscilloscope: Moving sweep-line blip
       const sweepX = (performance.now() / 5) % 400; 
       let d = "M 0 30";
-      for (let i = 0; i < sweepX; i += 2) {
-        d += ` L ${i} ${getEKGHeight(i)}`;
-      }
+      for (let i = 0; i < sweepX; i += 2) { d += ` L ${i} ${getEKGHeight(i)}`; }
       path.setAttribute('d', d);
     }
   } else if (globalState) {
@@ -79,7 +68,13 @@ function updateUI(s) {
 
   document.getElementById('sessionProgress').innerText = `${s.currentSearch}/${s.totalSearches}`;
   document.getElementById('searchProgressBar').style.width = `${(s.currentSearch / s.totalSearches) * 100}%`;
-  document.getElementById('timerDisplay').innerText = s.isRunning ? s.timeLeft + 's' : '--s';
+  
+  if (s.isRunning && s.timeLeft > 120) {
+    document.getElementById('timerDisplay').innerText = Math.floor(s.timeLeft / 60) + 'm';
+  } else {
+    document.getElementById('timerDisplay').innerText = s.isRunning ? s.timeLeft + 's' : '--s';
+  }
+
   const progress = s.totalWait > 0 ? ((s.totalWait - s.timeLeft) / s.totalWait) * 100 : 0;
   document.getElementById('timerBarFill').style.width = s.isRunning ? `${progress}%` : '0%';
 
@@ -88,17 +83,29 @@ function updateUI(s) {
   document.getElementById('pauseBtn').classList.toggle('hidden', s.isPaused);
   document.getElementById('resumeBtn').classList.toggle('hidden', !s.isPaused);
 
-  document.getElementById('mobileToggle').checked = s.isMobile;
-  document.getElementById('hudToggle').checked = s.isStealth;
-  document.getElementById('customCountInput').value = s.totalSearches;
-  document.getElementById('minWait').value = s.minWait;
+  // Sync Logic with focus-validation
+  const syncField = (id, val, isProp = false) => {
+    const el = document.getElementById(id);
+    if (el && document.activeElement !== el) {
+      if (isProp) el.checked = val;
+      else el.value = val;
+    }
+  };
+
+  syncField('mobileToggle', s.isMobile, true);
+  syncField('hudToggle', s.isStealth, true);
+  syncField('cooldownToggle', s.isCooldownMode, true);
+  syncField('awakeToggle', s.isKeepAwake, true);
+  syncField('customCountInput', s.totalSearches);
+  syncField('minWait', s.minWait);
+  syncField('maxWait', s.maxWait);
+  syncField('jitterFreq', s.jitterFreq);
+  syncField('accentPicker', s.accentColor);
+  syncField('skinSelector', s.heartbeatSkin);
+
   document.getElementById('minVal').innerText = s.minWait + 's';
-  document.getElementById('maxWait').value = s.maxWait;
   document.getElementById('maxVal').innerText = s.maxWait + 's';
-  document.getElementById('jitterFreq').value = s.jitterFreq;
   document.getElementById('jitVal').innerText = s.jitterFreq + 's';
-  document.getElementById('accentPicker').value = s.accentColor;
-  document.getElementById('skinSelector').value = s.heartbeatSkin;
 }
 
 const send = (data) => chrome.runtime.sendMessage({ action: "UPDATE_STATE", data });
@@ -112,10 +119,15 @@ document.getElementById('backBtn').onclick = () => document.getElementById('sett
 
 document.getElementById('mobileToggle').onchange = (e) => send({ isMobile: e.target.checked });
 document.getElementById('hudToggle').onchange = (e) => send({ isStealth: e.target.checked });
+document.getElementById('cooldownToggle').onchange = (e) => send({ isCooldownMode: e.target.checked });
+document.getElementById('awakeToggle').onchange = (e) => send({ isKeepAwake: e.target.checked });
 document.getElementById('minWait').oninput = (e) => send({ minWait: parseInt(e.target.value) });
 document.getElementById('maxWait').oninput = (e) => send({ maxWait: parseInt(e.target.value) });
 document.getElementById('jitterFreq').oninput = (e) => send({ jitterFreq: parseInt(e.target.value) });
-document.getElementById('customCountInput').onchange = (e) => send({ totalSearches: parseInt(e.target.value) });
+document.getElementById('customCountInput').oninput = (e) => {
+    const val = parseInt(e.target.value);
+    if (!isNaN(val)) send({ totalSearches: val });
+};
 document.getElementById('accentPicker').oninput = (e) => send({ accentColor: e.target.value });
 document.getElementById('skinSelector').onchange = (e) => send({ heartbeatSkin: e.target.value });
 

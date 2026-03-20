@@ -19,10 +19,10 @@
         <div class="card info-card">
           <label>Manual & Specs</label>
           <ul class="settings-guide">
-            <li><strong>Delay:</strong> Cooldown range between search cycles.</li>
-            <li><strong>Jitter:</strong> Frequency of behavioral micro-scrolls.</li>
-            <li><strong>Mobile:</strong> Spoofs iOS device for mobile rewards.</li>
-            <li><strong>Stealth:</strong> Hides the on-page HUD overlay.</li>
+            <li><strong>Delay:</strong> Range between search actions.</li>
+            <li><strong>Jitter:</strong> Frequency of micro-scrolls.</li>
+            <li><strong>Mobile:</strong> Spoofs iOS User-Agent.</li>
+            <li><strong>Awake:</strong> Prevents computer sleep during missions.</li>
           </ul>
         </div>
 
@@ -54,7 +54,15 @@
             <span>Stealth HUD</span>
             <label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label>
           </div>
-          <div class="input-group">
+          <div class="toggle-row">
+            <span>Cooldown Evasion</span>
+            <label class="switch"><input type="checkbox" id="cooldownToggle"><span class="slider round"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Stay Awake (Anti-Sleep)</span>
+            <label class="switch"><input type="checkbox" id="awakeToggle"><span class="slider round"></span></label>
+          </div>
+          <div class="input-group" style="margin-top:10px;">
             <span>Search Goal</span>
             <input type="number" id="customCountInput" value="30">
           </div>
