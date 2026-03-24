@@ -6,131 +6,160 @@
   <link rel="stylesheet" href="CSS/popup.css">
 </head>
 <body>
-  <div class="dashboard">
-    <div id="settingsPage" class="settings-overlay hidden">
-      <div class="overlay-header"><h2>ENGINE ROOM</h2></div>
-      
-      <div class="settings-scroll-area">
-        <div class="card log-card">
+  <div id="debriefPage" class="settings-overlay hidden">
+    <div class="overlay-header"><h2>MISSION DEBRIEF</h2></div>
+    <div class="debrief-content">
+      <div class="card debrief-card">
+        <label>Final Telemetry</label>
+        <div class="debrief-stat"><span>Status:</span> <span class="val-success">SUCCESSFUL</span></div>
+        <div class="debrief-stat"><span>Total Runtime:</span> <span id="debriefRuntime">--:--:--</span></div>
+        <div class="debrief-stat"><span>Action Count:</span> <span id="debriefCount">0/30</span></div>
+        <p class="debrief-note">The mission has been secured. Hardware is now entering standby mode.</p>
+      </div>
+    </div>
+    <div class="overlay-footer">
+      <button id="dismissDebriefBtn" class="btn-primary full-width">DISMISS REPORT</button>
+    </div>
+  </div>
+
+  <div id="settingsPage" class="settings-overlay hidden">
+    <div class="overlay-header"><h2>ENGINE ROOM</h2></div>
+    
+    <div class="settings-scroll-area">
+      <div class="card log-card">
+        <div class="log-header">
           <label>Mission Log</label>
-          <div id="missionLog" class="log-container"><div class="log-entry">Waiting...</div></div>
+          <button id="fontToggle" class="elite-mini-toggle">TERMINAL FONT</button>
         </div>
-
-        <div class="card info-card">
-          <label>Manual & Specs</label>
-          <ul class="settings-guide">
-            <li><strong>Delay:</strong> Range between search actions.</li>
-            <li><strong>Jitter:</strong> Frequency of micro-scrolls.</li>
-            <li><strong>Mobile:</strong> Spoofs iOS User-Agent.</li>
-            <li><strong>Awake:</strong> Prevents computer sleep during missions.</li>
-          </ul>
+        <div id="missionLog" class="log-container">
+          <div class="log-entry">Stabilizing telemetry heartbeat...</div>
         </div>
+      </div>
 
-        <div class="card settings range-card">
-          <label>Delay & Jitter Range</label>
-          <div class="range-grid">
-            <div class="range-item">
-              <div class="range-info"><span>Min Delay</span><span id="minVal" class="val-badge">20s</span></div>
-              <input type="range" id="minWait" min="15" max="40" value="20">
+      <div class="card info-card">
+        <label>Manual & Specs</label>
+        <ul class="settings-guide">
+          <li><strong>Delay:</strong> Seconds between individual search actions.</li>
+          <li><strong>Batching:</strong> Automated 2-3 sequence bursts.</li>
+          <li><strong>Diagnostic:</strong> A 1-search calibration to verify HUD/Logic.</li>
+          <li><strong>Stay Awake:</strong> Overrides OS sleep timers during search.</li>
+        </ul>
+      </div>
+
+      <div class="card settings range-card">
+        <label>Delay & Jitter Range</label>
+        <div class="range-grid">
+          <div class="range-item">
+            <div class="range-info"><span>Min Delay</span><span id="minVal" class="val-badge">20s</span></div>
+            <input type="range" id="minWait" min="15" max="40" value="20">
+          </div>
+          <div class="range-item">
+            <div class="range-info"><span>Max Delay</span><span id="maxVal" class="val-badge">45s</span></div>
+            <input type="range" id="maxWait" min="41" max="120" value="45">
+          </div>
+          <div class="range-item">
+            <div class="range-info"><span>Jitter Freq</span><span id="jitVal" class="val-badge">7s</span></div>
+            <input type="range" id="jitterFreq" min="5" max="30" value="7">
+          </div>
+        </div>
+      </div>
+
+      <div class="card settings">
+        <label>Mission Controls</label>
+        <div class="toggle-row"><span>Mobile Mode</span><label class="switch"><input type="checkbox" id="mobileToggle"><span class="slider round"></span></label></div>
+        <div class="toggle-row"><span>Stealth HUD</span><label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label></div>
+        <div class="toggle-row"><span>Cooldown Evasion</span><label class="switch"><input type="checkbox" id="cooldownToggle"><span class="slider round"></span></label></div>
+        <div class="toggle-row"><span>Stay Awake</span><label class="switch"><input type="checkbox" id="awakeToggle"><span class="slider round"></span></label></div>
+        <div class="input-group-row"><span>Search Goal</span><input type="number" id="customCountInput" class="premium-input" value="30"></div>
+      </div>
+
+      <div class="card settings">
+        <label>HUD Alignment</label>
+        <div class="pos-grid">
+          <button class="pos-btn" data-pos="top-left">TL</button>
+          <button class="pos-btn" data-pos="top-right">TR</button>
+          <button class="pos-btn" data-pos="bottom-left">BL</button>
+          <button class="pos-btn" data-pos="bottom-right">BR</button>
+        </div>
+      </div>
+
+      <div class="card settings range-card">
+        <label>Ghost Personalization</label>
+        <div class="range-grid">
+          <div class="range-item"><div class="range-info"><span>HUD Opacity</span><span id="opacVal" class="val-badge">100%</span></div><input type="range" id="opacitySlider" min="20" max="100" value="100"></div>
+          <div class="range-item"><div class="range-info"><span>HUD Blur</span><span id="blurVal" class="val-badge">10px</span></div><input type="range" id="blurSlider" min="0" max="20" value="10"></div>
+          <div class="range-item"><div class="range-info"><span>Neon Glow</span><span id="glowVal" class="val-badge">5px</span></div><input type="range" id="glowSlider" min="0" max="15" value="5"></div>
+          <div class="range-item"><div class="range-info"><span>Corner Radius</span><span id="radVal" class="val-badge">10px</span></div><input type="range" id="radiusSlider" min="0" max="25" value="10"></div>
+          <div class="range-item"><div class="range-info"><span>HUD Scale</span><span id="scaleVal" class="val-badge">1.0x</span></div><input type="range" id="scaleSlider" min="70" max="130" value="100"></div>
+          <div class="range-item"><div class="range-info"><span>Wave Amp</span><span id="ampVal" class="val-badge">15</span></div><input type="range" id="ampSlider" min="5" max="30" value="15"></div>
+          <div class="range-item"><div class="range-info"><span>Anim Speed</span><span id="speedVal" class="val-badge">100%</span></div><input type="range" id="speedSlider" min="50" max="200" value="100"></div>
+          <div class="range-item"><div class="range-info"><span>Glitch Freq</span><span id="glitchValBadge" class="val-badge">5</span></div><input type="range" id="glitchSlider" min="1" max="20" value="5"></div>
+        </div>
+        <div class="toggle-row" style="margin-top:20px"><span>Digital Scanlines</span><label class="switch"><input type="checkbox" id="scanlineToggle"><span class="slider round"></span></label></div>
+        <div class="input-group-row"><span>Accent Color</span><input type="color" id="accentPicker" class="premium-color"></div>
+        <div class="input-group-row"><span>Heartbeat Skin</span>
+          <select id="skinSelector" class="premium-select">
+            <option value="pulse">Neon Pulse</option>
+            <option value="osc">Oscilloscope</option>
+            <option value="glitch">Glitch Signal</option>
+            <option value="breath">Steady Breath</option>
+            <option value="sine">Sine Wave</option>
+            <option value="dna">DNA Helix</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="system-maintenance-footer">
+        <label>System Maintenance</label>
+        <button id="runDiagnosticBtn" class="btn-maintenance btn-outline-primary full-width">RUN HARDWARE DIAGNOSTIC</button>
+        <button id="resetLogsBtn" class="btn-maintenance btn-outline-danger full-width">FACTORY RESET TELEMETRY</button>
+      </div>
+    </div>
+    
+    <div class="overlay-footer">
+      <button id="backBtn" class="btn-parity-anchor btn-outline full-width">CLOSE ENGINE ROOM</button>
+    </div>
+  </div>
+
+  <div id="mainDashboard" class="dashboard">
+    <div class="dashboard-scroll-area">
+      <header>
+        <h1>REWARDS<span>PRO</span></h1>
+        <div class="header-right">
+          <div id="status-dot" class="dot-idle"></div>
+          <span id="runtimeDisplay">00:00:00</span>
+        </div>
+      </header>
+
+      <div class="card quote-card"><label>Daily Pulse</label><div id="quoteDisplay" class="quote-text">Hardware sync active.</div></div>
+
+      <div id="heartbeat-container" class="card heartbeat-extender">
+        <svg id="heartbeat-wave" viewBox="0 0 400 60" preserveAspectRatio="none">
+          <g id="dna-bars" opacity="0.4"></g>
+          <path id="wave-path" d="M 0 30 Q 100 30 200 30 T 400 30" fill="none" stroke="#58a6ff" stroke-width="2" />
+        </svg>
+        <div id="engine-mode-tag">ENGINE: OFFLINE</div>
+      </div>
+
+      <div class="card"><label>Mission Progress</label><div id="sessionProgress" class="card-large-text">0/30</div><div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div></div>
+
+      <div class="card"><label>Next Action In</label><div id="timerDisplay" class="card-large-text">--s</div><div class="timer-bar-bg"><div id="timerBarFill" class="timer-fill"></div></div></div>
+
+      <div class="action-section">
+        <div id="idleActions"><button id="startBtn" class="btn-primary">START MISSION</button></div>
+        <div id="activeActions" class="hidden">
+          <div class="button-grid">
+            <button id="stopBtn" class="btn-danger">STOP</button>
+            <div class="swap-slot">
+              <button id="pauseBtn" class="btn-secondary">PAUSE</button>
+              <button id="resumeBtn" class="btn-secondary hidden">RESUME</button>
             </div>
-            <div class="range-item">
-              <div class="range-info"><span>Max Delay</span><span id="maxVal" class="val-badge">45s</span></div>
-              <input type="range" id="maxWait" min="41" max="120" value="45">
-            </div>
-            <div class="range-item">
-              <div class="range-info"><span>Jitter Freq</span><span id="jitVal" class="val-badge">7s</span></div>
-              <input type="range" id="jitterFreq" min="5" max="30" value="7">
-            </div>
-          </div>
-        </div>
-
-        <div class="card settings">
-          <label>Mission Controls</label>
-          <div class="toggle-row">
-            <span>Mobile Mode</span>
-            <label class="switch"><input type="checkbox" id="mobileToggle"><span class="slider round"></span></label>
-          </div>
-          <div class="toggle-row">
-            <span>Stealth HUD</span>
-            <label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label>
-          </div>
-          <div class="toggle-row">
-            <span>Cooldown Evasion</span>
-            <label class="switch"><input type="checkbox" id="cooldownToggle"><span class="slider round"></span></label>
-          </div>
-          <div class="toggle-row">
-            <span>Stay Awake (Anti-Sleep)</span>
-            <label class="switch"><input type="checkbox" id="awakeToggle"><span class="slider round"></span></label>
-          </div>
-          <div class="input-group" style="margin-top:10px;">
-            <span>Search Goal</span>
-            <input type="number" id="customCountInput" value="30">
-          </div>
-        </div>
-
-        <div class="card settings">
-          <label>Ghost Personalization</label>
-          <div class="input-group">
-            <span>Accent Color</span>
-            <input type="color" id="accentPicker" value="#58a6ff">
-          </div>
-          <div class="input-group">
-            <span>Heartbeat Skin</span>
-            <select id="skinSelector">
-              <option value="pulse">Neon Pulse</option>
-              <option value="osc">Oscilloscope</option>
-            </select>
           </div>
         </div>
       </div>
-      <button id="backBtn" class="btn-outline full-width">CLOSE ENGINE ROOM</button>
     </div>
-
-    <header>
-      <h1>REWARDS<span>PRO</span></h1>
-      <div class="header-right">
-        <div id="status-dot" class="dot-idle"></div>
-        <span id="runtimeDisplay">00:00:00</span>
-      </div>
-    </header>
-
-    <div class="card quote-card">
-      <label>Daily Pulse</label>
-      <div id="quoteDisplay" class="quote-text">Initializing inspiration engine...</div>
-    </div>
-
-    <div id="heartbeat-container" class="card heartbeat-extender">
-      <svg id="heartbeat-wave" viewBox="0 0 400 60" preserveAspectRatio="none">
-        <path id="wave-path" d="M 0 30 Q 100 30 200 30 T 400 30" fill="none" stroke-width="2" />
-      </svg>
-      <div id="engine-mode-tag">ENGINE: OFFLINE</div>
-    </div>
-
-    <div class="card">
-      <div class="progress-info"><label>Mission Progress</label><span id="sessionProgress">0/30</span></div>
-      <div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div>
-    </div>
-
-    <div class="card timer-card">
-      <label>Next Action In</label>
-      <div id="timerDisplay">--s</div>
-      <div class="timer-bar-bg"><div id="timerBarFill" class="timer-fill"></div></div>
-    </div>
-
-    <div class="action-section">
-      <div id="idleActions">
-        <button id="startBtn" class="btn-primary full-width">START MISSION</button>
-      </div>
-      <div id="activeActions" class="hidden">
-        <div class="button-grid">
-          <button id="stopBtn" class="btn-danger">STOP</button>
-          <div class="state-controls">
-            <button id="pauseBtn" class="btn-secondary">PAUSE</button>
-            <button id="resumeBtn" class="btn-secondary hidden">RESUME</button>
-          </div>
-        </div>
-      </div>
-      <button id="openSettingsBtn" class="btn-outline full-width">ENGINE ROOM</button>
+    <div class="dashboard-footer">
+      <button id="openSettingsBtn" class="btn-parity-anchor btn-outline full-width">ENGINE ROOM</button>
     </div>
   </div>
   <script src="JS/popup.js"></script>

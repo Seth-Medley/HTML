@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Rewards Pro: Elite",
-  "version": "4.4.4",
-  "description": "Ghost Engine: Advanced search automation with variable batching, system wake-lock, and liquid-smooth biometric UI.",
+  "version": "4.9.20",
+  "description": "Premium search suite. Mirrored footer architecture, maintenance protocols, and expanded Elite spatial design.",
   "permissions": [
     "tabs",
     "storage",
@@ -26,11 +26,8 @@
   "content_scripts": [
     {
       "matches": ["https://www.bing.com/*"],
-      "js": ["JS/content.js"],
-      "css": ["CSS/hud.css"]
+      "js": ["JS/content.js"]
     }
   ],
-  "host_permissions": [
-    "https://www.bing.com/*"
-  ]
+  "host_permissions": ["https://www.bing.com/*"]
 }
