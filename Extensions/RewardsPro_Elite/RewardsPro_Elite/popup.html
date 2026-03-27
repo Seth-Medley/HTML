@@ -37,29 +37,61 @@
       </div>
 
       <div class="card info-card">
-        <label>Manual & Specs</label>
+        <label>Operator's Manual</label>
         <ul class="settings-guide">
-          <li><strong>Delay:</strong> Seconds between individual search actions.</li>
-          <li><strong>Batching:</strong> Automated 2-3 sequence bursts.</li>
-          <li><strong>Diagnostic:</strong> A 1-search calibration to verify HUD/Logic.</li>
-          <li><strong>Stay Awake:</strong> Overrides OS sleep timers during search.</li>
+          <li><strong>Wait Time:</strong> How long the tool stays quiet between searches.</li>
+          <li><strong>Wiggle Rate:</strong> Moving the mouse so it looks like a real person is there.</li>
+          <li><strong>Phone Mode:</strong> Makes the internet think you are using a phone.</li>
+          <li><strong>Hide HUD:</strong> Turns off the little info box on your screen.</li>
+          <li><strong>Nap Time:</strong> Taking a 1-minute break so we stay safe.</li>
+          <li><strong>Stay Awake:</strong> Keeps your computer from falling asleep.</li>
+          <li><strong>Auto-Start:</strong> Picking a specific time for the tool to start on its own.</li>
+          <li><strong>Color Theme:</strong> Changing the look to Light or Dark mode.</li>
+          <li><strong>Box Setup:</strong> Changing how the info box looks and where it sits.</li>
+          <li><strong>Test Tool:</strong> A quick 1-search test to make sure everything works.</li>
         </ul>
+      </div>
+
+      <div class="card settings">
+        <label>HUD Alignment</label>
+        <div class="pos-grid">
+          <button class="pos-btn" data-pos="top-left">TOP LEFT</button>
+          <button class="pos-btn" data-pos="top-right">TOP RIGHT</button>
+          <button class="pos-btn" data-pos="bottom-left">BOTTOM LEFT</button>
+          <button class="pos-btn" data-pos="bottom-right">BOTTOM RIGHT</button>
+        </div>
+      </div>
+
+      <div class="card settings">
+        <label>Chronos Scheduling</label>
+        <div class="toggle-row">
+          <span>Scheduled Start</span>
+          <label class="switch"><input type="checkbox" id="scheduleToggle"><span class="slider round"></span></label>
+        </div>
+        <div class="input-group-row">
+          <span>Launch Time</span>
+          <input type="time" id="scheduleTime" class="premium-input">
+        </div>
+        <button id="saveScheduleBtn" class="btn-compact btn-outline-primary btn-center">SAVE LAUNCH TIME</button>
       </div>
 
       <div class="card settings range-card">
         <label>Delay & Jitter Range</label>
         <div class="range-grid">
           <div class="range-item">
-            <div class="range-info"><span>Min Delay</span><span id="minVal" class="val-badge">20s</span></div>
+            <label>Min Delay</label>
             <input type="range" id="minWait" min="15" max="40" value="20">
+            <span id="minVal" class="val-badge">20s</span>
           </div>
           <div class="range-item">
-            <div class="range-info"><span>Max Delay</span><span id="maxVal" class="val-badge">45s</span></div>
+            <label>Max Delay</label>
             <input type="range" id="maxWait" min="41" max="120" value="45">
+            <span id="maxVal" class="val-badge">45s</span>
           </div>
           <div class="range-item">
-            <div class="range-info"><span>Jitter Freq</span><span id="jitVal" class="val-badge">7s</span></div>
+            <label>Jitter Freq</label>
             <input type="range" id="jitterFreq" min="5" max="30" value="7">
+            <span id="jitVal" class="val-badge">7s</span>
           </div>
         </div>
       </div>
@@ -67,36 +99,27 @@
       <div class="card settings">
         <label>Mission Controls</label>
         <div class="toggle-row"><span>Mobile Mode</span><label class="switch"><input type="checkbox" id="mobileToggle"><span class="slider round"></span></label></div>
-        <div class="toggle-row"><span>Stealth HUD</span><label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label></div>
+        <div class="toggle-row"><span>Hide HUD</span><label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label></div>
         <div class="toggle-row"><span>Cooldown Evasion</span><label class="switch"><input type="checkbox" id="cooldownToggle"><span class="slider round"></span></label></div>
         <div class="toggle-row"><span>Stay Awake</span><label class="switch"><input type="checkbox" id="awakeToggle"><span class="slider round"></span></label></div>
         <div class="input-group-row"><span>Search Goal</span><input type="number" id="customCountInput" class="premium-input" value="30"></div>
       </div>
 
-      <div class="card settings">
-        <label>HUD Alignment</label>
-        <div class="pos-grid">
-          <button class="pos-btn" data-pos="top-left">TL</button>
-          <button class="pos-btn" data-pos="top-right">TR</button>
-          <button class="pos-btn" data-pos="bottom-left">BL</button>
-          <button class="pos-btn" data-pos="bottom-right">BR</button>
-        </div>
-      </div>
-
-      <div class="card settings range-card">
+      <div class="card settings ghost-card">
         <label>Ghost Personalization</label>
-        <div class="range-grid">
-          <div class="range-item"><div class="range-info"><span>HUD Opacity</span><span id="opacVal" class="val-badge">100%</span></div><input type="range" id="opacitySlider" min="20" max="100" value="100"></div>
-          <div class="range-item"><div class="range-info"><span>HUD Blur</span><span id="blurVal" class="val-badge">10px</span></div><input type="range" id="blurSlider" min="0" max="20" value="10"></div>
-          <div class="range-item"><div class="range-info"><span>Neon Glow</span><span id="glowVal" class="val-badge">5px</span></div><input type="range" id="glowSlider" min="0" max="15" value="5"></div>
-          <div class="range-item"><div class="range-info"><span>Corner Radius</span><span id="radVal" class="val-badge">10px</span></div><input type="range" id="radiusSlider" min="0" max="25" value="10"></div>
-          <div class="range-item"><div class="range-info"><span>HUD Scale</span><span id="scaleVal" class="val-badge">1.0x</span></div><input type="range" id="scaleSlider" min="70" max="130" value="100"></div>
-          <div class="range-item"><div class="range-info"><span>Wave Amp</span><span id="ampVal" class="val-badge">15</span></div><input type="range" id="ampSlider" min="5" max="30" value="15"></div>
-          <div class="range-item"><div class="range-info"><span>Anim Speed</span><span id="speedVal" class="val-badge">100%</span></div><input type="range" id="speedSlider" min="50" max="200" value="100"></div>
-          <div class="range-item"><div class="range-info"><span>Glitch Freq</span><span id="glitchValBadge" class="val-badge">5</span></div><input type="range" id="glitchSlider" min="1" max="20" value="5"></div>
-        </div>
-        <div class="toggle-row" style="margin-top:20px"><span>Digital Scanlines</span><label class="switch"><input type="checkbox" id="scanlineToggle"><span class="slider round"></span></label></div>
+        
+        <div class="toggle-row" style="margin-top:15px"><span>Digital Scanlines</span><label class="switch"><input type="checkbox" id="scanlineToggle"><span class="slider round"></span></label></div>
+
         <div class="input-group-row"><span>Accent Color</span><input type="color" id="accentPicker" class="premium-color"></div>
+        
+        <div class="input-group-row"><span>Theme Mode</span>
+          <select id="themeSelector" class="premium-select">
+            <option value="system">Sync System</option>
+            <option value="dark">Forced Dark</option>
+            <option value="light">Forced Light</option>
+          </select>
+        </div>
+
         <div class="input-group-row"><span>Heartbeat Skin</span>
           <select id="skinSelector" class="premium-select">
             <option value="pulse">Neon Pulse</option>
@@ -107,17 +130,62 @@
             <option value="dna">DNA Helix</option>
           </select>
         </div>
+
+        <div class="range-grid-v2">
+          <div class="range-item-v2">
+            <label>HUD Opacity</label>
+            <input type="range" id="opacitySlider" min="20" max="100" value="100">
+            <span id="opacVal" class="val-badge">100%</span>
+          </div>
+          <div class="range-item-v2">
+            <label>HUD Blur</label>
+            <input type="range" id="blurSlider" min="0" max="20" value="10">
+            <span id="blurVal" class="val-badge">10px</span>
+          </div>
+          <div class="range-item-v2">
+            <label>Neon Glow</label>
+            <input type="range" id="glowSlider" min="0" max="15" value="5">
+            <span id="glowVal" class="val-badge">5px</span>
+          </div>
+          <div class="range-item-v2">
+            <label>Corner Rad</label>
+            <input type="range" id="radiusSlider" min="0" max="25" value="10">
+            <span id="radVal" class="val-badge">10px</span>
+          </div>
+          <div class="range-item-v2">
+            <label>HUD Scale</label>
+            <input type="range" id="scaleSlider" min="70" max="130" value="100">
+            <span id="scaleVal" class="val-badge">1.0x</span>
+          </div>
+          <div class="range-item-v2">
+            <label>Wave Amp</label>
+            <input type="range" id="ampSlider" min="5" max="30" value="15">
+            <span id="ampVal" class="val-badge">15</span>
+          </div>
+          <div class="range-item-v2">
+            <label>Anim Speed</label>
+            <input type="range" id="speedSlider" min="50" max="200" value="100">
+            <span id="speedVal" class="val-badge">100%</span>
+          </div>
+          <div class="range-item-v2">
+            <label>Glitch Freq</label>
+            <input type="range" id="glitchSlider" min="1" max="20" value="5">
+            <span id="glitchValBadge" class="val-badge">5</span>
+          </div>
+        </div>
       </div>
 
       <div class="system-maintenance-footer">
         <label>System Maintenance</label>
-        <button id="runDiagnosticBtn" class="btn-maintenance btn-outline-primary full-width">RUN HARDWARE DIAGNOSTIC</button>
-        <button id="resetLogsBtn" class="btn-maintenance btn-outline-danger full-width">FACTORY RESET TELEMETRY</button>
+        <button id="runDiagnosticBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">TEST TOOL</button>
+        <button id="testNotifBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">TEST SYSTEM NOTIFICATION</button>
+        <button id="resetSettingsBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">RESET ALL HARDWARE SETTINGS</button>
+        <button id="resetLogsBtn" class="btn-compact btn-outline-danger btn-center">FACTORY RESET TELEMETRY</button>
       </div>
     </div>
     
     <div class="overlay-footer">
-      <button id="backBtn" class="btn-parity-anchor btn-outline full-width">CLOSE ENGINE ROOM</button>
+      <button id="backBtn" class="btn-outline full-width">CLOSE ENGINE ROOM</button>
     </div>
   </div>
 
@@ -141,9 +209,17 @@
         <div id="engine-mode-tag">ENGINE: OFFLINE</div>
       </div>
 
-      <div class="card"><label>Mission Progress</label><div id="sessionProgress" class="card-large-text">0/30</div><div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div></div>
+      <div class="card">
+        <label>Mission Progress</label>
+        <div id="sessionProgress" class="card-large-text">0/30</div>
+        <div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div>
+      </div>
 
-      <div class="card"><label>Next Action In</label><div id="timerDisplay" class="card-large-text">--s</div><div class="timer-bar-bg"><div id="timerBarFill" class="timer-fill"></div></div></div>
+      <div class="card">
+        <label>Next Action In</label>
+        <div id="timerDisplay" class="card-large-text">--s</div>
+        <div class="timer-bar-bg"><div id="timerBarFill" class="timer-fill"></div></div>
+      </div>
 
       <div class="action-section">
         <div id="idleActions"><button id="startBtn" class="btn-primary">START MISSION</button></div>
@@ -159,7 +235,7 @@
       </div>
     </div>
     <div class="dashboard-footer">
-      <button id="openSettingsBtn" class="btn-parity-anchor btn-outline full-width">ENGINE ROOM</button>
+      <button id="openSettingsBtn" class="btn-outline full-width">ENGINE ROOM</button>
     </div>
   </div>
   <script src="JS/popup.js"></script>

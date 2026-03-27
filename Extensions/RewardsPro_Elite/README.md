@@ -1,35 +1,35 @@
-# Rewards Pro: Elite
+# Rewards Pro: Elite v5.0.4 (Build AG)
 
-Rewards Pro: Elite is a premium search automation extension designed for privacy, efficiency, and aesthetics. It uses advanced behavioral simulation to model human search patterns and provides a high-tech dashboard interface.
+**Rewards Pro: Elite** is an autonomous search appliance designed for high-integrity telemetry synchronization. It utilizes advanced simulation logic, a CSP-compliant execution engine, and a ghost-themed personalization suite to provide a seamless, human-like automated experience.
 
-## Core Features
+## 🚀 Core Systems
 
-- **Ghost Engine:** Advanced Next-Point Automation (NPA) with behavioral jitter.
-- **Mobile Spoofing:** Integrated iOS User-Agent spoofing via declarativeNetRequest.
-- **Biometric UI:** Liquid-smooth animations including a realistic hospital EKG oscilloscope.
-- **Theme Affinity:** Natural language search generation across Astronomy, Technology, Nature, and Arts.
-- **Stealth HUD:** Minimalistic on-page overlay for tracking mission progress in real-time.
+* **Chronos Scheduling:** Precision launch control allowing for automated mission starts at user-defined intervals.
+* **Ghost Personalization:** A deep-level UI customization suite including HUD opacity, backdrop blur, neon glow calibration, and digital scanline overlays.
+* **Hardened Notification Engine:** A bulletproof system signal architecture using Base64 Data-URI protocols to bypass filesystem restrictions and OS-level blocks.
+* **Mission Telemetry Log:** A real-time terminal-style buffer documenting every action, sync, and system engagement.
+* **Stealth Interlock:** Automatic HUD detachment and window management to maintain low-profile operations on active tabs.
 
-## v4.4.0 Release Notes
+## 🛠 Technical Specifications
 
-### Performance Improvements
-The rendering engine has been completely rebuilt. By moving away from interval-based updates to `requestAnimationFrame`, the heartbeat animations now run at a liquid-smooth 60fps without impacting browser performance.
+| Component | Technology Stack | Purpose |
+| :--- | :--- | :--- |
+| **Engine** | Chromium Service Worker (V3) | Background orchestration & Alarms |
+| **Interface** | HTML5 / CSS3 / Vanilla JS | Dashboard & Ghost Personalization |
+| **Agent** | Shadow-DOM Injection | HUD rendering & Search simulation |
+| **Security** | CSP-Compliant `requestSubmit` | Bypasses "Unsafe JS Navigation" blocks |
+| **Assets** | Base64 Inline / Web-Accessible | Bulletproof notification delivery |
 
-### UI/UX Refinements
-- **EKG Monitor:** The Oscilloscope skin now behaves like a professional heart monitor, featuring a sweep-line blip rather than a sliding wave.
-- **Header Alignment:** The main dashboard header has been realigned for better visual balance between the status indicator and the mission timer.
-- **Consistent Button Logic:** The "Close Engine Room" button now shares the same visual weight and design logic as the primary dashboard controls.
+## 📥 Installation
 
-### Bug Fixes
-- Resolved a critical issue where animations would "stutter" during heavy background logic cycles.
-- Fixed a layout bug in the settings area where scrollbars were obstructing the range badges.
-- Improved form submission stability to bypass Content Security Policy blocks on mobile search interfaces.
+1.  **Clone the Repository:**
+    ```bash
+    git clone [https://github.com/SethMedley/Rewards-Pro-Elite.git](https://github.com/SethMedley/Rewards-Pro-Elite.git)
+    ```
+2.  **Open Extensions Manager:** Navigate to `brave://extensions` or `chrome://extensions`.
+3.  **Enable Developer Mode:** Toggle the switch in the top-right corner.
+4.  **Load Unpacked:** Click "Load unpacked" and select the root directory of this project.
 
-## Installation
-1. Download or clone the repository.
-2. Open Chrome/Edge and navigate to `extensions`.
-3. Enable **Developer Mode**.
-4. Click **Load Unpacked** and select the extension folder.
+## ⚖️ License
 
----
-*Precision is the soul of efficiency.*
+Distributed under the MIT License. See `LICENSE` for more information.
