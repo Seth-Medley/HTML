@@ -1,390 +1,445 @@
 /**
- * Rewards Pro: Elite v5.0.4 - Master Popup Controller
+ * Rewards Pro: Elite v5.1.21 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD AG: Explicitly Expanded Hardware Listeners and UI Sync.
+ * BUILD BK: Targeted Safety Interlock. Toggles/Inputs lock; Sliders remain active.
  */
 
 let globalHardwareState = null;
 
+const quoteBank = [
+  "Simplicity is the soul of efficiency.",
+  "First, solve the problem. Then, write the code.",
+  "Hardware is easy to protect. Software is a ghost.",
+  "Telemetry is the only truth in a silent mission.",
+  "Precision is the difference between a tool and a toy.",
+  "In code we trust; in telemetry we verify.",
+  "The best error message is the one that never appears."
+];
+
 /**
- * UI SYNC: Global Hardware State Application
- * Updates every specific label, slider, and progress bar individually.
+ * UI SYNC: Master State Application
+ * Every label, slider, and button is explicitly targeted with safety guards.
  */
-function updateUI(state) {
-  if (!state || !chrome.runtime?.id) {
+function updateUI(s) {
+  if (!s || !chrome.runtime?.id) {
     return;
   }
   
-  globalHardwareState = state; 
+  globalHardwareState = s;
 
-  // --- 1. DASHBOARD TELEMETRY ---
+  // --- 1. VIEW MANAGEMENT (DEBRIEF & OVERLAY LOGIC) ---
+  const mainDashboard = document.getElementById('mainDashboard');
+  const settingsPage = document.getElementById('settingsPage');
+  const debriefPage = document.getElementById('debriefPage');
+
+  // Priority Check: If mission is complete but report hasn't been viewed, force Debrief View.
+  if (s.isRunning === true && s.currentSearch >= s.totalSearches && s.isDebriefViewed === false) {
+    if (debriefPage) debriefPage.classList.remove('hidden');
+    if (mainDashboard) mainDashboard.classList.add('hidden');
+    if (settingsPage) settingsPage.classList.add('hidden');
+
+    const dCount = document.getElementById('debriefCount');
+    const dRuntime = document.getElementById('debriefRuntime');
+    
+    if (dCount) {
+      dCount.innerText = s.currentSearch + " / " + s.totalSearches;
+    }
+    
+    if (dRuntime) {
+      const hours = Math.floor(s.runtime / 3600).toString().padStart(2, '0');
+      const minutes = Math.floor((s.runtime % 3600) / 60).toString().padStart(2, '0');
+      const seconds = (s.runtime % 60).toString().padStart(2, '0');
+      dRuntime.innerText = hours + ":" + minutes + ":" + seconds;
+    }
+  } else {
+    if (debriefPage) debriefPage.classList.add('hidden');
+    // Maintain Toggle: Settings vs Dashboard
+    if (settingsPage && settingsPage.classList.contains('hidden')) {
+      if (mainDashboard) mainDashboard.classList.remove('hidden');
+    }
+  }
+
+  // --- 2. MASTER THEME & SLIDER ACCENT APPLICATION ---
+  if (s.accentColor) {
+    document.documentElement.style.setProperty('--accent', s.accentColor);
+    
+    // Natively targets all slider thumbs for real-time accenting
+    const allSliders = document.querySelectorAll('input[type="range"]');
+    for (let i = 0; i < allSliders.length; i++) {
+      allSliders[i].style.accentColor = s.accentColor;
+    }
+  }
+  
+  if (s.themeMode) {
+    const activeTheme = s.themeMode === "system" 
+      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") 
+      : s.themeMode;
+    document.documentElement.setAttribute("data-theme", activeTheme);
+  }
+
+  // --- 3. DASHBOARD METRICS ---
   const sessionProgress = document.getElementById('sessionProgress');
   if (sessionProgress) {
-    sessionProgress.innerText = state.currentSearch + "/" + state.totalSearches;
+    sessionProgress.innerText = s.currentSearch + "/" + s.totalSearches;
   }
 
   const progressBar = document.getElementById('searchProgressBar');
   if (progressBar) {
-    const progressPercentage = (state.currentSearch / state.totalSearches) * 100;
-    progressBar.style.width = progressPercentage + "%";
+    progressBar.style.width = (s.currentSearch / s.totalSearches * 100) + "%";
   }
-
+  
   const runtimeDisplay = document.getElementById('runtimeDisplay');
   if (runtimeDisplay) {
-    const hours = Math.floor(state.runtime / 3600).toString().padStart(2, '0');
-    const minutes = Math.floor((state.runtime % 3600) / 60).toString().padStart(2, '0');
-    const seconds = (state.runtime % 60).toString().padStart(2, '0');
+    const hours = Math.floor(s.runtime / 3600).toString().padStart(2, '0');
+    const minutes = Math.floor((s.runtime % 3600) / 60).toString().padStart(2, '0');
+    const seconds = (s.runtime % 60).toString().padStart(2, '0');
     runtimeDisplay.innerText = hours + ":" + minutes + ":" + seconds;
   }
 
-  // --- 2. ACTION TIMER LOGIC ---
+  // --- 4. NEXT ACTION TIMER ---
   const timerDisplay = document.getElementById('timerDisplay');
-  const timerBar = document.getElementById('timerBarFill');
-  if (state.isRunning && !state.isPaused) {
+  const timerBarFill = document.getElementById('timerBarFill');
+  
+  if (s.isRunning === true && s.currentSearch < s.totalSearches) {
     if (timerDisplay) {
-      timerDisplay.innerText = state.timeLeft + "s";
+      timerDisplay.innerText = s.timeLeft + (s.isPaused ? "s (PAUSED)" : "s");
     }
-    if (timerBar) {
-      const timerPct = (state.totalWait > 0) ? ((state.totalWait - state.timeLeft) / state.totalWait) * 100 : 0;
-      timerBar.style.width = timerPct + "%";
+    if (timerBarFill) {
+      const percentage = (s.totalWait > 0) ? ((s.totalWait - s.timeLeft) / s.totalWait) * 100 : 0;
+      timerBarFill.style.width = percentage + "%";
     }
-  } else { 
+  } else {
     if (timerDisplay) {
       timerDisplay.innerText = "--s";
     }
-    if (timerBar) {
-      timerBar.style.width = "0%";
+    if (timerBarFill) {
+      timerBarFill.style.width = "0%";
     }
   }
 
-  // --- 3. INTERLOCK VISUALS ---
+  // --- 5. LED STATUS SIGNAL ---
+  const statusDot = document.getElementById('status-dot');
+  if (statusDot) {
+    statusDot.className = ''; 
+    if (s.isPaused) {
+      statusDot.classList.add('dot-paused');
+    } else if (s.isRunning) {
+      statusDot.classList.add('dot-active');
+    } else {
+      statusDot.classList.add('dot-idle');
+    }
+  }
+
+  // --- 6. ACTION DECK INTERLOCKS ---
   const idleActions = document.getElementById('idleActions');
   const activeActions = document.getElementById('activeActions');
+  if (idleActions && activeActions) {
+    if (s.isRunning === true && s.currentSearch < s.totalSearches) {
+      idleActions.classList.add('hidden');
+      activeActions.classList.remove('hidden');
+    } else {
+      idleActions.classList.remove('hidden');
+      activeActions.classList.add('hidden');
+    }
+  }
+  
   const pauseBtn = document.getElementById('pauseBtn');
   const resumeBtn = document.getElementById('resumeBtn');
-  
-  if (state.isRunning) {
-    if (idleActions) idleActions.classList.add('hidden');
-    if (activeActions) activeActions.classList.remove('hidden');
-    if (pauseBtn) pauseBtn.classList.toggle('hidden', state.isPaused);
-    if (resumeBtn) resumeBtn.classList.toggle('hidden', !state.isPaused);
-  } else {
-    if (idleActions) idleActions.classList.remove('hidden');
-    if (activeActions) activeActions.classList.add('hidden');
+  if (pauseBtn && resumeBtn) {
+    if (s.isPaused) {
+      pauseBtn.classList.add('hidden');
+      resumeBtn.classList.remove('hidden');
+    } else {
+      pauseBtn.classList.remove('hidden');
+      resumeBtn.classList.add('hidden');
+    }
   }
 
-  // --- 4. ENGINE ROOM: MISSION LOG ---
+  // --- 7. MISSION LOGS & TELEMETRY ---
   const logBox = document.getElementById('missionLog');
-  if (logBox && state.logs) {
-    logBox.innerHTML = state.logs.map(function(log) {
+  if (logBox && s.logs) {
+    logBox.innerHTML = s.logs.map(function(log) {
       return '<div class="log-entry">' + log + '</div>';
     }).join('');
+    
+    if (s.logMono) {
+      logBox.classList.add('log-mono');
+    } else {
+      logBox.classList.remove('log-mono');
+    }
   }
 
-  // --- 5. ENGINE ROOM: MISSION CONTROLS ---
-  document.getElementById('mobileToggle').checked = state.isMobile;
-  document.getElementById('hudToggle').checked = state.isStealth;
-  document.getElementById('cooldownToggle').checked = state.isCooldownMode;
-  document.getElementById('awakeToggle').checked = state.isKeepAwake;
-  
-  const customCount = document.getElementById('customCountInput');
-  if (customCount) {
-    customCount.value = state.totalSearches;
-    customCount.disabled = state.isRunning;
+  // --- 8. HARDWARE SAFETY INTERLOCK (TARGETED LOCK) ---
+  const isMissionLocked = s.isRunning === true && s.currentSearch < s.totalSearches;
+
+  // 8.1. RANGE SLIDERS: REMAIN FULLY ACTIVE
+  const sliderConfigs = [
+    { id: 'minWait', badge: 'minVal', state: 'minWait', unit: 's' },
+    { id: 'maxWait', badge: 'maxVal', state: 'maxWait', unit: 's' },
+    { id: 'jitterFreq', badge: 'jitVal', state: 'jitterFreq', unit: 's' },
+    { id: 'opacitySlider', badge: 'opacVal', state: 'hudOpacity', unit: '%' },
+    { id: 'blurSlider', badge: 'blurVal', state: 'hudBlur', unit: 'px' },
+    { id: 'glowSlider', badge: 'glowVal', state: 'neonGlow', unit: 'px' },
+    { id: 'radiusSlider', badge: 'radVal', state: 'hudRadius', unit: 'px' },
+    { id: 'scaleSlider', badge: 'scaleVal', state: 'hudScale', unit: 'x' },
+    { id: 'ampSlider', badge: 'ampVal', state: 'waveAmp', unit: '' },
+    { id: 'speedSlider', badge: 'speedVal', state: 'animSpeed', unit: '%' },
+    { id: 'glitchSlider', badge: 'glitchValBadge', state: 'glitchFreq', unit: '' }
+  ];
+
+  for (let i = 0; i < sliderConfigs.length; i++) {
+    const el = document.getElementById(sliderConfigs[i].id);
+    const b = document.getElementById(sliderConfigs[i].badge);
+    if (el && b && document.activeElement !== el) {
+      el.value = s[sliderConfigs[i].state];
+      el.disabled = false; // SLIDERS NEVER LOCKED
+      if (sliderConfigs[i].unit === 'x') {
+        b.innerText = (s[sliderConfigs[i].state] / 100).toFixed(1) + "x";
+      } else {
+        b.innerText = s[sliderConfigs[i].state] + sliderConfigs[i].unit;
+      }
+    }
   }
 
-  // --- 6. ENGINE ROOM: CHRONOS SCHEDULING ---
-  const schedToggle = document.getElementById('scheduleToggle');
-  if (schedToggle) {
-    schedToggle.checked = state.isScheduled;
-  }
-  const schedTime = document.getElementById('scheduleTime');
-  if (schedTime) {
-    schedTime.value = state.scheduledTime;
-    schedTime.disabled = !state.isScheduled;
+  // 8.2. TOGGLES & SWITCHES: LOCKED DURING MISSION
+  const toggleConfigs = [
+    { id: 'scheduleToggle', state: 'isScheduled' },
+    { id: 'mobileToggle', state: 'isMobile' },
+    { id: 'hudToggle', state: 'isStealth' },
+    { id: 'cooldownToggle', state: 'isCooldownMode' },
+    { id: 'awakeToggle', state: 'isKeepAwake' },
+    { id: 'scanlineToggle', state: 'showScanlines' }
+  ];
+
+  for (let i = 0; i < toggleConfigs.length; i++) {
+    const t = document.getElementById(toggleConfigs[i].id);
+    if (t) {
+      t.checked = s[toggleConfigs[i].state];
+      t.disabled = isMissionLocked; // LOCKED
+    }
   }
 
-  // --- 7. ENGINE ROOM: DELAY & JITTER ---
-  document.getElementById('minWait').value = state.minWait;
-  document.getElementById('minVal').innerText = state.minWait + "s";
-  document.getElementById('maxWait').value = state.maxWait;
-  document.getElementById('maxVal').innerText = state.maxWait + "s";
-  document.getElementById('jitterFreq').value = state.jitterFreq;
-  document.getElementById('jitVal').innerText = state.jitterFreq + "s";
+  // 8.3. DROPDOWNS & NUMBER INPUTS: LOCKED DURING MISSION
+  const inputConfigs = [
+    { id: 'themeSelector', state: 'themeMode' },
+    { id: 'skinSelector', state: 'heartbeatSkin' },
+    { id: 'accentPicker', state: 'accentColor' },
+    { id: 'customCountInput', state: 'totalSearches' },
+    { id: 'scheduleTime', state: 'scheduledTime' }
+  ];
 
-  // --- 8. ENGINE ROOM: GHOST PERSONALIZATION ---
-  document.getElementById('scanlineToggle').checked = state.showScanlines;
-  document.getElementById('accentPicker').value = state.accentColor;
-  document.getElementById('themeSelector').value = state.themeMode;
-  document.getElementById('skinSelector').value = state.heartbeatSkin;
-  
-  document.getElementById('opacitySlider').value = state.hudOpacity;
-  document.getElementById('opacVal').innerText = state.hudOpacity + "%";
-  
-  document.getElementById('blurSlider').value = state.hudBlur;
-  document.getElementById('blurVal').innerText = state.hudBlur + "px";
-  
-  document.getElementById('glowSlider').value = state.neonGlow;
-  document.getElementById('glowVal').innerText = state.neonGlow + "px";
-  
-  document.getElementById('radiusSlider').value = state.hudRadius;
-  document.getElementById('radVal').innerText = state.hudRadius + "px";
-  
-  document.getElementById('scaleSlider').value = state.hudScale;
-  document.getElementById('scaleVal').innerText = (state.hudScale / 100).toFixed(1) + "x";
-  
-  document.getElementById('ampSlider').value = state.waveAmp;
-  document.getElementById('ampVal').innerText = state.waveAmp;
-  
-  document.getElementById('speedSlider').value = state.animSpeed;
-  document.getElementById('speedVal').innerText = state.animSpeed + "%";
-  
-  document.getElementById('glitchSlider').value = state.glitchFreq;
-  document.getElementById('glitchValBadge').innerText = state.glitchFreq;
+  for (let i = 0; i < inputConfigs.length; i++) {
+    const el = document.getElementById(inputConfigs[i].id);
+    if (el) {
+      el.disabled = isMissionLocked; // LOCKED
+      if (inputConfigs[i].id === 'customCountInput') el.value = s.totalSearches;
+      else if (inputConfigs[i].id === 'scheduleTime') el.value = s.scheduledTime;
+      else if (inputConfigs[i].id === 'accentPicker') el.value = s.accentColor;
+      else el.value = s[inputConfigs[i].state];
+    }
+  }
+
+  // 8.4. ALIGNMENT BUTTONS: LOCKED DURING MISSION
+  const alignBtns = document.querySelectorAll('.pos-btn');
+  alignBtns.forEach(function(btn) {
+    btn.disabled = isMissionLocked; // LOCKED
+    if (btn.getAttribute('data-pos') === s.hudPosition) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  const saveBtn = document.getElementById('saveScheduleBtn');
+  if (saveBtn) {
+    saveBtn.disabled = !s.isScheduled || isMissionLocked; // LOCKED
+  }
 }
 
-// --- MISSION CONTROL LISTENERS ---
-
-document.getElementById('startBtn').onclick = function() {
-  chrome.runtime.sendMessage({ action: "START" });
-};
-
-document.getElementById('stopBtn').onclick = function() {
-  chrome.runtime.sendMessage({ action: "STOP" });
-};
-
-document.getElementById('pauseBtn').onclick = function() {
-  chrome.runtime.sendMessage({ action: "PAUSE" });
-};
-
-document.getElementById('resumeBtn').onclick = function() {
-  chrome.runtime.sendMessage({ action: "RESUME" });
-};
-
-// --- NAVIGATION LISTENERS ---
-
-document.getElementById('openSettingsBtn').onclick = function() {
-  document.getElementById('settingsPage').classList.remove('hidden');
-};
-
-document.getElementById('backBtn').onclick = function() {
-  document.getElementById('settingsPage').classList.add('hidden');
-};
-
-document.getElementById('dismissDebriefBtn').onclick = function() {
-  document.getElementById('debriefPage').classList.add('hidden');
-  chrome.runtime.sendMessage({ action: "DISMISS_DEBRIEF" });
-};
-
-// --- SYSTEM MAINTENANCE LISTENERS ---
-
-document.getElementById('testNotifBtn').onclick = function() {
-  chrome.runtime.sendMessage({ action: "TEST_NOTIFICATION" });
-};
-
-document.getElementById('runDiagnosticBtn').onclick = function() {
-  chrome.runtime.sendMessage({ action: "START_DIAGNOSTIC" });
-};
-
-document.getElementById('resetSettingsBtn').onclick = function() {
-  const confirmReset = confirm("REVERT ALL HARDWARE SETTINGS TO DEFAULTS?");
-  if (confirmReset) {
-    chrome.runtime.sendMessage({ action: "RESET_SETTINGS" });
+/**
+ * UTILITY: Daily Pulse Randomizer
+ */
+function randomizePulse() {
+  const display = document.getElementById('quoteDisplay');
+  if (display) {
+    const randomIndex = Math.floor(Math.random() * quoteBank.length);
+    display.innerText = quoteBank[randomIndex];
   }
-};
+}
 
-document.getElementById('resetLogsBtn').onclick = function() {
-  const confirmPurge = confirm("PERMANENTLY PURGE TELEMETRY LOGS?");
-  if (confirmPurge) {
-    chrome.runtime.sendMessage({ action: "FACTORY_RESET" });
+// ============================================================================
+// GLOBAL OMNI-LISTENER: Failsafe Event Routing
+// ============================================================================
+
+document.addEventListener('click', function(event) {
+  const target = event.target;
+
+  if (target.closest('#startBtn')) {
+    event.preventDefault();
+    chrome.runtime.sendMessage({ action: "START" });
+  } 
+  else if (target.closest('#stopBtn')) {
+    event.preventDefault();
+    chrome.runtime.sendMessage({ action: "STOP" });
+  } 
+  else if (target.closest('#pauseBtn')) {
+    event.preventDefault();
+    chrome.runtime.sendMessage({ action: "PAUSE" });
+  } 
+  else if (target.closest('#resumeBtn')) {
+    event.preventDefault();
+    chrome.runtime.sendMessage({ action: "RESUME" });
+  } 
+  else if (target.closest('#dismissDebriefBtn')) {
+    event.preventDefault();
+    chrome.runtime.sendMessage({ action: "DISMISS_DEBRIEF" });
   }
-};
-
-// --- CONFIGURATION: MISSION CONTROLS ---
-
-document.getElementById('customCountInput').onchange = function(event) {
-  const newGoal = parseInt(event.target.value);
-  if (newGoal > 0) {
-    chrome.runtime.sendMessage({ 
-      action: "UPDATE_STATE", 
-      data: { totalSearches: newGoal } 
-    });
+  else if (target.closest('#openSettingsBtn')) {
+    event.preventDefault();
+    const settings = document.getElementById('settingsPage');
+    const dashboard = document.getElementById('mainDashboard');
+    if (settings) settings.classList.remove('hidden');
+    if (dashboard) dashboard.classList.add('hidden');
+  } 
+  else if (target.closest('#backBtn')) {
+    event.preventDefault();
+    const settings = document.getElementById('settingsPage');
+    const dashboard = document.getElementById('mainDashboard');
+    if (settings) settings.classList.add('hidden');
+    if (dashboard) dashboard.classList.remove('hidden');
+  } 
+  else if (target.closest('#saveScheduleBtn') && !target.disabled) {
+    event.preventDefault();
+    const scheduleTime = document.getElementById('scheduleTime');
+    if (scheduleTime) {
+      chrome.runtime.sendMessage({ 
+        action: "SAVE_SCHEDULE", 
+        isScheduled: globalHardwareState.isScheduled,
+        scheduledTime: scheduleTime.value 
+      });
+      alert("Launch telemetry secured.");
+    }
+  } 
+  else if (target.closest('[data-pos]') && !target.disabled) {
+    event.preventDefault();
+    const pos = target.closest('[data-pos]').getAttribute('data-pos');
+    chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { hudPosition: pos } });
   }
-};
-
-document.getElementById('mobileToggle').onchange = function(event) {
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { isMobile: event.target.checked } 
-  });
-};
-
-document.getElementById('hudToggle').onchange = function(event) {
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { isStealth: event.target.checked } 
-  });
-};
-
-document.getElementById('cooldownToggle').onchange = function(event) {
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { isCooldownMode: event.target.checked } 
-  });
-};
-
-document.getElementById('awakeToggle').onchange = function(event) {
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { isKeepAwake: event.target.checked } 
-  });
-};
-
-// --- CONFIGURATION: CHRONOS SCHEDULING ---
-
-document.getElementById('scheduleToggle').onchange = function(event) {
-  const isEnabled = event.target.checked;
-  document.getElementById('scheduleTime').disabled = !isEnabled;
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { isScheduled: isEnabled } 
-  });
-};
-
-document.getElementById('saveScheduleBtn').onclick = function() {
-  const timeValue = document.getElementById('scheduleTime').value;
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { scheduledTime: timeValue } 
-  });
-};
-
-// --- CONFIGURATION: DELAY & JITTER SLIDERS ---
-
-document.getElementById('minWait').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('minVal').innerText = val + "s";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { minWait: val } });
-};
-
-document.getElementById('maxWait').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('maxVal').innerText = val + "s";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { maxWait: val } });
-};
-
-document.getElementById('jitterFreq').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('jitVal').innerText = val + "s";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { jitterFreq: val } });
-};
-
-// --- CONFIGURATION: GHOST PERSONALIZATION ---
-
-document.getElementById('scanlineToggle').onchange = function(event) {
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { showScanlines: event.target.checked } 
-  });
-};
-
-document.getElementById('accentPicker').onchange = function(event) {
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { accentColor: event.target.value } 
-  });
-};
-
-document.getElementById('themeSelector').onchange = function(event) {
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { themeMode: event.target.value } 
-  });
-};
-
-document.getElementById('skinSelector').onchange = function(event) {
-  chrome.runtime.sendMessage({ 
-    action: "UPDATE_STATE", 
-    data: { heartbeatSkin: event.target.value } 
-  });
-};
-
-// --- GHOST PERSONALIZATION SLIDERS ---
-
-document.getElementById('opacitySlider').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('opacVal').innerText = val + "%";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { hudOpacity: val } });
-};
-
-document.getElementById('blurSlider').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('blurVal').innerText = val + "px";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { hudBlur: val } });
-};
-
-document.getElementById('glowSlider').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('glowVal').innerText = val + "px";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { neonGlow: val } });
-};
-
-document.getElementById('radiusSlider').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('radVal').innerText = val + "px";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { hudRadius: val } });
-};
-
-document.getElementById('scaleSlider').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('scaleVal').innerText = (val / 100).toFixed(1) + "x";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { hudScale: val } });
-};
-
-document.getElementById('ampSlider').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('ampVal').innerText = val;
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { waveAmp: val } });
-};
-
-document.getElementById('speedSlider').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('speedVal').innerText = val + "%";
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { animSpeed: val } });
-};
-
-document.getElementById('glitchSlider').oninput = function(event) {
-  const val = parseInt(event.target.value);
-  document.getElementById('glitchValBadge').innerText = val;
-  chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { glitchFreq: val } });
-};
-
-// --- HUD ALIGNMENT LISTENERS ---
-
-const posButtons = document.querySelectorAll('.pos-btn');
-posButtons.forEach(function(btn) {
-  btn.onclick = function() {
-    const newPos = btn.getAttribute('data-pos');
-    chrome.runtime.sendMessage({ 
-      action: "UPDATE_STATE", 
-      data: { hudPosition: newPos } 
-    });
-  };
+  else if (target.closest('#testNotifBtn')) {
+    event.preventDefault();
+    chrome.runtime.sendMessage({ action: "TEST_NOTIFICATION" });
+  }
+  else if (target.closest('#runDiagnosticBtn')) {
+    event.preventDefault();
+    chrome.runtime.sendMessage({ action: "START_DIAGNOSTIC" });
+  }
+  else if (target.closest('#resetSettingsBtn')) {
+    event.preventDefault();
+    if (confirm("REVERT ALL HARDWARE SETTINGS TO DEFAULTS?")) {
+      chrome.runtime.sendMessage({ action: "RESET_SETTINGS" });
+    }
+  }
+  else if (target.closest('#resetLogsBtn')) {
+    event.preventDefault();
+    if (confirm("PERMANENTLY PURGE TELEMETRY LOGS?")) {
+      chrome.runtime.sendMessage({ action: "FACTORY_RESET" });
+    }
+  }
+  else if (target.closest('#fontToggle')) {
+    event.preventDefault();
+    const currentState = globalHardwareState ? globalHardwareState.logMono : false;
+    chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { logMono: !currentState } });
+  }
 });
 
-/**
- * INITIALIZATION: Boot Sequence
- */
+// ============================================================================
+// SYSTEM INITIALIZATION & INPUT LISTENERS
+// ============================================================================
+
 chrome.runtime.onMessage.addListener(function(message) {
   if (message.type === "SYNC") {
     updateUI(message.state);
   }
-  return true;
 });
 
-document.addEventListener('DOMContentLoaded', async function() {
-  const storedData = await chrome.storage.local.get("state");
-  if (storedData.state) {
-    updateUI(storedData.state);
+document.addEventListener('DOMContentLoaded', function() {
+  chrome.storage.local.get("state", function(storedData) {
+    if (storedData.state) {
+      updateUI(storedData.state);
+    }
+  });
+  
+  randomizePulse(); 
+
+  // --- CONFIGURATION INPUTS (Number, Time) ---
+  const customCountInput = document.getElementById('customCountInput');
+  if (customCountInput) {
+    customCountInput.onchange = (e) => {
+      chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { totalSearches: parseInt(e.target.value) } });
+    };
   }
+
+  // --- GHOST PERSONALIZATION CONTROLS ---
+  const accentPicker = document.getElementById('accentPicker');
+  if (accentPicker) {
+    accentPicker.oninput = (e) => {
+      document.documentElement.style.setProperty('--accent', e.target.value);
+      const allSliders = document.querySelectorAll('input[type="range"]');
+      allSliders.forEach(function(s) { s.style.accentColor = e.target.value; });
+    };
+    accentPicker.onchange = (e) => {
+      chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { accentColor: e.target.value } });
+    };
+  }
+
+  const themeSelector = document.getElementById('themeSelector');
+  if (themeSelector) {
+    themeSelector.onchange = (e) => {
+      chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { themeMode: e.target.value } });
+    };
+  }
+
+  const skinSelector = document.getElementById('skinSelector');
+  if (skinSelector) {
+    skinSelector.onchange = (e) => {
+      chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: { heartbeatSkin: e.target.value } });
+    };
+  }
+
+  // --- OMNI-RANGE LISTENER ---
+  const rangeIDs = [
+    'opacitySlider', 'blurSlider', 'glowSlider', 'radiusSlider', 'scaleSlider', 
+    'ampSlider', 'speedSlider', 'glitchSlider', 'minWait', 'maxWait', 'jitterFreq'
+  ];
+  rangeIDs.forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.onchange = function(e) {
+        let u = {};
+        const key = id === 'glitchSlider' ? 'glitchFreq' : id;
+        u[key] = parseInt(e.target.value);
+        chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: u });
+      };
+    }
+  });
+
+  // --- OMNI-TOGGLE LISTENER ---
+  const toggleConfigs = [
+    { id: 'mobileToggle', state: 'isMobile' },
+    { id: 'hudToggle', state: 'isStealth' },
+    { id: 'cooldownToggle', state: 'isCooldownMode' },
+    { id: 'awakeToggle', state: 'isKeepAwake' },
+    { id: 'scanlineToggle', state: 'showScanlines' },
+    { id: 'scheduleToggle', state: 'isScheduled' }
+  ];
+  toggleConfigs.forEach(function(config) {
+    const el = document.getElementById(config.id);
+    if (el) {
+      el.onchange = function(e) {
+        let u = {};
+        u[config.state] = e.target.checked;
+        chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: u });
+      };
+    }
+  });
 });

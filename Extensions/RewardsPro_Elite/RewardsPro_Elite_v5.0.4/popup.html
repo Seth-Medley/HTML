@@ -6,14 +6,26 @@
   <link rel="stylesheet" href="CSS/popup.css">
 </head>
 <body>
+
   <div id="debriefPage" class="settings-overlay hidden">
-    <div class="overlay-header"><h2>MISSION DEBRIEF</h2></div>
+    <div class="overlay-header">
+      <h2>MISSION DEBRIEF</h2>
+    </div>
     <div class="debrief-content">
       <div class="card debrief-card">
         <label>Final Telemetry</label>
-        <div class="debrief-stat"><span>Status:</span> <span class="val-success">SUCCESSFUL</span></div>
-        <div class="debrief-stat"><span>Total Runtime:</span> <span id="debriefRuntime">--:--:--</span></div>
-        <div class="debrief-stat"><span>Action Count:</span> <span id="debriefCount">0/30</span></div>
+        <div class="debrief-stat">
+          <span>Status:</span> 
+          <span class="val-success">SUCCESSFUL</span>
+        </div>
+        <div class="debrief-stat">
+          <span>Total Runtime:</span> 
+          <span id="debriefRuntime">--:--:--</span>
+        </div>
+        <div class="debrief-stat">
+          <span>Action Count:</span> 
+          <span id="debriefCount">0/30</span>
+        </div>
         <p class="debrief-note">The mission has been secured. Hardware is now entering standby mode.</p>
       </div>
     </div>
@@ -23,7 +35,9 @@
   </div>
 
   <div id="settingsPage" class="settings-overlay hidden">
-    <div class="overlay-header"><h2>ENGINE ROOM</h2></div>
+    <div class="overlay-header">
+      <h2>ENGINE ROOM</h2>
+    </div>
     
     <div class="settings-scroll-area">
       <div class="card log-card">
@@ -66,7 +80,10 @@
         <label>Chronos Scheduling</label>
         <div class="toggle-row">
           <span>Scheduled Start</span>
-          <label class="switch"><input type="checkbox" id="scheduleToggle"><span class="slider round"></span></label>
+          <label class="switch">
+            <input type="checkbox" id="scheduleToggle">
+            <span class="slider round"></span>
+          </label>
         </div>
         <div class="input-group-row">
           <span>Launch Time</span>
@@ -98,21 +115,43 @@
 
       <div class="card settings">
         <label>Mission Controls</label>
-        <div class="toggle-row"><span>Mobile Mode</span><label class="switch"><input type="checkbox" id="mobileToggle"><span class="slider round"></span></label></div>
-        <div class="toggle-row"><span>Hide HUD</span><label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label></div>
-        <div class="toggle-row"><span>Cooldown Evasion</span><label class="switch"><input type="checkbox" id="cooldownToggle"><span class="slider round"></span></label></div>
-        <div class="toggle-row"><span>Stay Awake</span><label class="switch"><input type="checkbox" id="awakeToggle"><span class="slider round"></span></label></div>
-        <div class="input-group-row"><span>Search Goal</span><input type="number" id="customCountInput" class="premium-input" value="30"></div>
+        <div class="toggle-row">
+          <span>Mobile Mode</span>
+          <label class="switch"><input type="checkbox" id="mobileToggle"><span class="slider round"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Hide HUD</span>
+          <label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Cooldown Evasion</span>
+          <label class="switch"><input type="checkbox" id="cooldownToggle"><span class="slider round"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Stay Awake</span>
+          <label class="switch"><input type="checkbox" id="awakeToggle"><span class="slider round"></span></label>
+        </div>
+        <div class="input-group-row">
+          <span>Search Goal</span>
+          <input type="number" id="customCountInput" class="premium-input" value="30">
+        </div>
       </div>
 
       <div class="card settings ghost-card">
         <label>Ghost Personalization</label>
         
-        <div class="toggle-row" style="margin-top:15px"><span>Digital Scanlines</span><label class="switch"><input type="checkbox" id="scanlineToggle"><span class="slider round"></span></label></div>
+        <div class="toggle-row" style="margin-top:15px">
+          <span>Digital Scanlines</span>
+          <label class="switch"><input type="checkbox" id="scanlineToggle"><span class="slider round"></span></label>
+        </div>
 
-        <div class="input-group-row"><span>Accent Color</span><input type="color" id="accentPicker" class="premium-color"></div>
+        <div class="input-group-row">
+          <span>Accent Color</span>
+          <input type="color" id="accentPicker" class="premium-color">
+        </div>
         
-        <div class="input-group-row"><span>Theme Mode</span>
+        <div class="input-group-row">
+          <span>Theme Mode</span>
           <select id="themeSelector" class="premium-select">
             <option value="system">Sync System</option>
             <option value="dark">Forced Dark</option>
@@ -120,7 +159,8 @@
           </select>
         </div>
 
-        <div class="input-group-row"><span>Heartbeat Skin</span>
+        <div class="input-group-row">
+          <span>Heartbeat Skin</span>
           <select id="skinSelector" class="premium-select">
             <option value="pulse">Neon Pulse</option>
             <option value="osc">Oscilloscope</option>
@@ -199,7 +239,10 @@
         </div>
       </header>
 
-      <div class="card quote-card"><label>Daily Pulse</label><div id="quoteDisplay" class="quote-text">Hardware sync active.</div></div>
+      <div class="card quote-card">
+        <label>Daily Pulse</label>
+        <div id="quoteDisplay" class="quote-text">Hardware sync active.</div>
+      </div>
 
       <div id="heartbeat-container" class="card heartbeat-extender">
         <svg id="heartbeat-wave" viewBox="0 0 400 60" preserveAspectRatio="none">
@@ -212,17 +255,23 @@
       <div class="card">
         <label>Mission Progress</label>
         <div id="sessionProgress" class="card-large-text">0/30</div>
-        <div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div>
+        <div class="progress-bar-bg">
+          <div id="searchProgressBar" class="progress-fill"></div>
+        </div>
       </div>
 
       <div class="card">
         <label>Next Action In</label>
         <div id="timerDisplay" class="card-large-text">--s</div>
-        <div class="timer-bar-bg"><div id="timerBarFill" class="timer-fill"></div></div>
+        <div class="timer-bar-bg">
+          <div id="timerBarFill" class="timer-fill"></div>
+        </div>
       </div>
 
       <div class="action-section">
-        <div id="idleActions"><button id="startBtn" class="btn-primary">START MISSION</button></div>
+        <div id="idleActions">
+          <button id="startBtn" class="btn-primary">START MISSION</button>
+        </div>
         <div id="activeActions" class="hidden">
           <div class="button-grid">
             <button id="stopBtn" class="btn-danger">STOP</button>
@@ -234,10 +283,12 @@
         </div>
       </div>
     </div>
+    
     <div class="dashboard-footer">
       <button id="openSettingsBtn" class="btn-outline full-width">ENGINE ROOM</button>
     </div>
   </div>
+
   <script src="JS/popup.js"></script>
 </body>
 </html>

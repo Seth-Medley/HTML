@@ -1,7 +1,7 @@
 /**
- * Rewards Pro: Elite v5.0.4 - Master Background Logic
+ * Rewards Pro: Elite v5.0.7 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD AG: Implementation of Manual Notification Testing and Hardened Signatures.
+ * BUILD AJ: Telemetry reset logic on debrief dismissal.
  */
 
 // --- GLOBAL ENGINE STATE ---
@@ -49,9 +49,26 @@ let state = {
 };
 
 /**
- * DEFAULT HARDWARE SETTINGS
- * Used for the Reset All Settings protocol.
+ * KEYWORD LIBRARY
+ * A diverse collection of terms to simulate human search variety.
  */
+const keywordBank = [
+  "Tennessee weather forecast", "ETSU campus map", "GitHub trending repositories",
+  "Marvel Cinematic Universe timeline", "Thor Love and Thunder review", "Fortnite map updates",
+  "CSS Flexbox vs Grid guide", "Samsung S25 Ultra specs", "DoorDash driver earnings 2026",
+  "Pigeon Forge attractions", "Smoky Mountains hiking trails", "MoCA adapter setup guide",
+  "Roblox Studio scripting tutorials", "HTML5 canvas animation", "JavaScript async await",
+  "Best barbecue in Memphis", "Nashville Predators schedule", "Windows 11 vs Windows 12 features",
+  "Android 16 release date", "Lightweight HTML editors", "Stack Overflow top questions",
+  "FreeCodeCamp certification paths", "Halogen work light maintenance", "TP-Link Archer router settings",
+  "Johnson City TN news", "Freedom Hall events schedule", "Neon Trees concert tour",
+  "Beach resort lazy river", "Sunshere Knoxville history", "Escape Game Pigeon Forge",
+  "Matte clay vs styling paste", "New student orientation ETSU", "Masonic lodge history Tennessee",
+  "Best seafood restaurants East Tennessee", "Boston butt slow cooker recipes", "Fortnite pro building tips",
+  "React vs Vue in 2026", "TypeScript best practices", "Modern web design trends",
+  "Samsung One UI 9 features", "Galaxy Watch Ultra review", "Mobile app development 2026"
+];
+
 const DEFAULT_HARDWARE = {
   isMobile: false,
   isStealth: false,
@@ -116,7 +133,6 @@ function updateBadge() {
 
 /**
  * UTILITY: Global Sync
- * FIX: Hardened integer gate for tabs.sendMessage signature compatibility.
  */
 function sync() { 
   if (!chrome.runtime?.id) {
@@ -134,7 +150,6 @@ function sync() {
     // Popup context closed.
   }); 
   
-  // SIGNATURE FIX: Strict validation of Tab ID as a positive integer.
   if (state.bingTabId !== null && state.bingTabId !== undefined) {
     const validatedTabId = parseInt(state.bingTabId, 10);
     
@@ -145,7 +160,7 @@ function sync() {
           state: state
         }, function() {
           if (chrome.runtime.lastError) {
-            // Handled silent fail: Tab likely inactive.
+            // Handled silent fail.
           }
         });
       }, 75);
@@ -176,11 +191,8 @@ function addLog(msg) {
 
 /**
  * NOTIFICATION: Hardware Signal
- * FIX: Bare-bones Data-URI icon to bypass Chromium "Image Download" fatal errors.
  */
 function triggerCompletionNotification(isManual = false) {
-  console.log("NOTIF: Triggering signal...");
-
   if (!chrome.notifications) {
     addLog("NOTIF ERROR: API locked.");
     return;
@@ -199,7 +211,6 @@ function triggerCompletionNotification(isManual = false) {
 
   chrome.notifications.create("SIGNAL_" + Date.now(), options, function(id) {
     if (chrome.runtime.lastError) {
-      console.error("NOTIF FAIL:", chrome.runtime.lastError.message);
       addLog("NOTIF FAIL: OS block.");
     } else {
       addLog("NOTIF SIGNAL: Toast deployed.");
@@ -207,7 +218,6 @@ function triggerCompletionNotification(isManual = false) {
   });
 }
 
-// Global notification interaction listener
 chrome.notifications.onClicked.addListener(function() {
   chrome.tabs.create({
     url: chrome.runtime.getURL("popup.html")
@@ -233,9 +243,6 @@ async function cleanupBingTabs() {
   }
 }
 
-/**
- * TAB MONITOR: Safety Interlock
- */
 chrome.tabs.onRemoved.addListener(function(tabId) {
   if (state.isRunning && tabId === state.bingTabId) {
     addLog("SAFETY: Mission tab closed. Standby engaged.");
@@ -306,7 +313,9 @@ function resetTimer() {
   
   state.timeLeft = state.totalWait;
   state.isTypingStarted = false;
-  state.pendingTerm = state.isDiagnostic ? "Diagnostic Sweep" : ("Hardware Trace #" + Math.floor(Math.random() * 9999));
+  
+  const randomIndex = Math.floor(Math.random() * keywordBank.length);
+  state.pendingTerm = state.isDiagnostic ? "Diagnostic Sweep" : keywordBank[randomIndex];
   
   sync();
 }
@@ -351,14 +360,12 @@ function startTick() {
       if (state.timeLeft > 0) {
         state.timeLeft = state.timeLeft - 1;
         
-        // Dispatch Jitter (Cursor simulation)
         if (state.timeLeft % state.jitterFreq === 0 && state.bingTabId) {
           chrome.tabs.sendMessage(parseInt(state.bingTabId, 10), {
             action: "JITTER"
           }, function() { if (chrome.runtime.lastError) {} });
         }
         
-        // Dispatch Typing simulation (5s Lead)
         if (state.timeLeft === 5 && !state.isTypingStarted && state.bingTabId) {
           chrome.tabs.sendMessage(parseInt(state.bingTabId, 10), {
             action: "PING"
@@ -376,7 +383,6 @@ function startTick() {
         }
       }
 
-      // Execute Search
       if (state.timeLeft <= 0) {
         if (!state.bingTabId) {
           return;
@@ -452,7 +458,6 @@ function stopAutomation(isComp = false) {
     addLog("MISSION SECURED.");
     triggerCompletionNotification(false);
     
-    // PERSISTENCE DELAY: Wait 3 seconds for search registration
     setTimeout(function() {
       if (state.bingTabId) {
         chrome.tabs.remove(parseInt(state.bingTabId, 10)).catch(function() {});
@@ -499,6 +504,7 @@ function relaunchMission() {
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   if (msg.action === "START") {
     initiateMission();
+    sendResponse({ status: "started" });
   } else if (msg.action === "START_DIAGNOSTIC") {
     state.isRunning = true;
     state.isPaused = false;
@@ -515,36 +521,47 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       state.bingTabId = tab.id;
       sync();
     });
+    sendResponse({ status: "diagnostic_started" });
   } else if (msg.action === "STOP") {
     stopAutomation(false);
+    sendResponse({ status: "stopped" });
   } else if (msg.action === "PAUSE") {
     state.isPaused = true;
     addLog("Engine Standby.");
     sync();
+    sendResponse({ status: "paused" });
   } else if (msg.action === "RESUME") {
     state.isPaused = false;
     addLog("Engine Resumed.");
     sync();
+    sendResponse({ status: "resumed" });
   } else if (msg.action === "FACTORY_RESET") {
     state.logs = [];
     addLog("Logs Purged.");
     sync();
+    sendResponse({ status: "reset_logs" });
   } else if (msg.action === "RESET_SETTINGS") {
     Object.assign(state, DEFAULT_HARDWARE);
     addLog("HARDWARE RESET.");
     sync();
+    sendResponse({ status: "reset_settings" });
   } else if (msg.action === "DISMISS_DEBRIEF") {
+    // FIX: Resets the dashboard telemetry to 0 immediately upon dismissal.
     state.isRunning = false;
     state.isDebriefViewed = true;
+    state.currentSearch = 0;
+    state.runtime = 0;
     sync();
+    sendResponse({ status: "dismissed" });
   } else if (msg.action === "SAVE_SCHEDULE") {
     state.isScheduled = msg.isScheduled;
     state.scheduledTime = msg.scheduledTime;
     updateChronosAlarm();
+    sendResponse({ status: "scheduled" });
   } else if (msg.action === "TEST_NOTIFICATION") {
     triggerCompletionNotification(true);
+    sendResponse({ status: "notified" });
   } else if (msg.action === "UPDATE_STATE") {
-    // HOT-SWAP INTERLOCK
     if (state.isRunning) {
       const goalChanged = msg.data.hasOwnProperty('totalSearches') && msg.data.totalSearches !== state.totalSearches;
       const mobileChanged = msg.data.hasOwnProperty('isMobile') && msg.data.isMobile !== state.isMobile;
@@ -552,19 +569,21 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       if (goalChanged || mobileChanged) {
         Object.assign(state, msg.data);
         relaunchMission();
-        return;
+        sendResponse({ status: "relaunched" });
+        return false;
       }
     }
     
     Object.assign(state, msg.data);
     sync();
+    sendResponse({ status: "updated" });
   } else if (msg.action === "GET_STATE") {
     sendResponse(state);
-    return true;
+  } else {
+    sendResponse({ status: "unknown" });
   }
   
-  sendResponse({});
-  return true;
+  return false; 
 });
 
 /**

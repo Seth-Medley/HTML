@@ -1,8 +1,38 @@
 /**
- * Rewards Pro: Elite v5.0.4 - Master Style Sheet
- * NO CONDENSING - NO SHORTHAND - VERBOSE EXPANSION
+ * Rewards Pro: Elite - Selective Safety Interlock
+ * Greys out toggles but preserves slider visual integrity.
  */
 
+/* Dim cards containing disabled checkboxes or selects */
+.card:has(input[type="checkbox"]:disabled), 
+.card:has(select:disabled) {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+  transition: all 0.3s ease;
+}
+
+/* Specific styling for disabled premium inputs (excluding sliders) */
+.premium-input:disabled, 
+.premium-select:disabled, 
+.premium-color:disabled {
+  background-color: rgba(48, 54, 61, 0.5) !important;
+  color: #8b949e !important;
+  border-color: #30363d !important;
+}
+
+/* Grey out the custom switch sliders for checkboxes */
+input[type="checkbox"]:disabled + .slider {
+  background-color: #30363d !important;
+  opacity: 0.5;
+}
+
+/* Ensure range sliders NEVER grey out, even if targeted */
+input[type="range"] {
+  opacity: 1.0 !important;
+  filter: none !important;
+  cursor: pointer !important;
+}
 :root {
   --bg: #0d1117;
   --card: #161b22;
