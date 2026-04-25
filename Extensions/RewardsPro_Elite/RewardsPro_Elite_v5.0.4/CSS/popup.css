@@ -1,8 +1,137 @@
 /**
- * Rewards Pro: Elite - Selective Safety Interlock
- * Greys out toggles but preserves slider visual integrity.
+ * Rewards Pro: Elite - Final Viewport Calibration
+ * Build: 5.1.54 - 320px Width / 560px Height / Center-Locked Footers
+ * Implementation: Proportional Flex & Zero-Margin Center Protocol
  */
 
+/* 1. ROOT VIEWPORT LOCK */
+html, body {
+  width: 320px !important; /* Fixed width protocol */
+  height: 560px !important; /* Fixed height protocol to eliminate scrollbars */
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important; /* Force kills the outside scrollbar */
+  background: #0d1117;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #c9d1d9;
+}
+
+/* 2. DASHBOARD FRAME ARCHITECTURE */
+#mainDashboard {
+  height: 560px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.dashboard-scroll-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px 0 12px; /* Top/Side padding only for vertical alignment */
+  gap: 10px; /* Ventilated spacing between blocks */
+  overflow: hidden !important; /* Removes internal dashboard scrollbar */
+}
+
+/* 3. TELEMETRY CARD UNIFORMITY */
+#mainDashboard .card {
+  flex: 1; /* Telemetry blocks share identical vertical footprint */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 0 !important;
+  padding: 4px 12px !important; 
+  min-height: 0; /* Scaling safety for 560px frame */
+  background: rgba(22, 27, 34, 0.8);
+  border: 1px solid #30363d;
+  border-radius: 10px;
+}
+
+/* 4. ACTION DECK CALIBRATION (Half-Height) */
+#mainDashboard .action-section {
+  flex: 0.5; /* Mathematically locked to 50% of telemetry card height */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Inherit full vertical space for button parity */
+#idleActions, 
+#activeActions, 
+.button-grid, 
+.swap-slot {
+  height: 100% !important;
+  display: block;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Force Parity: Start, Stop, Pause, and Resume match height exactly */
+#mainDashboard .action-section button {
+  height: 100% !important;
+  width: 100%;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+}
+
+/* 5. NAVIGATION & FOOTER CENTERING (CENTER-LOCK PATCH) */
+.dashboard-footer, .overlay-footer {
+  height: 60px; /* Uniform vertical footprint */
+  padding: 0 12px !important; /* Center-Lock Patch: Removes vertical padding for centering */
+  display: flex;
+  align-items: center; /* Mathematical vertical centering */
+  justify-content: center;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.footer-nav-btn {
+  height: 42px !important; /* Standardized button height */
+  width: 100%;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  margin: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 6. ENGINE ROOM SCOPED SCROLL */
+#settingsPage .settings-scroll-area {
+  height: 450px !important; /* Calibrated to fit within the 560px body */
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  padding: 10px 12px;
+}
+
+/* Custom scrollbar for Engine Room logic */
+.settings-scroll-area::-webkit-scrollbar {
+  width: 4px;
+}
+.settings-scroll-area::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 10px;
+}
+
+.hidden {
+  display: none !important;
+}
 /* Dim cards containing disabled checkboxes or selects */
 .card:has(input[type="checkbox"]:disabled), 
 .card:has(select:disabled) {

@@ -4,69 +4,152 @@
   <meta charset="UTF-8">
   <title>Rewards Pro: Elite</title>
   <link rel="stylesheet" href="CSS/popup.css">
+  <style>
+    /* BUILD CT-MANUAL: Geometric Alignment & No-Overflow Protocol */
+    html, body {
+      width: 320px !important;
+      height: 560px !important;
+      overflow: hidden !important;
+      margin: 0;
+      padding: 0;
+      background: #0d1117;
+    }
+
+    #mainDashboard {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .dashboard-scroll-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 12px;
+      gap: 6px; 
+      overflow: hidden !important;
+    }
+
+    #mainDashboard .card {
+      flex: 1; 
+      margin-bottom: 0 !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+      padding: 6px 12px !important;
+      background: rgba(22, 27, 34, 0.8);
+      border: 1px solid #30363d;
+      border-radius: 10px;
+    }
+
+    #mainDashboard .action-section {
+      flex: 0.5; 
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    #idleActions, #activeActions, .button-grid, .swap-slot {
+      height: 100% !important;
+      display: block;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    #mainDashboard .action-section button {
+      height: 100% !important;
+      width: 100%;
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dashboard-footer, .overlay-footer {
+      height: 50px;
+      padding: 0 12px 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .footer-nav-btn {
+      height: 40px !important;
+      width: 100%;
+      font-weight: 600;
+      text-transform: uppercase;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+    }
+
+    .settings-scroll-area {
+      height: 450px !important;
+      overflow-y: auto !important;
+      overflow-x: hidden;
+      padding: 10px 12px;
+    }
+
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
 
   <div id="debriefPage" class="settings-overlay hidden">
-    <div class="overlay-header">
-      <h2>MISSION DEBRIEF</h2>
-    </div>
+    <div class="overlay-header"><h2>MISSION DEBRIEF</h2></div>
     <div class="debrief-content">
       <div class="card debrief-card">
         <label>Final Telemetry</label>
-        <div class="debrief-stat">
-          <span>Status:</span> 
-          <span class="val-success">SUCCESSFUL</span>
-        </div>
-        <div class="debrief-stat">
-          <span>Total Runtime:</span> 
-          <span id="debriefRuntime">--:--:--</span>
-        </div>
-        <div class="debrief-stat">
-          <span>Action Count:</span> 
-          <span id="debriefCount">0/30</span>
-        </div>
-        <p class="debrief-note">The mission has been secured. Hardware is now entering standby mode.</p>
+        <div class="debrief-stat"><span>Status:</span> <span class="val-success">SUCCESSFUL</span></div>
+        <div class="debrief-stat"><span>Total Runtime:</span> <span id="debriefRuntime">--:--:--</span></div>
+        <div class="debrief-stat"><span>Action Count:</span> <span id="debriefCount">0/30</span></div>
       </div>
     </div>
     <div class="overlay-footer">
-      <button id="dismissDebriefBtn" class="btn-primary full-width">DISMISS REPORT</button>
+      <button id="dismissDebriefBtn" class="btn-primary footer-nav-btn">DISMISS REPORT</button>
     </div>
   </div>
 
   <div id="settingsPage" class="settings-overlay hidden">
-    <div class="overlay-header">
-      <h2>ENGINE ROOM</h2>
-    </div>
-    
+    <div class="overlay-header"><h2>ENGINE ROOM</h2></div>
     <div class="settings-scroll-area">
-      <div class="card log-card">
+      
+      <div id="card-logs" class="card log-card">
         <div class="log-header">
           <label>Mission Log</label>
           <button id="fontToggle" class="elite-mini-toggle">TERMINAL FONT</button>
         </div>
-        <div id="missionLog" class="log-container">
-          <div class="log-entry">Stabilizing telemetry heartbeat...</div>
-        </div>
+        <div id="missionLog" class="log-container"></div>
       </div>
 
-      <div class="card info-card">
+      <div id="card-manual" class="card info-card">
         <label>Operator's Manual</label>
         <ul class="settings-guide">
-          <li><strong>Wait Time:</strong> How long the tool stays quiet between searches.</li>
-          <li><strong>Wiggle Rate:</strong> Moving the mouse so it looks like a real person is there.</li>
-          <li><strong>Phone Mode:</strong> Makes the internet think you are using a phone.</li>
-          <li><strong>Hide HUD:</strong> Turns off the little info box on your screen.</li>
-          <li><strong>Nap Time:</strong> Taking a 1-minute break so we stay safe.</li>
-          <li><strong>Stay Awake:</strong> Keeps your computer from falling asleep.</li>
-          <li><strong>Auto-Start:</strong> Picking a specific time for the tool to start on its own.</li>
-          <li><strong>Color Theme:</strong> Changing the look to Light or Dark mode.</li>
-          <li><strong>Box Setup:</strong> Changing how the info box looks and where it sits.</li>
-          <li><strong>Test Tool:</strong> A quick 1-search test to make sure everything works.</li>
+          <li><strong>Chronos:</strong> Schedule a specific time for the engine to automatically launch missions.</li>
+          <li><strong>Delays:</strong> Set the minimum and maximum wait times between search actions.</li>
+          <li><strong>Jitter:</strong> Controls the frequency of simulated human-like mouse movements.</li>
+          <li><strong>Mobile Mode:</strong> Configures the engine to simulate a mobile device user-agent.</li>
+          <li><strong>Stealth:</strong> Toggle the visibility of the on-screen HUD or enable cooldown evasion.</li>
+          <li><strong>Search Goal:</strong> Define the total number of searches to be completed per mission.</li>
+          <li><strong>Customization:</strong> Personalize the hardware accent, theme, and animation skins.</li>
+          <li><strong>HUD Tuning:</strong> Adjust the opacity, blur, and scale of the display interface.</li>
         </ul>
       </div>
 
-      <div class="card settings">
+      <div id="card-alignment" class="card settings">
         <label>HUD Alignment</label>
         <div class="pos-grid">
           <button class="pos-btn" data-pos="top-left">TOP LEFT</button>
@@ -76,14 +159,11 @@
         </div>
       </div>
 
-      <div class="card settings">
+      <div id="card-chronos" class="card settings">
         <label>Chronos Scheduling</label>
         <div class="toggle-row">
           <span>Scheduled Start</span>
-          <label class="switch">
-            <input type="checkbox" id="scheduleToggle">
-            <span class="slider round"></span>
-          </label>
+          <label class="switch"><input type="checkbox" id="scheduleToggle"><span class="slider round"></span></label>
         </div>
         <div class="input-group-row">
           <span>Launch Time</span>
@@ -92,8 +172,8 @@
         <button id="saveScheduleBtn" class="btn-compact btn-outline-primary btn-center">SAVE LAUNCH TIME</button>
       </div>
 
-      <div class="card settings range-card">
-        <label>Delay & Jitter Range</label>
+      <div id="card-search-params" class="card settings range-card">
+        <label>Search Parameters</label>
         <div class="range-grid">
           <div class="range-item">
             <label>Min Delay</label>
@@ -113,7 +193,7 @@
         </div>
       </div>
 
-      <div class="card settings">
+      <div id="card-mission-logic" class="card settings">
         <label>Mission Controls</label>
         <div class="toggle-row">
           <span>Mobile Mode</span>
@@ -137,19 +217,12 @@
         </div>
       </div>
 
-      <div class="card settings ghost-card">
-        <label>Ghost Personalization</label>
-        
-        <div class="toggle-row" style="margin-top:15px">
-          <span>Digital Scanlines</span>
-          <label class="switch"><input type="checkbox" id="scanlineToggle"><span class="slider round"></span></label>
-        </div>
-
-        <div class="input-group-row">
+      <div id="card-engine-customization" class="card settings ghost-card">
+        <label>Engine Customization</label>
+        <div class="input-group-row" style="margin-top: 10px;">
           <span>Accent Color</span>
           <input type="color" id="accentPicker" class="premium-color">
         </div>
-        
         <div class="input-group-row">
           <span>Theme Mode</span>
           <select id="themeSelector" class="premium-select">
@@ -158,9 +231,8 @@
             <option value="light">Forced Light</option>
           </select>
         </div>
-
         <div class="input-group-row">
-          <span>Heartbeat Skin</span>
+          <span>Animation Skin</span>
           <select id="skinSelector" class="premium-select">
             <option value="pulse">Neon Pulse</option>
             <option value="osc">Oscilloscope</option>
@@ -170,62 +242,39 @@
             <option value="dna">DNA Helix</option>
           </select>
         </div>
+      </div>
 
-        <div class="range-grid-v2">
-          <div class="range-item-v2">
-            <label>HUD Opacity</label>
-            <input type="range" id="opacitySlider" min="20" max="100" value="100">
-            <span id="opacVal" class="val-badge">100%</span>
-          </div>
-          <div class="range-item-v2">
-            <label>HUD Blur</label>
-            <input type="range" id="blurSlider" min="0" max="20" value="10">
-            <span id="blurVal" class="val-badge">10px</span>
-          </div>
-          <div class="range-item-v2">
-            <label>Neon Glow</label>
-            <input type="range" id="glowSlider" min="0" max="15" value="5">
-            <span id="glowVal" class="val-badge">5px</span>
-          </div>
-          <div class="range-item-v2">
-            <label>Corner Rad</label>
-            <input type="range" id="radiusSlider" min="0" max="25" value="10">
-            <span id="radVal" class="val-badge">10px</span>
-          </div>
-          <div class="range-item-v2">
-            <label>HUD Scale</label>
-            <input type="range" id="scaleSlider" min="70" max="130" value="100">
-            <span id="scaleVal" class="val-badge">1.0x</span>
-          </div>
-          <div class="range-item-v2">
-            <label>Wave Amp</label>
-            <input type="range" id="ampSlider" min="5" max="30" value="15">
-            <span id="ampVal" class="val-badge">15</span>
-          </div>
-          <div class="range-item-v2">
-            <label>Anim Speed</label>
-            <input type="range" id="speedSlider" min="50" max="200" value="100">
-            <span id="speedVal" class="val-badge">100%</span>
-          </div>
-          <div class="range-item-v2">
-            <label>Glitch Freq</label>
-            <input type="range" id="glitchSlider" min="1" max="20" value="5">
-            <span id="glitchValBadge" class="val-badge">5</span>
-          </div>
+      <div id="card-hud-customization" class="card settings ghost-card">
+        <label>HUD Customization</label>
+        <div class="range-grid-v2" style="margin-top: 10px;">
+          <div class="range-item-v2"><label>Opacity</label><input type="range" id="opacitySlider" min="20" max="100" value="100"></div>
+          <div class="range-item-v2"><label>HUD Blur</label><input type="range" id="blurSlider" min="0" max="20" value="10"></div>
+          <div class="range-item-v2"><label>Neon Glow</label><input type="range" id="glowSlider" min="0" max="15" value="5"></div>
+          <div class="range-item-v2"><label>Corner Rad</label><input type="range" id="radiusSlider" min="0" max="25" value="10"></div>
+          <div class="range-item-v2"><label>HUD Scale</label><input type="range" id="scaleSlider" min="70" max="130" value="100"></div>
         </div>
       </div>
 
-      <div class="system-maintenance-footer">
+      <div id="card-dynamic-effects" class="card settings ghost-card">
+        <label>Dynamic Animation Effects</label>
+        <div class="range-grid-v2" style="margin-top: 10px;">
+          <div class="range-item-v2"><label>Wave Amp</label><input type="range" id="ampSlider" min="5" max="30" value="15"></div>
+          <div class="range-item-v2"><label>Anim Speed</label><input type="range" id="speedSlider" min="50" max="200" value="100"></div>
+          <div class="range-item-v2"><label>Glitch Freq</label><input type="range" id="glitchSlider" min="1" max="20" value="5"></div>
+        </div>
+      </div>
+
+      <div id="card-maintenance" class="system-maintenance-footer">
         <label>System Maintenance</label>
         <button id="runDiagnosticBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">TEST TOOL</button>
         <button id="testNotifBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">TEST SYSTEM NOTIFICATION</button>
         <button id="resetSettingsBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">RESET ALL HARDWARE SETTINGS</button>
         <button id="resetLogsBtn" class="btn-compact btn-outline-danger btn-center">FACTORY RESET TELEMETRY</button>
       </div>
+
     </div>
-    
     <div class="overlay-footer">
-      <button id="backBtn" class="btn-outline full-width">CLOSE ENGINE ROOM</button>
+      <button id="backBtn" class="btn-outline footer-nav-btn">CLOSE ENGINE ROOM</button>
     </div>
   </div>
 
@@ -233,10 +282,7 @@
     <div class="dashboard-scroll-area">
       <header>
         <h1>REWARDS<span>PRO</span></h1>
-        <div class="header-right">
-          <div id="status-dot" class="dot-idle"></div>
-          <span id="runtimeDisplay">00:00:00</span>
-        </div>
+        <div class="header-right"><div id="status-dot" class="dot-idle"></div><span id="runtimeDisplay">00:00:00</span></div>
       </header>
 
       <div class="card quote-card">
@@ -244,8 +290,8 @@
         <div id="quoteDisplay" class="quote-text">Hardware sync active.</div>
       </div>
 
-      <div id="heartbeat-container" class="card heartbeat-extender">
-        <svg id="heartbeat-wave" viewBox="0 0 400 60" preserveAspectRatio="none">
+      <div id="animation-container" class="card heartbeat-extender">
+        <svg id="animation-wave" viewBox="0 0 400 60" preserveAspectRatio="none">
           <g id="dna-bars" opacity="0.4"></g>
           <path id="wave-path" d="M 0 30 Q 100 30 200 30 T 400 30" fill="none" stroke="#58a6ff" stroke-width="2" />
         </svg>
@@ -255,29 +301,23 @@
       <div class="card">
         <label>Mission Progress</label>
         <div id="sessionProgress" class="card-large-text">0/30</div>
-        <div class="progress-bar-bg">
-          <div id="searchProgressBar" class="progress-fill"></div>
-        </div>
+        <div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div>
       </div>
 
       <div class="card">
         <label>Next Action In</label>
         <div id="timerDisplay" class="card-large-text">--s</div>
-        <div class="timer-bar-bg">
-          <div id="timerBarFill" class="timer-fill"></div>
-        </div>
+        <div class="timer-bar-bg"><div id="timerBarFill" class="timer-fill"></div></div>
       </div>
 
       <div class="action-section">
-        <div id="idleActions">
-          <button id="startBtn" class="btn-primary">START MISSION</button>
-        </div>
-        <div id="activeActions" class="hidden">
+        <div id="idleActions" style="height: 100%;"><button id="startBtn" class="btn-primary full-width">START MISSION</button></div>
+        <div id="activeActions" class="hidden" style="height: 100%;">
           <div class="button-grid">
             <button id="stopBtn" class="btn-danger">STOP</button>
             <div class="swap-slot">
-              <button id="pauseBtn" class="btn-secondary">PAUSE</button>
-              <button id="resumeBtn" class="btn-secondary hidden">RESUME</button>
+              <button id="pauseBtn" class="btn-secondary full-width">PAUSE</button>
+              <button id="resumeBtn" class="btn-secondary full-width hidden">RESUME</button>
             </div>
           </div>
         </div>
@@ -285,7 +325,7 @@
     </div>
     
     <div class="dashboard-footer">
-      <button id="openSettingsBtn" class="btn-outline full-width">ENGINE ROOM</button>
+      <button id="openSettingsBtn" class="btn-outline footer-nav-btn">ENGINE ROOM</button>
     </div>
   </div>
 
