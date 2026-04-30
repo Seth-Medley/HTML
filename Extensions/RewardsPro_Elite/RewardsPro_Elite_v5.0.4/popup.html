@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="CSS/popup.css">
   <style>
     /* ========================================================================
-       BUILD DM: MASTER GEOMETRIC PROTOCOL
+       BUILD EF: MASTER GEOMETRIC PROTOCOL
        Strict viewport locking and spacing ventilation.
        ======================================================================== */
     html, body {
@@ -49,14 +49,20 @@
       border-radius: 10px;
     }
 
-    .action-section {
-      flex: 0.5; 
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
+    /* STATUS LIGHT DESIGN */
+    .dot-active { background: #3fb950; box-shadow: 0 0 8px #3fb950; }
+    .dot-idle { background: #f85149; box-shadow: 0 0 8px #f85149; }
+    #status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+
+    /* HUD ALIGNMENT GLOW - UNIFIED WITH MAINTENANCE BUTTONS */
+    .pos-btn.active {
+      background: rgba(88, 166, 255, 0.1) !important;
+      color: var(--accent, #58a6ff) !important;
+      border: 1px solid var(--accent, #58a6ff) !important;
+      box-shadow: 0 0 15px rgba(88, 166, 255, 0.4) !important;
+      font-weight: 600 !important;
     }
 
-    /* CHRONOS TERMINAL STYLING */
     .alarms-terminal {
       background: #010409;
       border: 1px solid #30363d;
@@ -78,17 +84,12 @@
       color: #8b949e;
     }
 
-    .alarm-entry:last-child { border-bottom: none; }
-    .alarm-time { color: var(--accent); font-weight: 600; }
-
-    .del-alarm-btn {
-      background: transparent;
-      border: none;
-      color: #f85149;
-      cursor: pointer;
-      font-size: 10px;
-      font-weight: bold;
+    #mobileToggle:disabled + .slider {
+      background-color: #21262d !important;
+      cursor: not-allowed;
+      filter: grayscale(1);
     }
+    .disabled-row { opacity: 0.5; }
 
     .dashboard-footer, .overlay-footer {
       height: 60px;
@@ -152,12 +153,11 @@
       <div id="card-manual" class="card info-card">
         <label>Operator's Manual</label>
         <ul class="settings-guide">
-          <li><strong>Chronos Scheduling:</strong> Program multiple automated launch windows throughout the day to maximize points.</li>
-          <li><strong>Delay Calibration:</strong> Set variable wait times between search actions to match human browsing velocity.</li>
-          <li><strong>Max Entropy Engine:</strong> Categorical thematic searches are locked to a single subject per mission start.</li>
-          <li><strong>Result Engagement:</strong> Clicks and Jitters are simulated 6 seconds after every search to verify human intent.</li>
-          <li><strong>Stealth Protocols:</strong> Utilize Cooldown Evasion to bypass velocity filters during high-volume sessions.</li>
-          <li><strong>Customization:</strong> Personalize the hardware accent colors, theme modes, and procedurally generated skins.</li>
+          <li><strong>Chronos Calibration:</strong> Automated launch windows are synchronized with the OS clock for cold-boot ignition.</li>
+          <li><strong>Search Velocity:</strong> Delay range sliders directly impact the entropy of human browsing simulations.</li>
+          <li><strong>Handshake Protocol:</strong> The recursive ignition system will wait indefinitely for the mission tab to initialize.</li>
+          <li><strong>HUD Persistence:</strong> Alignment and design parameters are saved to the persistent local hardware state.</li>
+          <li><strong>Safe Termination:</strong> Stopping a mission mid-cycle will purge the search tab and pause all telemetry loops.</li>
         </ul>
       </div>
 
@@ -188,12 +188,14 @@
           <span>Enable Scheduler</span>
           <label class="switch"><input type="checkbox" id="scheduleToggle"><span class="slider round"></span></label>
         </div>
-        <div class="input-group-row">
-          <input type="time" id="scheduleTime" class="premium-input" style="flex: 1;">
-          <button id="addAlarmBtn" class="btn-compact btn-outline-primary" style="margin-left: 8px;">ADD ALARM</button>
-        </div>
-        <div class="alarms-terminal">
-          <div id="activeAlarmsList"></div>
+        <div id="chronos-controls-group">
+          <div class="input-group-row">
+            <input type="time" id="scheduleTime" class="premium-input" style="flex: 1;">
+            <button id="addAlarmBtn" class="btn-compact btn-outline-primary" style="margin-left: 8px;">ADD ALARM</button>
+          </div>
+          <div class="alarms-terminal">
+            <div id="activeAlarmsList"></div>
+          </div>
         </div>
       </div>
 
@@ -220,17 +222,17 @@
 
       <div id="card-mission-logic" class="card settings">
         <label>Mission Controls</label>
-        <div class="toggle-row">
-          <span>Mobile Mode</span>
-          <label class="switch"><input type="checkbox" id="mobileToggle"><span class="slider round"></span></label>
-        </div>
-        <div class="toggle-row">
-          <span>Click Simulation</span>
-          <label class="switch"><input type="checkbox" id="clickSimToggle" checked><span class="slider round"></span></label>
+        <div class="toggle-row disabled-row">
+          <span>Mobile Mode (LOCKED)</span>
+          <label class="switch"><input type="checkbox" id="mobileToggle" disabled><span class="slider round"></span></label>
         </div>
         <div class="toggle-row">
           <span>Hide HUD</span>
           <label class="switch"><input type="checkbox" id="hudToggle"><span class="slider round"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Click Simulation</span>
+          <label class="switch"><input type="checkbox" id="clickSimToggle" checked><span class="slider round"></span></label>
         </div>
         <div class="toggle-row">
           <span>Cooldown Evasion</span>
