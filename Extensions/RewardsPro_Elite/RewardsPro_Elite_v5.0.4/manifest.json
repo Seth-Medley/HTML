@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Rewards Pro: Elite",
-  "version": "5.0.4",
-  "description": "Autonomous Search Appliance. Hardened Signal Calibration and CSP-Compliant Telemetry.",
+  "version": "5.2.28",
+  "description": "Set the gear, secure the points. Automate your daily mission with precision human-mimicry and Chronos scheduling logic.",
   "permissions": [
     "tabs",
     "storage",

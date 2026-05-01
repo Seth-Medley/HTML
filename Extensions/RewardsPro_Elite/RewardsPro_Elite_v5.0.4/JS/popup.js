@@ -1,7 +1,7 @@
 /**
- * Rewards Pro: Elite v5.2.13 - Master Popup Controller
+ * Rewards Pro: Elite v5.2.28 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD EJ: MSI Screensaver Compatibility; Status Light Logic; Selective Card Locking.
+ * BUILD EY: Fixed Engine Status Tag logic; First-click ignition; Brave stability.
  * BASEPLATE: RewardsPro_Elite_v5.0.4/JS/popup.js
  */
 
@@ -9,6 +9,7 @@ let globalHardwareState = null;
 let animationFrameId = null;
 let animationClock = 0;
 let uiStateLock = false; 
+let chronosLockTimeout = null; 
 
 const quoteBank = [
   "Simplicity is the soul of efficiency.",
@@ -137,7 +138,21 @@ function updateUI(s) {
     } else { if (dashboard) { dashboard.classList.add('hidden'); } }
   }
 
-  // FIX: STATUS LIGHT LOGIC
+  // FIX: ENGINE STATUS TAG
+  const engineTag = document.getElementById('engine-mode-tag');
+  if (engineTag) {
+    if (s.isRunning && !s.isPaused) {
+      engineTag.innerText = s.isHunting ? "ENGINE: BREACHING..." : "ENGINE: ONLINE";
+      engineTag.style.color = "var(--accent, #58a6ff)";
+    } else if (s.isRunning && s.isPaused) {
+      engineTag.innerText = "ENGINE: STANDBY";
+      engineTag.style.color = "#8b949e";
+    } else {
+      engineTag.innerText = "ENGINE: OFFLINE";
+      engineTag.style.color = "#484f58";
+    }
+  }
+
   const statusLight = document.getElementById('status-dot');
   if (statusLight) {
     if (s.isRunning && !s.isPaused) {
@@ -178,7 +193,6 @@ function updateUI(s) {
     else { pBtn.classList.remove('hidden'); rBtn.classList.add('hidden'); }
   }
 
-  // SELECTIVE ENGINE ROOM LOCKING
   const isMissionActive = s.isRunning === true && s.currentSearch < s.totalSearches;
   const cardsToLock = ['card-chronos', 'card-search-params', 'card-mission-logic', 'card-engine-customization', 'card-dynamic-effects', 'card-maintenance'];
   
@@ -212,6 +226,12 @@ function updateUI(s) {
     }
   }
 
+  if (s.accentColor) {
+    document.documentElement.style.setProperty('--accent', s.accentColor);
+    const wave = document.getElementById('wave-path');
+    if (wave) { wave.style.stroke = s.accentColor; }
+  }
+
   const uiElements = [
     { id: 'mobileToggle', state: 'isMobile' }, 
     { id: 'clickSimToggle', state: 'isClickSim' }, 
@@ -226,12 +246,12 @@ function updateUI(s) {
   uiElements.forEach(item => {
     const el = document.getElementById(item.id);
     if (el && document.activeElement !== el) {
+      if (item.id === 'scheduleToggle' && chronosLockTimeout) return;
       if (el.type === 'checkbox') { el.checked = s[item.state]; }
       else { el.value = s[item.state]; }
     }
   });
 
-  // SLIDERS & BADGE MASTER SYNC
   const syncConfigs = [
     { id: 'minWait', state: 'minWait', badge: 'minVal', unit: 's' },
     { id: 'maxWait', state: 'maxWait', badge: 'maxVal', unit: 's' },
@@ -261,7 +281,6 @@ function updateUI(s) {
     }
   });
 
-  // PROGRESS BARS
   const progressText = document.getElementById('sessionProgress');
   if (progressText) { progressText.innerText = s.currentSearch + "/" + s.totalSearches; }
   const bar = document.getElementById('searchProgressBar');
@@ -270,7 +289,12 @@ function updateUI(s) {
   const timerText = document.getElementById('timerDisplay');
   const timerFill = document.getElementById('timerBarFill');
   if (s.isRunning === true && s.currentSearch < s.totalSearches) {
-    if (timerText) { timerText.innerText = s.timeLeft + (s.isPaused ? "s (PAUSED)" : "s"); }
+    if (timerText) { 
+      let label = s.timeLeft + "s";
+      if (s.isPaused) label += " (PAUSED)";
+      else if (s.isHunting) label = "HUNTING...";
+      timerText.innerText = label;
+    }
     if (timerFill) {
       const percentage = (s.totalWait > 0) ? ((s.totalWait - s.timeLeft) / s.totalWait) * 100 : 0;
       timerFill.style.width = percentage + "%";
@@ -299,9 +323,6 @@ function randomizePulse() {
   if (node) { node.innerText = quoteBank[Math.floor(Math.random() * quoteBank.length)]; }
 }
 
-/**
- * MASTER CLICK LISTENER
- */
 document.addEventListener('click', function(event) {
   const target = event.target;
   
@@ -348,10 +369,10 @@ document.addEventListener('click', function(event) {
   else if (target.closest('#runDiagnosticBtn')) { chrome.runtime.sendMessage({ action: "START_DIAGNOSTIC" }); }
   else if (target.closest('#testNotifBtn')) { chrome.runtime.sendMessage({ action: "TEST_NOTIFICATION" }); }
   else if (target.closest('#resetSettingsBtn')) {
-    if (confirm("REVERT ALL HARDWARE SETTINGS TO DEFAULTS?")) { chrome.runtime.sendMessage({ action: "RESET_SETTINGS" }); }
+    if (confirm("RESTORE ALL HARDWARE TOGGLES AND SLIDERS TO DEFAULTS?")) { chrome.runtime.sendMessage({ action: "RESET_SETTINGS" }); }
   }
   else if (target.closest('#resetLogsBtn')) {
-    if (confirm("PERMANENTLY PURGE ALL TELEMETRY LOGS AND WIPE HARDWARE TO DEFAULTS?")) { chrome.runtime.sendMessage({ action: "FACTORY_RESET" }); }
+    if (confirm("PURGE ALL MISSION LOGS AND CHRONOS TIMERS?")) { chrome.runtime.sendMessage({ action: "FACTORY_RESET" }); }
   }
   else if (target.closest('#fontToggle')) {
     const current = globalHardwareState ? globalHardwareState.logMono : false;
@@ -372,6 +393,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (el) {
       el.onchange = function(e) {
         if (id === 'scheduleToggle') {
+          if (chronosLockTimeout) clearTimeout(chronosLockTimeout);
+          chronosLockTimeout = setTimeout(() => { chronosLockTimeout = null; }, 500);
           chrome.runtime.sendMessage({ action: "SAVE_SCHEDULE", isScheduled: e.target.checked, alarms: globalHardwareState.alarms || [] });
         } else if (id === 'mobileToggle') {
           e.target.checked = false;

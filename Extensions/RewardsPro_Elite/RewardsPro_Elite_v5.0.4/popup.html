@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="CSS/popup.css">
   <style>
     /* ========================================================================
-       BUILD EF: MASTER GEOMETRIC PROTOCOL
+       BUILD EX: MASTER GEOMETRIC PROTOCOL
        Strict viewport locking and spacing ventilation.
        ======================================================================== */
     html, body {
@@ -49,18 +49,28 @@
       border-radius: 10px;
     }
 
-    /* STATUS LIGHT DESIGN */
     .dot-active { background: #3fb950; box-shadow: 0 0 8px #3fb950; }
     .dot-idle { background: #f85149; box-shadow: 0 0 8px #f85149; }
     #status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
 
-    /* HUD ALIGNMENT GLOW - UNIFIED WITH MAINTENANCE BUTTONS */
     .pos-btn.active {
       background: rgba(88, 166, 255, 0.1) !important;
       color: var(--accent, #58a6ff) !important;
       border: 1px solid var(--accent, #58a6ff) !important;
       box-shadow: 0 0 15px rgba(88, 166, 255, 0.4) !important;
       font-weight: 600 !important;
+    }
+
+    #addAlarmBtn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1;
     }
 
     .alarms-terminal {
@@ -118,6 +128,24 @@
       padding: 10px 12px;
     }
 
+    /* FIX: RECONSTRUCTED MANUAL ALIGNMENT */
+    .settings-guide {
+      list-style-type: disc;
+      padding-left: 18px; /* Visual gutter for bullets */
+      margin: 10px 0 0 0;
+      font-size: 11px;
+    }
+    .settings-guide li {
+      margin-bottom: 10px;
+      padding-left: 4px; /* Space between bullet and text */
+      padding-bottom: 8px;
+      border-bottom: 1px solid #21262d;
+      line-height: 1.4;
+      color: #c9d1d9;
+    }
+    .settings-guide li:last-child { border-bottom: none; }
+    .settings-guide strong { color: var(--accent); display: block; margin-bottom: 2px; }
+
     .hidden { display: none !important; }
   </style>
 </head>
@@ -130,7 +158,7 @@
         <label>Final Telemetry</label>
         <div class="debrief-stat"><span>Status:</span> <span class="val-success">SUCCESSFUL</span></div>
         <div class="debrief-stat"><span>Total Runtime:</span> <span id="debriefRuntime">--:--:--</span></div>
-        <div class="debrief-stat"><span>Action Count:</span> <span id="debriefCount">0/30</span></div>
+        <div class="debrief-stat"><span>Action Count:</span> <span id="debriefCount">0/35</span></div>
       </div>
     </div>
     <div class="overlay-footer">
@@ -151,13 +179,23 @@
       </div>
 
       <div id="card-manual" class="card info-card">
-        <label>Operator's Manual</label>
+        <label>Operator's Manual: Hardware Reference</label>
         <ul class="settings-guide">
-          <li><strong>Chronos Calibration:</strong> Automated launch windows are synchronized with the OS clock for cold-boot ignition.</li>
-          <li><strong>Search Velocity:</strong> Delay range sliders directly impact the entropy of human browsing simulations.</li>
-          <li><strong>Handshake Protocol:</strong> The recursive ignition system will wait indefinitely for the mission tab to initialize.</li>
-          <li><strong>HUD Persistence:</strong> Alignment and design parameters are saved to the persistent local hardware state.</li>
-          <li><strong>Safe Termination:</strong> Stopping a mission mid-cycle will purge the search tab and pause all telemetry loops.</li>
+          <li><strong>Min/Max Delay:</strong> Sets the randomized temporal range (seconds) between search queries.</li>
+          <li><strong>Jitter Freq:</strong> Calibrates the human-mimicry mouse movement frequency during waits.</li>
+          <li><strong>Enable Scheduler:</strong> Arms the Chronos window to trigger automation at set clock times.</li>
+          <li><strong>Hide HUD:</strong> Physically masks the telemetry overlay during active search cycles.</li>
+          <li><strong>Click Simulation:</strong> Fires an engagement pulse 6s after result population for point tracking.</li>
+          <li><strong>Cooldown Evasion:</strong> Artificially extends wait times to bypass high-velocity detection filters.</li>
+          <li><strong>Stay Awake:</strong> Overrides system power settings to prevent sleep during long-form missions.</li>
+          <li><strong>Search Goal:</strong> Defines the total search pulses per mission (Default: 35 for 150 points).</li>
+          <li><strong>Opacity & Blur:</strong> Tunes the visual transparency and frosting intensity of the HUD module.</li>
+          <li><strong>Glow & Radius:</strong> Adjusts neon border saturation and corner curvature of UI elements.</li>
+          <li><strong>HUD Scale:</strong> Dynamically resizes the HUD geometry from 0.7x to 1.3x scaling.</li>
+          <li><strong>Wave Amp & Speed:</strong> Adjusts the vertical amplitude and refresh rate of the DNA visualizer.</li>
+          <li><strong>Glitch Freq:</strong> Determines the visual noise density when using the "Glitch" animation skin.</li>
+          <li><strong>Accent Picker:</strong> Remaps the primary neon color scheme across the entire hardware stack.</li>
+          <li><strong>Skin Selector:</strong> Swaps the active telemetry heartbeat method (Pulse, DNA, Osc, etc.).</li>
         </ul>
       </div>
 
@@ -191,7 +229,7 @@
         <div id="chronos-controls-group">
           <div class="input-group-row">
             <input type="time" id="scheduleTime" class="premium-input" style="flex: 1;">
-            <button id="addAlarmBtn" class="btn-compact btn-outline-primary" style="margin-left: 8px;">ADD ALARM</button>
+            <button id="addAlarmBtn" class="btn-compact btn-outline-primary" style="margin-left: 8px;">+</button>
           </div>
           <div class="alarms-terminal">
             <div id="activeAlarmsList"></div>
@@ -244,7 +282,7 @@
         </div>
         <div class="input-group-row">
           <span>Search Goal</span>
-          <input type="number" id="customCountInput" class="premium-input" value="30">
+          <input type="number" id="customCountInput" class="premium-input" value="35">
         </div>
       </div>
 
@@ -288,7 +326,7 @@
         <label>System Maintenance</label>
         <button id="runDiagnosticBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">TEST HARDWARE TOOL</button>
         <button id="testNotifBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">TEST SYSTEM NOTIFICATION</button>
-        <button id="resetSettingsBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">RESET ALL HARDWARE SETTINGS</button>
+        <button id="resetSettingsBtn" class="btn-compact btn-outline-primary btn-center" style="margin-bottom: 12px;">DEFAULT SETTINGS</button>
         <button id="resetLogsBtn" class="btn-compact btn-outline-danger btn-center">FACTORY RESET TELEMETRY</button>
       </div>
 
@@ -320,7 +358,7 @@
 
       <div class="card">
         <label>Mission Progress</label>
-        <div id="sessionProgress" class="card-large-text">0/30</div>
+        <div id="sessionProgress" class="card-large-text">0/35</div>
         <div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div>
       </div>
 
