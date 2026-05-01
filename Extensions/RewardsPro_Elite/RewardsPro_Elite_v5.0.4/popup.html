@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="CSS/popup.css">
   <style>
     /* ========================================================================
-       BUILD EX: MASTER GEOMETRIC PROTOCOL
+       BUILD FA: MASTER GEOMETRIC PROTOCOL
        Strict viewport locking and spacing ventilation.
        ======================================================================== */
     html, body {
@@ -73,6 +73,30 @@
       line-height: 1;
     }
 
+    /* REDESIGNED DELETE TRIGGER */
+    .del-alarm-btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: rgba(248, 81, 73, 0.1);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      color: #f85149;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+    .del-alarm-btn:hover {
+      background: #f85149;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(248, 81, 73, 0.4);
+      border-color: #f85149;
+    }
+
     .alarms-terminal {
       background: #010409;
       border: 1px solid #30363d;
@@ -87,7 +111,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 8px;
+      padding: 6px 8px;
       border-bottom: 1px solid #21262d;
       font-family: var(--font-mono, monospace);
       font-size: 11px;
@@ -128,16 +152,15 @@
       padding: 10px 12px;
     }
 
-    /* FIX: RECONSTRUCTED MANUAL ALIGNMENT */
     .settings-guide {
       list-style-type: disc;
-      padding-left: 18px; /* Visual gutter for bullets */
+      padding-left: 18px; 
       margin: 10px 0 0 0;
       font-size: 11px;
     }
     .settings-guide li {
       margin-bottom: 10px;
-      padding-left: 4px; /* Space between bullet and text */
+      padding-left: 4px;
       padding-bottom: 8px;
       border-bottom: 1px solid #21262d;
       line-height: 1.4;

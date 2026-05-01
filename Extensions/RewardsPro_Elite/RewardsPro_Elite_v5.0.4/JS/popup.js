@@ -1,7 +1,7 @@
 /**
- * Rewards Pro: Elite v5.2.28 - Master Popup Controller
+ * Rewards Pro: Elite v5.2.29 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD EY: Fixed Engine Status Tag logic; First-click ignition; Brave stability.
+ * BUILD FA: 12-Hour Time conversion; Redesigned Delete Trigger; Engine sync.
  * BASEPLATE: RewardsPro_Elite_v5.0.4/JS/popup.js
  */
 
@@ -20,6 +20,19 @@ const quoteBank = [
   "In code we trust; in telemetry we verify.",
   "The best error message is the one that never appears."
 ];
+
+/**
+ * FIX 1: CHRONOMETRY UTILITY
+ * Converts 24hr machine time ("14:30") to 12hr operator time ("2:30 PM").
+ */
+function formatTime12hr(time24) {
+  if (!time24) return "--:--";
+  const [hrs, mins] = time24.split(':').map(Number);
+  const ampm = hrs >= 12 ? 'PM' : 'AM';
+  const hrs12 = hrs % 12 || 12;
+  const minsStr = mins.toString().padStart(2, '0');
+  return `${hrs12}:${minsStr} ${ampm}`;
+}
 
 /**
  * ANIMATION ENGINE: Telemetry Visualizer
@@ -138,7 +151,6 @@ function updateUI(s) {
     } else { if (dashboard) { dashboard.classList.add('hidden'); } }
   }
 
-  // FIX: ENGINE STATUS TAG
   const engineTag = document.getElementById('engine-mode-tag');
   if (engineTag) {
     if (s.isRunning && !s.isPaused) {
@@ -211,6 +223,10 @@ function updateUI(s) {
     chronosGroup.style.pointerEvents = s.isScheduled ? "auto" : "none";
   }
 
+  /**
+   * FIX 2: ALARM LIST RE-ENGINEERING
+   * Redesigned delete button and 12-hour time conversion display.
+   */
   const alarmListEl = document.getElementById('activeAlarmsList');
   if (alarmListEl) {
     const activeAlarms = s.alarms || []; 
@@ -219,8 +235,8 @@ function updateUI(s) {
     } else {
       alarmListEl.innerHTML = activeAlarms.map(alarm => `
         <div class="alarm-entry">
-          <span>SIGNAL: <span class="alarm-time">${alarm.time}</span></span>
-          <button class="del-alarm-btn" data-id="${alarm.id}">DELETE</button>
+          <span>SIGNAL: <span class="alarm-time">${formatTime12hr(alarm.time)}</span></span>
+          <button class="del-alarm-btn" data-id="${alarm.id}">×</button>
         </div>
       `).join('');
     }
