@@ -1,5 +1,29 @@
 # Rewards Pro: Elite - Version History
 
+### [v5.3.0 - Build FA] - 2026-04-30
+#### **Engine & Ignition**
+- IMPLEMENTED: "Active Hunt" protocol to resolve race conditions during tab creation.
+- IMPLEMENTED: Screensaver Breach logic using cyclic `chrome.windows.update` focus pulses.
+- IMPLEMENTED: Shielded Initialization (150ms delay) to resolve Brave "No SW" errors.
+- UPGRADED: Entropy Engine expanded to 12 subjects (Astrophysics, Culinary, Botany, etc.).
+- ADJUSTED: Default search goal increased to 35 missions for 150-point safety buffer.
+
+#### **Chronos Terminal**
+- UPGRADED: Time telemetry converted to 12-hour format with AM/PM indicators.
+- REDESIGNED: Delete button upgraded to circular "×" Red-Ghost Signal with hover glow.
+- FIXED: State Race Condition on Chronos Toggle using a Transactional Lock gate.
+
+#### **Interface & Aesthetics**
+- FIXED: Heartbeat Status Tag logic (#engine-mode-tag) to sync with running/paused states.
+- FIXED: Geometric alignment of the Operator's Manual with 18px bullet gutters.
+- RESTORED: Dynamic Animation Effects card (Wave Amp, Anim Speed, Glitch Freq).
+- UPDATED: Color Picker reversion logic to ensure engineering blue (#58a6ff) on reset.
+- UPDATED: Bifurcated reset logic: "Default Settings" (Hardware) vs "Factory Reset" (Telemetry).
+
+#### **Stability & Logic**
+- IMPLEMENTED: `safePulse` wrapper to handle BFCache and Port-Closure exceptions.
+- FIXED: "Zombie Tick" loop that caused UI freezes after diagnostic completion.
+- CLEANED: Synchronous routing for `chrome.runtime.onMessage` to prevent channel collapses.
 ### v5.0.4 (Build AG) - Latest Stable
 * [cite_start]**Notification Signal Restoration:** Resolved a fatal hardware exception where the Service Worker failed to trigger notifications due to the "Unable to download all specified images" error[cite: 1, 2, 4, 5, 7].
 * [cite_start]**CSP Security Patch:** Fixed a Content Security Policy (CSP) violation in the search execution logic where calling `.click()` on specific elements was blocked by the browser's "script-src" directive[cite: 3].
