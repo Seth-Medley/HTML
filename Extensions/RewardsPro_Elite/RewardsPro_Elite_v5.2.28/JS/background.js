@@ -1,19 +1,19 @@
 /**
- * Rewards Pro: Elite v5.3.5 - Master Background Logic
+ * Rewards Pro: Elite v5.4.0 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FF: Rewards Redirect Mode implemented; Extreme Entropy dictionary.
- * BASEPLATE: RewardsPro_Elite_v5.3.4/JS/background.js
+ * BUILD FK: Pre-Ignition Cleanup (Purge then Create); Target-specific tab removal.
+ * BASEPLATE: RewardsPro_Elite_v5.3.9/JS/background.js
  */
 
 const DEFAULT_HARDWARE = {
-  isRunning: false, isPaused: false, isMobile: false, isStealth: false, 
-  isCooldownMode: true, isKeepAwake: true, isClickSim: true,
-  isRedirectMode: true, // FIX: Navigation baseline
-  isScheduled: false, alarms: [], themeMode: "system",
-  minWait: 25, maxWait: 60, jitterFreq: 7, accentColor: "#58a6ff",
-  animationSkin: "dna", hudOpacity: 100, hudBlur: 10, neonGlow: 5,
-  hudRadius: 10, hudScale: 100, hudPosition: "bottom-left", logMono: false,
-  totalSearches: 45, animSpeed: 100, waveAmp: 15, glitchFreq: 5
+  isRunning: false, isPaused: false, isHunting: false, isMobile: false, 
+  isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
+  isScrollSim: true, isRedirectMode: true, isScheduled: false, alarms: [], 
+  themeMode: "system", minWait: 25, maxWait: 60, jitterFreq: 7, 
+  accentColor: "#58a6ff", animationSkin: "dna", hudOpacity: 100, 
+  hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
+  hudPosition: "bottom-left", logMono: false, totalSearches: 45, 
+  animSpeed: 100, waveAmp: 15, glitchFreq: 5
 };
 
 // --- GLOBAL ENGINE STATE ---
@@ -24,16 +24,16 @@ let isStorageLoaded = false;
 let state = {
   isRunning: false, isPaused: false, isHunting: false, isMobile: false, 
   isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
-  isRedirectMode: true, // Normalized baseline
-  isDebriefViewed: false, isDiagnostic: false, isScheduled: false,
-  alarms: [], themeMode: "system", batchCounter: 0, targetBatchSize: 6,
-  currentSearch: 0, totalSearches: 45, timeLeft: 0, totalWait: 0,
-  minWait: 25, maxWait: 60, jitterFreq: 7, accentColor: "#58a6ff",
-  animationSkin: "dna", hudOpacity: 100, hudBlur: 10, neonGlow: 5,
-  hudRadius: 10, hudScale: 100, hudPosition: "bottom-left", 
-  showScanlines: false, waveAmp: 15, animSpeed: 100, glitchFreq: 5,
-  logMono: false, bingTabId: null, pendingTerm: null, isTypingStarted: false,
-  runtime: 0, logs: [], sessionCategory: null
+  isScrollSim: true, isRedirectMode: true, isDebriefViewed: false, 
+  isDiagnostic: false, isScheduled: false, alarms: [], themeMode: "system", 
+  batchCounter: 0, targetBatchSize: 6, currentSearch: 0, totalSearches: 45, 
+  timeLeft: 0, totalWait: 0, minWait: 25, maxWait: 60, jitterFreq: 7, 
+  accentColor: "#58a6ff", animationSkin: "dna", hudOpacity: 100, 
+  hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
+  hudPosition: "bottom-left", showScanlines: false, waveAmp: 15, 
+  animSpeed: 100, glitchFreq: 5, logMono: false, bingTabId: null, 
+  pendingTerm: null, isTypingStarted: false, runtime: 0, logs: [], 
+  sessionCategory: null
 };
 
 function triggerCompletionNotification(isManual = false) {
@@ -154,12 +154,18 @@ function ensureStorageReadyAndLaunch() {
 
 chrome.alarms.onAlarm.addListener(() => { ensureStorageReadyAndLaunch(); });
 
+/**
+ * FIX 1: ASYNC CLEANUP UTILITY
+ * Robust removal of all Bing tabs to ensure point-tracking clarity.
+ */
 async function cleanupBingTabs() {
   if (!chrome.tabs || !chrome.runtime?.id) return;
   try {
     const query = { url: "*://*.bing.com/*" };
     const tabs = await chrome.tabs.query(query);
-    for (const tab of tabs) { chrome.tabs.remove(tab.id).catch(() => {}); }
+    for (const tab of tabs) { 
+      await chrome.tabs.remove(tab.id).catch(() => {}); 
+    }
   } catch (e) {}
 }
 
@@ -173,15 +179,25 @@ function resetTimer() {
   sync();
 }
 
-function initiateMission() {
+/**
+ * FIX 2: PRE-IGNITION PURGE
+ * Now async to allow cleanup of manual tabs BEFORE engine creation.
+ */
+async function initiateMission() {
   state.isRunning = true; state.isPaused = false; state.isHunting = true;
   state.currentSearch = 0; state.runtime = 0; state.batchCounter = 0; huntCycleCounter = 0;
+  
   const categories = Object.keys(themeEngine);
   state.sessionCategory = categories[Math.floor(Math.random() * categories.length)];
   addLog(`Hardware Engaged. BREACHING OVERLAY: ${themeEngine[state.sessionCategory].label}`);
+  
+  // Clean deck before tab creation
+  await cleanupBingTabs(); 
+  
   resetTimer();
   if (tickInterval) clearInterval(tickInterval);
   startTick();
+  
   chrome.tabs.create({ url: "https://www.bing.com/" }, (tab) => { 
     state.bingTabId = tab.id; 
     chrome.windows.update(tab.windowId, { focused: true, state: "maximized", drawAttention: true });
@@ -220,6 +236,7 @@ function startTick() {
           state.currentSearch++;
           addLog(`Action logged: ${state.currentSearch}/${state.totalSearches} -> [${state.pendingTerm}]`);
           safePulse("SEARCH");
+          
           if (state.isClickSim) { 
             setTimeout(() => { 
               safePulse("ENGAGE", {}, () => {
@@ -227,6 +244,15 @@ function startTick() {
               }); 
             }, 6000); 
           }
+
+          if (state.isScrollSim) {
+             setTimeout(() => {
+               safePulse("SCROLL", { distance: Math.floor(Math.random() * 400) + 300 }, () => {
+                 addLog("[SIGNAL]: Kinetic Scroll Initiated.");
+               });
+             }, 8500);
+          }
+
           if (state.currentSearch >= state.totalSearches) stopAutomation(true); else resetTimer();
         });
       }
@@ -235,10 +261,6 @@ function startTick() {
   }, 1000);
 }
 
-/**
- * FIX 1: REDIRECT NAVIGATION LOGIC
- * Determines if tab is purged or navigated to Rewards page on completion.
- */
 function stopAutomation(isComp = false) {
   const wasDiagnostic = state.isDiagnostic;
   if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
@@ -274,7 +296,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   } 
   if (msg.action === "UPDATE_STATE") { Object.assign(state, msg.data); sync(); return false; }
   if (msg.action === "FACTORY_RESET") {
-    stopAutomation(false); state.logs = []; state.alarms = []; 
+    stopAutomation(false); cleanupBingTabs(); 
+    state.logs = []; state.alarms = []; 
     addLog("TELEMETRY WIPE: Windows Purged.");
     if (chrome.alarms) chrome.alarms.clearAll(); sync(); return false;
   }
@@ -299,7 +322,6 @@ async function runInit() {
   if (!chrome.runtime?.id) return;
   setTimeout(async () => {
     try {
-      await cleanupBingTabs();
       const stored = await chrome.storage.local.get("state");
       if (stored.state) { 
         Object.assign(state, stored.state); 

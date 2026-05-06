@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.3.6 - Master Popup Controller
+ * Rewards Pro: Elite v5.3.8 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FG: Added Manual Accordion logic; Engine tag sync; Status Visuals.
- * BASEPLATE: RewardsPro_Elite_v5.3.5/JS/popup.js
+ * BUILD FI: Fixed Search Goal persistence; Scroll Simulation sync; Manual Folding.
+ * BASEPLATE: RewardsPro_Elite_v5.3.7/JS/popup.js
  */
 
 let globalHardwareState = null;
@@ -243,6 +243,7 @@ function updateUI(s) {
   const uiElements = [
     { id: 'mobileToggle', state: 'isMobile' }, 
     { id: 'clickSimToggle', state: 'isClickSim' }, 
+    { id: 'scrollSimToggle', state: 'isScrollSim' }, 
     { id: 'hudToggle', state: 'isStealth' }, 
     { id: 'cooldownToggle', state: 'isCooldownMode' }, 
     { id: 'awakeToggle', state: 'isKeepAwake' },
@@ -349,7 +350,6 @@ document.addEventListener('click', function(event) {
   else if (target.closest('#stopBtn')) { chrome.runtime.sendMessage({ action: "STOP" }); } 
   else if (target.closest('#pauseBtn')) { chrome.runtime.sendMessage({ action: "PAUSE" }); } 
   else if (target.closest('#resumeBtn')) { chrome.runtime.sendMessage({ action: "RESUME" }); } 
-  // ACCORDION TOGGLE
   else if (target.closest('#toggleManualBtn')) {
     const manual = document.getElementById('manual-content');
     if (manual) {
@@ -404,7 +404,11 @@ document.addEventListener('DOMContentLoaded', function() {
   randomizePulse();
   runAnimationEngine();
   
-  const toggles = ['mobileToggle', 'clickSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector'];
+  /**
+   * FIX: STATE PERSISTENCE BRIDGE
+   * Added customCountInput to the active manifest to secure Goal settings.
+   */
+  const toggles = ['mobileToggle', 'clickSimToggle', 'scrollSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector', 'customCountInput'];
   toggles.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -417,8 +421,8 @@ document.addEventListener('DOMContentLoaded', function() {
           e.target.checked = false;
         } else {
           let u = {};
-          const map = { 'customCountInput': 'totalSearches', 'mobileToggle':'isMobile', 'clickSimToggle':'isClickSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
-          u[map[id] || id] = (el.type === 'checkbox') ? e.target.checked : e.target.value;
+          const map = { 'customCountInput': 'totalSearches', 'mobileToggle':'isMobile', 'clickSimToggle':'isClickSim', 'scrollSimToggle':'isScrollSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
+          u[map[id] || id] = (el.type === 'checkbox') ? e.target.checked : (el.type === 'number' ? parseInt(e.target.value) : e.target.value);
           chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: u });
         }
       };
