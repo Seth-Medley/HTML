@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.4.0 - Master Background Logic
+ * Rewards Pro: Elite v5.4.3 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FK: Pre-Ignition Cleanup (Purge then Create); Target-specific tab removal.
- * BASEPLATE: RewardsPro_Elite_v5.3.9/JS/background.js
+ * BUILD FN: Added 5s Point-Sync Buffer; Points Breakdown redirect; dismissal fix.
+ * BASEPLATE: RewardsPro_Elite_v5.4.2/JS/background.js
  */
 
 const DEFAULT_HARDWARE = {
@@ -154,10 +154,6 @@ function ensureStorageReadyAndLaunch() {
 
 chrome.alarms.onAlarm.addListener(() => { ensureStorageReadyAndLaunch(); });
 
-/**
- * FIX 1: ASYNC CLEANUP UTILITY
- * Robust removal of all Bing tabs to ensure point-tracking clarity.
- */
 async function cleanupBingTabs() {
   if (!chrome.tabs || !chrome.runtime?.id) return;
   try {
@@ -179,21 +175,16 @@ function resetTimer() {
   sync();
 }
 
-/**
- * FIX 2: PRE-IGNITION PURGE
- * Now async to allow cleanup of manual tabs BEFORE engine creation.
- */
 async function initiateMission() {
   state.isRunning = true; state.isPaused = false; state.isHunting = true;
   state.currentSearch = 0; state.runtime = 0; state.batchCounter = 0; huntCycleCounter = 0;
+  state.isDebriefViewed = false; 
   
   const categories = Object.keys(themeEngine);
   state.sessionCategory = categories[Math.floor(Math.random() * categories.length)];
   addLog(`Hardware Engaged. BREACHING OVERLAY: ${themeEngine[state.sessionCategory].label}`);
   
-  // Clean deck before tab creation
   await cleanupBingTabs(); 
-  
   resetTimer();
   if (tickInterval) clearInterval(tickInterval);
   startTick();
@@ -253,7 +244,16 @@ function startTick() {
              }, 8500);
           }
 
-          if (state.currentSearch >= state.totalSearches) stopAutomation(true); else resetTimer();
+          /**
+           * FIX 1: POINT SYNC BUFFER
+           * Implements a 5-second wait on the final search to ensure server-side award registry.
+           */
+          if (state.currentSearch >= state.totalSearches) {
+            addLog("[PROTOCOL]: Synchronizing Rewards (5s Landing Buffer)...");
+            setTimeout(() => { stopAutomation(true); }, 5000); 
+          } else {
+            resetTimer();
+          }
         });
       }
     }
@@ -261,16 +261,26 @@ function startTick() {
   }, 1000);
 }
 
+/**
+ * FIX 2: REDIRECT REPAIR
+ * Points specifically to Breakdown interface. Verifies tab state before Jump.
+ */
 function stopAutomation(isComp = false) {
   const wasDiagnostic = state.isDiagnostic;
   if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
-  state.isRunning = isComp; state.isHunting = false; state.isTypingStarted = false;
+  
+  state.isRunning = isComp; 
+  state.isHunting = false; 
+  state.isTypingStarted = false;
   
   if (state.bingTabId) {
+    const targetId = parseInt(state.bingTabId, 10);
     if (isComp && state.isRedirectMode && !wasDiagnostic) {
-      chrome.tabs.update(parseInt(state.bingTabId, 10), { url: "https://rewards.bing.com/" }).catch(() => {});
+      chrome.tabs.update(targetId, { url: "https://rewards.bing.com/pointsbreakdown" }, () => {
+        if (chrome.runtime.lastError) { /* Tab context failure protection */ }
+      });
     } else {
-      chrome.tabs.remove(parseInt(state.bingTabId, 10)).catch(() => {});
+      chrome.tabs.remove(targetId).catch(() => {});
     }
   }
   state.bingTabId = null;
@@ -290,6 +300,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.action === "STOP") { stopAutomation(false); return false; } 
   if (msg.action === "PAUSE") { state.isPaused = true; sync(); return false; }
   if (msg.action === "RESUME") { state.isPaused = false; sync(); return false; }
+  
+  if (msg.action === "DISMISS_DEBRIEF") {
+    state.isRunning = false; state.isDebriefViewed = true; sync(); return false;
+  }
+
   if (msg.action === "SAVE_SCHEDULE") {
     state.isScheduled = msg.isScheduled; state.alarms = msg.alarms || [];
     updateChronosAlarms(); sync(); return false;

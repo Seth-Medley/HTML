@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.3.8 - Master Popup Controller
+ * Rewards Pro: Elite v5.4.1 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FI: Fixed Search Goal persistence; Scroll Simulation sync; Manual Folding.
- * BASEPLATE: RewardsPro_Elite_v5.3.7/JS/popup.js
+ * BUILD FL: Fixed Search Goal persistence; Scroll Simulation sync; Manual Folding.
+ * BASEPLATE: RewardsPro_Elite_v5.3.8/JS/popup.js
  */
 
 let globalHardwareState = null;
@@ -117,9 +117,6 @@ function runAnimationEngine() {
   animationFrameId = requestAnimationFrame(runAnimationEngine);
 }
 
-/**
- * UI SYNC: Master State Application
- */
 function updateUI(s) {
   if (!s || !chrome.runtime?.id) { return; }
   globalHardwareState = s;
@@ -251,7 +248,8 @@ function updateUI(s) {
     { id: 'scheduleToggle', state: 'isScheduled' }, 
     { id: 'themeSelector', state: 'themeMode' },
     { id: 'skinSelector', state: 'animationSkin' },
-    { id: 'accentPicker', state: 'accentColor' }
+    { id: 'accentPicker', state: 'accentColor' },
+    { id: 'customCountInput', state: 'totalSearches' }
   ];
   uiElements.forEach(item => {
     const el = document.getElementById(item.id);
@@ -273,8 +271,7 @@ function updateUI(s) {
     { id: 'blurSlider', state: 'hudBlur', badge: 'blurVal', unit: 'px' },
     { id: 'glowSlider', state: 'neonGlow', badge: 'glowVal', unit: 'px' },
     { id: 'radiusSlider', state: 'hudRadius', badge: 'radVal', unit: 'px' },
-    { id: 'scaleSlider', state: 'hudScale', badge: 'scaleVal', unit: 'x' },
-    { id: 'customCountInput', state: 'totalSearches' }
+    { id: 'scaleSlider', state: 'hudScale', badge: 'scaleVal', unit: 'x' }
   ];
 
   syncConfigs.forEach(cfg => {
@@ -404,10 +401,6 @@ document.addEventListener('DOMContentLoaded', function() {
   randomizePulse();
   runAnimationEngine();
   
-  /**
-   * FIX: STATE PERSISTENCE BRIDGE
-   * Added customCountInput to the active manifest to secure Goal settings.
-   */
   const toggles = ['mobileToggle', 'clickSimToggle', 'scrollSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector', 'customCountInput'];
   toggles.forEach(id => {
     const el = document.getElementById(id);

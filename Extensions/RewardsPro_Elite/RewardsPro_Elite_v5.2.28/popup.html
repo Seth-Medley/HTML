@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="CSS/popup.css">
   <style>
     /* ========================================================================
-       BUILD FG: MASTER GEOMETRIC PROTOCOL
+       BUILD FM: MASTER GEOMETRIC PROTOCOL
        Strict viewport locking and spacing ventilation.
        ======================================================================== */
     html, body {
@@ -61,7 +61,6 @@
       font-weight: 600 !important;
     }
 
-    /* COLLAPSIBLE MANUAL ENGINE */
     .manual-collapsible {
       max-height: 190px;
       overflow: hidden;
@@ -97,11 +96,6 @@
       cursor: pointer;
       margin-top: 10px;
       transition: all 0.2s;
-    }
-    .see-more-manual-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(88, 166, 255, 0.05);
     }
 
     #addAlarmBtn {
@@ -246,9 +240,9 @@
             <li><strong>Enable Scheduler:</strong> Arms the Chronos window to trigger automation at set clock times.</li>
             <li><strong>Hide HUD:</strong> Physically masks the telemetry overlay during active search cycles.</li>
             <li><strong>Click Simulation:</strong> Fires an engagement pulse 6s after result population for point tracking.</li>
-            <li><strong>Cooldown Evasion:</strong> Artificially extends wait times to bypass high-velocity detection filters.</li>
+            <li><strong>Scroll Mimicry:</strong> Randomizes vertical page kinetic pulses to simulate user scanning.</li>
             <li><strong>Stay Awake:</strong> Overrides system power settings to prevent sleep during long-form missions.</li>
-            <li><strong>Rewards Redirect:</strong> Determines if the mission tab navigates to the dashboard or closes upon completion.</li>
+            <li><strong>Rewards Redirect:</strong> Navigates the mission tab to the Points Breakdown deck on completion.</li>
             <li><strong>Search Goal:</strong> Defines total search pulses (Default: 45 for extreme point security).</li>
             <li><strong>Opacity & Blur:</strong> Tunes the visual transparency and frosting intensity of the HUD module.</li>
             <li><strong>Glow & Radius:</strong> Adjusts neon border saturation and corner curvature of UI elements.</li>
@@ -334,6 +328,10 @@
         <div class="toggle-row">
           <span>Click Simulation</span>
           <label class="switch"><input type="checkbox" id="clickSimToggle" checked><span class="slider round"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>Scroll Simulation</span>
+          <label class="switch"><input type="checkbox" id="scrollSimToggle" checked><span class="slider round"></span></label>
         </div>
         <div class="toggle-row">
           <span>Cooldown Evasion</span>
