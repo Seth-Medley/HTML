@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="CSS/popup.css">
   <style>
     /* ========================================================================
-       BUILD FA: MASTER GEOMETRIC PROTOCOL
+       BUILD FG: MASTER GEOMETRIC PROTOCOL
        Strict viewport locking and spacing ventilation.
        ======================================================================== */
     html, body {
@@ -61,6 +61,49 @@
       font-weight: 600 !important;
     }
 
+    /* COLLAPSIBLE MANUAL ENGINE */
+    .manual-collapsible {
+      max-height: 190px;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .manual-collapsible.expanded {
+      max-height: 1200px;
+    }
+    .manual-collapsible::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: linear-gradient(transparent, rgba(22, 27, 34, 0.9));
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .manual-collapsible.expanded::after { opacity: 0; }
+
+    .see-more-manual-btn {
+      width: 100%;
+      background: rgba(48, 54, 61, 0.3);
+      border: 1px solid #30363d;
+      color: #8b949e;
+      padding: 6px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+    .see-more-manual-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(88, 166, 255, 0.05);
+    }
+
     #addAlarmBtn {
       width: 32px;
       height: 32px;
@@ -73,7 +116,6 @@
       line-height: 1;
     }
 
-    /* REDESIGNED DELETE TRIGGER */
     .del-alarm-btn {
       width: 20px;
       height: 20px;
@@ -89,12 +131,6 @@
       font-weight: bold;
       transition: all 0.2s ease;
       line-height: 1;
-    }
-    .del-alarm-btn:hover {
-      background: #f85149;
-      color: #fff;
-      box-shadow: 0 0 10px rgba(248, 81, 73, 0.4);
-      border-color: #f85149;
     }
 
     .alarms-terminal {
@@ -181,7 +217,7 @@
         <label>Final Telemetry</label>
         <div class="debrief-stat"><span>Status:</span> <span class="val-success">SUCCESSFUL</span></div>
         <div class="debrief-stat"><span>Total Runtime:</span> <span id="debriefRuntime">--:--:--</span></div>
-        <div class="debrief-stat"><span>Action Count:</span> <span id="debriefCount">0/35</span></div>
+        <div class="debrief-stat"><span>Action Count:</span> <span id="debriefCount">0/45</span></div>
       </div>
     </div>
     <div class="overlay-footer">
@@ -203,23 +239,27 @@
 
       <div id="card-manual" class="card info-card">
         <label>Operator's Manual: Hardware Reference</label>
-        <ul class="settings-guide">
-          <li><strong>Min/Max Delay:</strong> Sets the randomized temporal range (seconds) between search queries.</li>
-          <li><strong>Jitter Freq:</strong> Calibrates the human-mimicry mouse movement frequency during waits.</li>
-          <li><strong>Enable Scheduler:</strong> Arms the Chronos window to trigger automation at set clock times.</li>
-          <li><strong>Hide HUD:</strong> Physically masks the telemetry overlay during active search cycles.</li>
-          <li><strong>Click Simulation:</strong> Fires an engagement pulse 6s after result population for point tracking.</li>
-          <li><strong>Cooldown Evasion:</strong> Artificially extends wait times to bypass high-velocity detection filters.</li>
-          <li><strong>Stay Awake:</strong> Overrides system power settings to prevent sleep during long-form missions.</li>
-          <li><strong>Search Goal:</strong> Defines the total search pulses per mission (Default: 35 for 150 points).</li>
-          <li><strong>Opacity & Blur:</strong> Tunes the visual transparency and frosting intensity of the HUD module.</li>
-          <li><strong>Glow & Radius:</strong> Adjusts neon border saturation and corner curvature of UI elements.</li>
-          <li><strong>HUD Scale:</strong> Dynamically resizes the HUD geometry from 0.7x to 1.3x scaling.</li>
-          <li><strong>Wave Amp & Speed:</strong> Adjusts the vertical amplitude and refresh rate of the DNA visualizer.</li>
-          <li><strong>Glitch Freq:</strong> Determines the visual noise density when using the "Glitch" animation skin.</li>
-          <li><strong>Accent Picker:</strong> Remaps the primary neon color scheme across the entire hardware stack.</li>
-          <li><strong>Skin Selector:</strong> Swaps the active telemetry heartbeat method (Pulse, DNA, Osc, etc.).</li>
-        </ul>
+        <div id="manual-content" class="manual-collapsible">
+          <ul class="settings-guide">
+            <li><strong>Min/Max Delay:</strong> Sets the randomized temporal range (seconds) between search queries.</li>
+            <li><strong>Jitter Freq:</strong> Calibrates the human-mimicry mouse movement frequency during waits.</li>
+            <li><strong>Enable Scheduler:</strong> Arms the Chronos window to trigger automation at set clock times.</li>
+            <li><strong>Hide HUD:</strong> Physically masks the telemetry overlay during active search cycles.</li>
+            <li><strong>Click Simulation:</strong> Fires an engagement pulse 6s after result population for point tracking.</li>
+            <li><strong>Cooldown Evasion:</strong> Artificially extends wait times to bypass high-velocity detection filters.</li>
+            <li><strong>Stay Awake:</strong> Overrides system power settings to prevent sleep during long-form missions.</li>
+            <li><strong>Rewards Redirect:</strong> Determines if the mission tab navigates to the dashboard or closes upon completion.</li>
+            <li><strong>Search Goal:</strong> Defines total search pulses (Default: 45 for extreme point security).</li>
+            <li><strong>Opacity & Blur:</strong> Tunes the visual transparency and frosting intensity of the HUD module.</li>
+            <li><strong>Glow & Radius:</strong> Adjusts neon border saturation and corner curvature of UI elements.</li>
+            <li><strong>HUD Scale:</strong> Dynamically resizes the HUD geometry from 0.7x to 1.3x scaling.</li>
+            <li><strong>Wave Amp & Speed:</strong> Adjusts the vertical amplitude and refresh rate of the DNA visualizer.</li>
+            <li><strong>Glitch Freq:</strong> Determines the visual noise density when using the "Glitch" animation skin.</li>
+            <li><strong>Accent Picker:</strong> Remaps the primary neon color scheme across the entire hardware stack.</li>
+            <li><strong>Skin Selector:</strong> Swaps the active telemetry heartbeat method (Pulse, DNA, Osc, etc.).</li>
+          </ul>
+        </div>
+        <button id="toggleManualBtn" class="see-more-manual-btn">SEE MORE</button>
       </div>
 
       <div id="card-alignment" class="card settings">
@@ -303,9 +343,13 @@
           <span>Stay Awake</span>
           <label class="switch"><input type="checkbox" id="awakeToggle" checked><span class="slider round"></span></label>
         </div>
+        <div class="toggle-row">
+          <span>Rewards Redirect</span>
+          <label class="switch"><input type="checkbox" id="redirectToggle" checked><span class="slider round"></span></label>
+        </div>
         <div class="input-group-row">
           <span>Search Goal</span>
-          <input type="number" id="customCountInput" class="premium-input" value="35">
+          <input type="number" id="customCountInput" class="premium-input" value="45">
         </div>
       </div>
 
@@ -331,7 +375,7 @@
             <option value="glitch">Glitch Signal</option>
             <option value="breath">Steady Breath</option>
             <option value="sine">Sine Wave</option>
-            <option value="dna">DNA Helix</option>
+            <option value="dna" selected>DNA Helix</option>
           </select>
         </div>
       </div>
@@ -381,7 +425,7 @@
 
       <div class="card">
         <label>Mission Progress</label>
-        <div id="sessionProgress" class="card-large-text">0/35</div>
+        <div id="sessionProgress" class="card-large-text">0/45</div>
         <div class="progress-bar-bg"><div id="searchProgressBar" class="progress-fill"></div></div>
       </div>
 

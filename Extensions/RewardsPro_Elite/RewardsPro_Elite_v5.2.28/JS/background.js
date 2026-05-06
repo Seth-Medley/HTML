@@ -1,18 +1,39 @@
 /**
- * Rewards Pro: Elite v5.2.25 - Master Background Logic
+ * Rewards Pro: Elite v5.3.5 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD EV: Fixed "No SW" promise rejection (Shielded Init); Async port logic.
- * BASEPLATE: RewardsPro_Elite_v5.0.4/JS/background.js
+ * BUILD FF: Rewards Redirect Mode implemented; Extreme Entropy dictionary.
+ * BASEPLATE: RewardsPro_Elite_v5.3.4/JS/background.js
  */
 
 const DEFAULT_HARDWARE = {
   isRunning: false, isPaused: false, isMobile: false, isStealth: false, 
   isCooldownMode: true, isKeepAwake: true, isClickSim: true,
+  isRedirectMode: true, // FIX: Navigation baseline
   isScheduled: false, alarms: [], themeMode: "system",
   minWait: 25, maxWait: 60, jitterFreq: 7, accentColor: "#58a6ff",
-  heartbeatSkin: "dna", hudOpacity: 100, hudBlur: 10, neonGlow: 5,
+  animationSkin: "dna", hudOpacity: 100, hudBlur: 10, neonGlow: 5,
   hudRadius: 10, hudScale: 100, hudPosition: "bottom-left", logMono: false,
-  totalSearches: 35, animSpeed: 100, waveAmp: 15, glitchFreq: 5
+  totalSearches: 45, animSpeed: 100, waveAmp: 15, glitchFreq: 5
+};
+
+// --- GLOBAL ENGINE STATE ---
+let tickInterval = null; 
+let huntCycleCounter = 0;
+let isStorageLoaded = false; 
+
+let state = {
+  isRunning: false, isPaused: false, isHunting: false, isMobile: false, 
+  isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
+  isRedirectMode: true, // Normalized baseline
+  isDebriefViewed: false, isDiagnostic: false, isScheduled: false,
+  alarms: [], themeMode: "system", batchCounter: 0, targetBatchSize: 6,
+  currentSearch: 0, totalSearches: 45, timeLeft: 0, totalWait: 0,
+  minWait: 25, maxWait: 60, jitterFreq: 7, accentColor: "#58a6ff",
+  animationSkin: "dna", hudOpacity: 100, hudBlur: 10, neonGlow: 5,
+  hudRadius: 10, hudScale: 100, hudPosition: "bottom-left", 
+  showScanlines: false, waveAmp: 15, animSpeed: 100, glitchFreq: 5,
+  logMono: false, bingTabId: null, pendingTerm: null, isTypingStarted: false,
+  runtime: 0, logs: [], sessionCategory: null
 };
 
 function triggerCompletionNotification(isManual = false) {
@@ -28,24 +49,6 @@ function triggerCompletionNotification(isManual = false) {
   });
 }
 
-// --- GLOBAL ENGINE STATE ---
-let tickInterval = null; 
-let huntCycleCounter = 0;
-
-let state = {
-  isRunning: false, isPaused: false, isHunting: false, isMobile: false, 
-  isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
-  isDebriefViewed: false, isDiagnostic: false, isScheduled: false,
-  alarms: [], themeMode: "system", batchCounter: 0, targetBatchSize: 6,
-  currentSearch: 0, totalSearches: 35, timeLeft: 0, totalWait: 0,
-  minWait: 25, maxWait: 60, jitterFreq: 7, accentColor: "#58a6ff",
-  heartbeatSkin: "dna", hudOpacity: 100, hudBlur: 10, neonGlow: 5,
-  hudRadius: 10, hudScale: 100, hudPosition: "bottom-left", 
-  showScanlines: false, waveAmp: 15, animSpeed: 100, glitchFreq: 5,
-  logMono: false, bingTabId: null, pendingTerm: null, isTypingStarted: false,
-  runtime: 0, logs: [], sessionCategory: null
-};
-
 const themeEngine = {
   astrophysics: { label: "ASTROPHYSICS", subjects: ["Event Horizon", "Dark Matter", "Neutron Star", "Quasar", "Gravitational Lensing", "Nebular Hypothesis"], descriptors: ["thermal emission spectroscopy", "spectral shift analysis", "orbital eccentricities"] },
   architecture: { label: "ARCHITECTURE & DESIGN", subjects: ["Brutalist Concrete", "Gothic Arch", "Bauhaus School", "Sustainable Urbanism", "Art Deco Facade"], descriptors: ["structural load calculations", "aesthetic integration", "material durability"] },
@@ -58,7 +61,19 @@ const themeEngine = {
   computing: { label: "QUANTUM COMPUTING", subjects: ["Qubit superposition", "Neural network topology", "Cryptographic hashing", "Distributed ledger"], descriptors: ["latency optimization", "computational overhead"] },
   mythology: { label: "MYTHOLOGICAL LORE", subjects: ["Norse Aesir", "Hellenic Titans", "Aztec cosmology", "Mesopotamian deities"], descriptors: ["symbolic representation", "cultural transmission"] },
   oceanography: { label: "OCEANOGRAPHY", subjects: ["Abyssal plain", "Thermohaline circulation", "Hydrothermal vents", "Pelagic zones"], descriptors: ["bathymetric mapping", "salinity gradients"] },
-  automotive: { label: "AUTOMOTIVE TECHNOLOGY", subjects: ["EV Battery cooling", "Regenerative braking", "Chassis rigidity", "Turbocharger compression"], descriptors: ["energy density analysis", "thermal management"] }
+  automotive: { label: "AUTOMOTIVE TECHNOLOGY", subjects: ["EV Battery cooling", "Regenerative braking", "Chassis rigidity", "Turbocharger compression"], descriptors: ["energy density analysis", "thermal management"] },
+  aeronautics: { label: "AERONAUTICS", subjects: ["Supersonic Airfoil", "Laminar Flow", "Turbofan Bypass", "Avionics Bus"], descriptors: ["drag coefficient", "thrust-to-weight ratio", "pitch stability"] },
+  microbiology: { label: "MICRO-BIOLOGY", subjects: ["Ribosomal RNA", "Bacterial Flagella", "Viral Capsid", "Plasmids"], descriptors: ["genetic sequencing", "protein synthesis", "microbial metabolic pathway"] },
+  philosophy: { label: "CLASSICAL PHILOSOPHY", subjects: ["Stoic Ethics", "Categorical Imperative", "Dialectical Materialism", "Existentialism"], descriptors: ["epistemological framework", "ethical construct", "ontological inquiry"] },
+  quantum: { label: "QUANTUM MECHANICS", subjects: ["Wave-Particle Duality", "Schrödinger's Cat", "Entanglement", "Planck's Constant"], descriptors: ["probability density", "state superposition", "uncertainty principle"] },
+  civil: { label: "CIVIL ENGINEERING", subjects: ["Suspension Bridge", "Geotechnical Survey", "Reinforced Masonry", "Hydraulic Head"], descriptors: ["tensile stress distribution", "seismic resistance", "static load limit"] },
+  organic_chem: { label: "ORGANIC CHEMISTRY", subjects: ["Hydrocarbon Isomers", "Covalent Bonding", "Aromatic Ring", "Catalytic Hydrogenation"], descriptors: ["molecular geometry", "reaction kinetics", "valence shell configuration"] },
+  cryptography: { label: "CRYPTOGRAPHY", subjects: ["Elliptic Curve", "Zero-Knowledge Proof", "Public Key Infrastructure", "Salted Hashing"], descriptors: ["entropy calculations", "encryption latency", "brute-force threshold"] },
+  renaissance: { label: "RENAISSANCE ART", subjects: ["Chiaroscuro Technique", "Linear Perspective", "Fresco Pigment", "Humanist Iconography"], descriptors: ["compositional symmetry", "aesthetic proportion", "historical context"] },
+  entomology: { label: "ENTOMOLOGY", subjects: ["Coleoptera Morphology", "Pheromone Communication", "Chitin Exoskeleton", "Metamorphosis Stages"], descriptors: ["taxonomic classification", "ecological niche", "evolutionary adaptation"] },
+  linguistics: { label: "LINGUISTICS", subjects: ["Phonetic Transcription", "Syntax Parsing", "Morphological Derivation", "Semantics"], descriptors: ["etymological origin", "phonological shift", "structural grammar"] },
+  thermo: { label: "THERMODYNAMICS", subjects: ["Entropy Increase", "Carnot Cycle", "Heat Exchanger", "Adiabatic Process"], descriptors: ["thermal equilibrium", "energy dissipation", "specific heat capacity"] },
+  mythology2: { label: "LEGENDARY LORE", subjects: ["Mount Olympus", "River Styx", "Egyptian Book of Dead", "Pandora's Box"], descriptors: ["allegorical significance", "mythic archetype", "cultural narrative"] }
 };
 
 function generateStickyQuery() {
@@ -79,7 +94,7 @@ function safePulse(action, payload = {}, callback = null) {
 }
 
 function sync() { 
-  if (!chrome.runtime?.id) { return; }
+  if (!chrome.runtime?.id || !isStorageLoaded) { return; }
   try {
     chrome.storage.local.set({ state: state }, () => {
       if (chrome.runtime.lastError) return;
@@ -129,7 +144,15 @@ async function updateChronosAlarms() {
   } catch (e) {}
 }
 
-chrome.alarms.onAlarm.addListener(() => { initiateMission(); });
+function ensureStorageReadyAndLaunch() {
+  if (!isStorageLoaded) {
+    setTimeout(ensureStorageReadyAndLaunch, 100); 
+    return;
+  }
+  initiateMission();
+}
+
+chrome.alarms.onAlarm.addListener(() => { ensureStorageReadyAndLaunch(); });
 
 async function cleanupBingTabs() {
   if (!chrome.tabs || !chrome.runtime?.id) return;
@@ -197,7 +220,13 @@ function startTick() {
           state.currentSearch++;
           addLog(`Action logged: ${state.currentSearch}/${state.totalSearches} -> [${state.pendingTerm}]`);
           safePulse("SEARCH");
-          if (state.isClickSim) { setTimeout(() => { safePulse("ENGAGE"); }, 6000); }
+          if (state.isClickSim) { 
+            setTimeout(() => { 
+              safePulse("ENGAGE", {}, () => {
+                addLog("[SIGNAL]: Engagement Pulse Secured.");
+              }); 
+            }, 6000); 
+          }
           if (state.currentSearch >= state.totalSearches) stopAutomation(true); else resetTimer();
         });
       }
@@ -206,11 +235,22 @@ function startTick() {
   }, 1000);
 }
 
+/**
+ * FIX 1: REDIRECT NAVIGATION LOGIC
+ * Determines if tab is purged or navigated to Rewards page on completion.
+ */
 function stopAutomation(isComp = false) {
   const wasDiagnostic = state.isDiagnostic;
   if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
   state.isRunning = isComp; state.isHunting = false; state.isTypingStarted = false;
-  if (state.bingTabId) chrome.tabs.remove(parseInt(state.bingTabId, 10)).catch(() => {});
+  
+  if (state.bingTabId) {
+    if (isComp && state.isRedirectMode && !wasDiagnostic) {
+      chrome.tabs.update(parseInt(state.bingTabId, 10), { url: "https://rewards.bing.com/" }).catch(() => {});
+    } else {
+      chrome.tabs.remove(parseInt(state.bingTabId, 10)).catch(() => {});
+    }
+  }
   state.bingTabId = null;
 
   if (wasDiagnostic) {
@@ -265,10 +305,11 @@ async function runInit() {
         Object.assign(state, stored.state); 
         state.isRunning = false; state.isPaused = false; state.bingTabId = null; 
       }
+      isStorageLoaded = true; 
       updateChronosAlarms(); 
       sync(); 
-      addLog("Hardware Reboot Sequence Complete.");
-    } catch (e) {}
+      addLog("Cold-Boot: Memory Link Verified.");
+    } catch (e) { isStorageLoaded = true; }
   }, 150);
 }
 runInit();

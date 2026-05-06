@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.2.29 - Master Popup Controller
+ * Rewards Pro: Elite v5.3.6 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FA: 12-Hour Time conversion; Redesigned Delete Trigger; Engine sync.
- * BASEPLATE: RewardsPro_Elite_v5.0.4/JS/popup.js
+ * BUILD FG: Added Manual Accordion logic; Engine tag sync; Status Visuals.
+ * BASEPLATE: RewardsPro_Elite_v5.3.5/JS/popup.js
  */
 
 let globalHardwareState = null;
@@ -21,10 +21,6 @@ const quoteBank = [
   "The best error message is the one that never appears."
 ];
 
-/**
- * FIX 1: CHRONOMETRY UTILITY
- * Converts 24hr machine time ("14:30") to 12hr operator time ("2:30 PM").
- */
 function formatTime12hr(time24) {
   if (!time24) return "--:--";
   const [hrs, mins] = time24.split(':').map(Number);
@@ -49,7 +45,7 @@ function runAnimationEngine() {
   
   let renderSpeed = (s.animSpeed || 100) / 5500; 
   let renderAmplitude = s.waveAmp || 15;
-  let activeSkin = s.animationSkin || s.heartbeatSkin || "dna";
+  let activeSkin = s.animationSkin || "dna";
 
   const isMissionActive = !!s.isRunning && !s.isPaused;
   if (!isMissionActive) {
@@ -223,10 +219,6 @@ function updateUI(s) {
     chronosGroup.style.pointerEvents = s.isScheduled ? "auto" : "none";
   }
 
-  /**
-   * FIX 2: ALARM LIST RE-ENGINEERING
-   * Redesigned delete button and 12-hour time conversion display.
-   */
   const alarmListEl = document.getElementById('activeAlarmsList');
   if (alarmListEl) {
     const activeAlarms = s.alarms || []; 
@@ -254,6 +246,7 @@ function updateUI(s) {
     { id: 'hudToggle', state: 'isStealth' }, 
     { id: 'cooldownToggle', state: 'isCooldownMode' }, 
     { id: 'awakeToggle', state: 'isKeepAwake' },
+    { id: 'redirectToggle', state: 'isRedirectMode' },
     { id: 'scheduleToggle', state: 'isScheduled' }, 
     { id: 'themeSelector', state: 'themeMode' },
     { id: 'skinSelector', state: 'animationSkin' },
@@ -356,6 +349,14 @@ document.addEventListener('click', function(event) {
   else if (target.closest('#stopBtn')) { chrome.runtime.sendMessage({ action: "STOP" }); } 
   else if (target.closest('#pauseBtn')) { chrome.runtime.sendMessage({ action: "PAUSE" }); } 
   else if (target.closest('#resumeBtn')) { chrome.runtime.sendMessage({ action: "RESUME" }); } 
+  // ACCORDION TOGGLE
+  else if (target.closest('#toggleManualBtn')) {
+    const manual = document.getElementById('manual-content');
+    if (manual) {
+      manual.classList.toggle('expanded');
+      target.innerText = manual.classList.contains('expanded') ? "SEE LESS" : "SEE MORE";
+    }
+  }
   else if (target.closest('#addAlarmBtn')) {
     const timeEl = document.getElementById('scheduleTime');
     if (timeEl && timeEl.value) {
@@ -403,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
   randomizePulse();
   runAnimationEngine();
   
-  const toggles = ['mobileToggle', 'clickSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'scheduleToggle', 'themeSelector', 'skinSelector'];
+  const toggles = ['mobileToggle', 'clickSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector'];
   toggles.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -416,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
           e.target.checked = false;
         } else {
           let u = {};
-          const map = { 'customCountInput': 'totalSearches', 'mobileToggle':'isMobile', 'clickSimToggle':'isClickSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
+          const map = { 'customCountInput': 'totalSearches', 'mobileToggle':'isMobile', 'clickSimToggle':'isClickSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
           u[map[id] || id] = (el.type === 'checkbox') ? e.target.checked : e.target.value;
           chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: u });
         }
