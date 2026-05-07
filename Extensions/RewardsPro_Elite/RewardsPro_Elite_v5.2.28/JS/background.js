@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.4.3 - Master Background Logic
+ * Rewards Pro: Elite v5.4.4 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FN: Added 5s Point-Sync Buffer; Points Breakdown redirect; dismissal fix.
- * BASEPLATE: RewardsPro_Elite_v5.4.2/JS/background.js
+ * BUILD FO: Batch Throttling (Burst Mode); Alarm-based Nav-Redirect; 50 Goal.
+ * BASEPLATE: RewardsPro_Elite_v5.4.3/JS/background.js
  */
 
 const DEFAULT_HARDWARE = {
@@ -12,7 +12,7 @@ const DEFAULT_HARDWARE = {
   themeMode: "system", minWait: 25, maxWait: 60, jitterFreq: 7, 
   accentColor: "#58a6ff", animationSkin: "dna", hudOpacity: 100, 
   hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
-  hudPosition: "bottom-left", logMono: false, totalSearches: 45, 
+  hudPosition: "bottom-left", logMono: false, totalSearches: 50, 
   animSpeed: 100, waveAmp: 15, glitchFreq: 5
 };
 
@@ -26,7 +26,7 @@ let state = {
   isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
   isScrollSim: true, isRedirectMode: true, isDebriefViewed: false, 
   isDiagnostic: false, isScheduled: false, alarms: [], themeMode: "system", 
-  batchCounter: 0, targetBatchSize: 6, currentSearch: 0, totalSearches: 45, 
+  batchCounter: 0, targetBatchSize: 5, currentSearch: 0, totalSearches: 50, 
   timeLeft: 0, totalWait: 0, minWait: 25, maxWait: 60, jitterFreq: 7, 
   accentColor: "#58a6ff", animationSkin: "dna", hudOpacity: 100, 
   hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
@@ -144,15 +144,17 @@ async function updateChronosAlarms() {
   } catch (e) {}
 }
 
-function ensureStorageReadyAndLaunch() {
-  if (!isStorageLoaded) {
-    setTimeout(ensureStorageReadyAndLaunch, 100); 
-    return;
+/**
+ * FIX 1: RESILIENT ALARM ROUTER
+ * Handles both mission ignition and the finalization navigation buffer.
+ */
+chrome.alarms.onAlarm.addListener((alarm) => { 
+  if (alarm.name === "FINAL_REDIRECT") {
+    stopAutomation(true); 
+  } else {
+    ensureStorageReadyAndLaunch(); 
   }
-  initiateMission();
-}
-
-chrome.alarms.onAlarm.addListener(() => { ensureStorageReadyAndLaunch(); });
+});
 
 async function cleanupBingTabs() {
   if (!chrome.tabs || !chrome.runtime?.id) return;
@@ -167,9 +169,19 @@ async function cleanupBingTabs() {
 
 function resetTimer() {
   if (!state.isRunning || state.currentSearch >= state.totalSearches) return;
-  const waitRange = parseInt(state.maxWait) - parseInt(state.minWait) + 1;
-  state.totalWait = Math.floor(Math.random() * waitRange) + parseInt(state.minWait);
-  state.timeLeft = state.totalWait;
+  
+  // FIX 2: BATCH THROTTLING COOLDOWN
+  if (state.batchCounter >= state.targetBatchSize) {
+    addLog(`[SIGNAL]: Burst Complete. Cooling Systems (20s)...`);
+    state.totalWait = 20;
+    state.timeLeft = 20;
+    state.batchCounter = 0;
+  } else {
+    const waitRange = parseInt(state.maxWait) - parseInt(state.minWait) + 1;
+    state.totalWait = Math.floor(Math.random() * waitRange) + parseInt(state.minWait);
+    state.timeLeft = state.totalWait;
+  }
+  
   state.isTypingStarted = false;
   state.pendingTerm = generateStickyQuery();
   sync();
@@ -225,6 +237,7 @@ function startTick() {
         safePulse("PING", {}, (response) => {
           if (!response) return;
           state.currentSearch++;
+          state.batchCounter++;
           addLog(`Action logged: ${state.currentSearch}/${state.totalSearches} -> [${state.pendingTerm}]`);
           safePulse("SEARCH");
           
@@ -245,12 +258,12 @@ function startTick() {
           }
 
           /**
-           * FIX 1: POINT SYNC BUFFER
-           * Implements a 5-second wait on the final search to ensure server-side award registry.
+           * FIX 3: ALARM-BASED NAVIGATION BUFFER
+           * Prevents "Abandonment" glitch by using a browser alarm to fire the final nav.
            */
           if (state.currentSearch >= state.totalSearches) {
-            addLog("[PROTOCOL]: Synchronizing Rewards (5s Landing Buffer)...");
-            setTimeout(() => { stopAutomation(true); }, 5000); 
+            addLog("[PROTOCOL]: Synchronizing Rewards (5s Signal Delay)...");
+            chrome.alarms.create("FINAL_REDIRECT", { delayInMinutes: 5 / 60 });
           } else {
             resetTimer();
           }
@@ -261,10 +274,6 @@ function startTick() {
   }, 1000);
 }
 
-/**
- * FIX 2: REDIRECT REPAIR
- * Points specifically to Breakdown interface. Verifies tab state before Jump.
- */
 function stopAutomation(isComp = false) {
   const wasDiagnostic = state.isDiagnostic;
   if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
@@ -277,7 +286,7 @@ function stopAutomation(isComp = false) {
     const targetId = parseInt(state.bingTabId, 10);
     if (isComp && state.isRedirectMode && !wasDiagnostic) {
       chrome.tabs.update(targetId, { url: "https://rewards.bing.com/pointsbreakdown" }, () => {
-        if (chrome.runtime.lastError) { /* Tab context failure protection */ }
+        if (chrome.runtime.lastError) { /* Tab lost context */ }
       });
     } else {
       chrome.tabs.remove(targetId).catch(() => {});
@@ -332,6 +341,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.action === "TEST_NOTIFICATION") { triggerCompletionNotification(true); return false; }
   return false; 
 });
+
+function ensureStorageReadyAndLaunch() {
+  if (!isStorageLoaded) {
+    setTimeout(ensureStorageReadyAndLaunch, 100); 
+    return;
+  }
+  initiateMission();
+}
 
 async function runInit() {
   if (!chrome.runtime?.id) return;

@@ -30,9 +30,6 @@ function formatTime12hr(time24) {
   return `${hrs12}:${minsStr} ${ampm}`;
 }
 
-/**
- * ANIMATION ENGINE: Telemetry Visualizer
- */
 function runAnimationEngine() {
   if (!globalHardwareState) {
     animationFrameId = requestAnimationFrame(runAnimationEngine);
