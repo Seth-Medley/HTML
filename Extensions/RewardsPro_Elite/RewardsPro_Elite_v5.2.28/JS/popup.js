@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.4.3 - Master Popup Controller
+ * Rewards Pro: Elite v5.4.4 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FL: Fixed Search Goal persistence; Dynamic Amber Styling with LED override.
- * BASEPLATE: RewardsPro_Elite_v5.4.2/JS/popup.js
+ * BUILD FL: Fixed Search Goal persistence; Dynamic Amber Styling with LED override; Stopped State Color Reset.
+ * BASEPLATE: RewardsPro_Elite_v5.4.3/JS/popup.js
  */
 
 let globalHardwareState = null;
@@ -119,7 +119,7 @@ function updateUI(s) {
   globalHardwareState = s;
 
   let displayColor = s.accentColor;
-  if (s.isPaused || s.isCooling) {
+  if (s.isRunning && (s.isPaused || s.isCooling)) {
     displayColor = "#ffbf00";
   }
 

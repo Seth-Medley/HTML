@@ -1,5 +1,5 @@
 /**
- * Rewards Pro: Elite v5.0.6 - Content Script
+ * Rewards Pro: Elite v5.0.7 - Content Script
  * FULL LENGTH CODE - NO CONDENSING
  * IMPLEMENTS: CSP-Compliant Search Execution, Dynamic Color Override (Amber State).
  */
@@ -150,10 +150,10 @@ function updateShadowVisuals(s) {
   let displayColor = s.accentColor;
   let timerLabel = s.timeLeft + 's';
 
-  if (s.isPaused) {
+  if (s.isRunning && s.isPaused) {
     displayColor = "#ffbf00";
     timerLabel = "PAUSED";
-  } else if (s.isCooling) {
+  } else if (s.isRunning && s.isCooling) {
     displayColor = "#ffbf00";
     timerLabel = "COOLING";
   }

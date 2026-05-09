@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.4.7 - Master Background Logic
+ * Rewards Pro: Elite v5.4.8 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FO: Batch Throttling (Burst Mode); Alarm-based Nav-Redirect; 30 Goal; Anti-Bot Randomization; Cooling State Tracker.
- * BASEPLATE: RewardsPro_Elite_v5.4.6/JS/background.js
+ * BUILD FO: Batch Throttling (Burst Mode); Alarm-based Nav-Redirect; 30 Goal; Anti-Bot Randomization; Cooling State Tracker; State Reset Fix.
+ * BASEPLATE: RewardsPro_Elite_v5.4.7/JS/background.js
  */
 
 const DEFAULT_HARDWARE = {
@@ -279,6 +279,7 @@ function stopAutomation(isComp = false) {
   state.isHunting = false; 
   state.isTypingStarted = false;
   state.isCooling = false;
+  state.isPaused = false;
   
   if (state.bingTabId) {
     const targetId = parseInt(state.bingTabId, 10);
