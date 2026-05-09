@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.4.1 - Master Popup Controller
+ * Rewards Pro: Elite v5.4.3 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FL: Fixed Search Goal persistence; Scroll Simulation sync; Manual Folding.
- * BASEPLATE: RewardsPro_Elite_v5.3.8/JS/popup.js
+ * BUILD FL: Fixed Search Goal persistence; Dynamic Amber Styling with LED override.
+ * BASEPLATE: RewardsPro_Elite_v5.4.2/JS/popup.js
  */
 
 let globalHardwareState = null;
@@ -44,7 +44,7 @@ function runAnimationEngine() {
   let renderAmplitude = s.waveAmp || 15;
   let activeSkin = s.animationSkin || "dna";
 
-  const isMissionActive = !!s.isRunning && !s.isPaused;
+  const isMissionActive = !!s.isRunning && !s.isPaused && !s.isCooling;
   if (!isMissionActive) {
     activeSkin = "breath";
     renderSpeed = 0.01; 
@@ -118,6 +118,11 @@ function updateUI(s) {
   if (!s || !chrome.runtime?.id) { return; }
   globalHardwareState = s;
 
+  let displayColor = s.accentColor;
+  if (s.isPaused || s.isCooling) {
+    displayColor = "#ffbf00";
+  }
+
   const dashboard = document.getElementById('mainDashboard');
   const engineRoom = document.getElementById('settingsPage');
   const report = document.getElementById('debriefPage');
@@ -143,12 +148,15 @@ function updateUI(s) {
 
   const engineTag = document.getElementById('engine-mode-tag');
   if (engineTag) {
-    if (s.isRunning && !s.isPaused) {
+    if (s.isRunning && !s.isPaused && !s.isCooling) {
       engineTag.innerText = s.isHunting ? "ENGINE: BREACHING..." : "ENGINE: ONLINE";
-      engineTag.style.color = "var(--accent, #58a6ff)";
+      engineTag.style.color = displayColor;
     } else if (s.isRunning && s.isPaused) {
       engineTag.innerText = "ENGINE: STANDBY";
-      engineTag.style.color = "#8b949e";
+      engineTag.style.color = displayColor;
+    } else if (s.isRunning && s.isCooling) {
+      engineTag.innerText = "ENGINE: COOLING";
+      engineTag.style.color = displayColor;
     } else {
       engineTag.innerText = "ENGINE: OFFLINE";
       engineTag.style.color = "#484f58";
@@ -157,10 +165,16 @@ function updateUI(s) {
 
   const statusLight = document.getElementById('status-dot');
   if (statusLight) {
-    if (s.isRunning && !s.isPaused) {
-      statusLight.classList.remove('dot-idle'); statusLight.classList.add('dot-active');
+    if (s.isRunning) {
+      statusLight.classList.remove('dot-idle'); 
+      statusLight.classList.add('dot-active');
+      statusLight.style.backgroundColor = displayColor;
+      statusLight.style.boxShadow = `0 0 8px ${displayColor}`;
     } else {
-      statusLight.classList.remove('dot-active'); statusLight.classList.add('dot-idle');
+      statusLight.classList.remove('dot-active'); 
+      statusLight.classList.add('dot-idle');
+      statusLight.style.backgroundColor = "";
+      statusLight.style.boxShadow = "";
     }
   }
 
@@ -228,10 +242,10 @@ function updateUI(s) {
     }
   }
 
-  if (s.accentColor) {
-    document.documentElement.style.setProperty('--accent', s.accentColor);
+  if (displayColor) {
+    document.documentElement.style.setProperty('--accent', displayColor, 'important');
     const wave = document.getElementById('wave-path');
-    if (wave) { wave.style.stroke = s.accentColor; }
+    if (wave) { wave.style.stroke = displayColor; }
   }
 
   const uiElements = [
@@ -295,7 +309,8 @@ function updateUI(s) {
   if (s.isRunning === true && s.currentSearch < s.totalSearches) {
     if (timerText) { 
       let label = s.timeLeft + "s";
-      if (s.isPaused) label += " (PAUSED)";
+      if (s.isPaused) label = "PAUSED";
+      else if (s.isCooling) label = "COOLING";
       else if (s.isHunting) label = "HUNTING...";
       timerText.innerText = label;
     }

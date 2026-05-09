@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.4.4 - Master Background Logic
+ * Rewards Pro: Elite v5.4.7 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FO: Batch Throttling (Burst Mode); Alarm-based Nav-Redirect; 50 Goal.
- * BASEPLATE: RewardsPro_Elite_v5.4.3/JS/background.js
+ * BUILD FO: Batch Throttling (Burst Mode); Alarm-based Nav-Redirect; 30 Goal; Anti-Bot Randomization; Cooling State Tracker.
+ * BASEPLATE: RewardsPro_Elite_v5.4.6/JS/background.js
  */
 
 const DEFAULT_HARDWARE = {
@@ -12,8 +12,8 @@ const DEFAULT_HARDWARE = {
   themeMode: "system", minWait: 25, maxWait: 60, jitterFreq: 7, 
   accentColor: "#58a6ff", animationSkin: "dna", hudOpacity: 100, 
   hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
-  hudPosition: "bottom-left", logMono: false, totalSearches: 50, 
-  animSpeed: 100, waveAmp: 15, glitchFreq: 5
+  hudPosition: "bottom-left", logMono: false, totalSearches: 30, 
+  animSpeed: 100, waveAmp: 15, glitchFreq: 5, isCooling: false
 };
 
 // --- GLOBAL ENGINE STATE ---
@@ -26,14 +26,14 @@ let state = {
   isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
   isScrollSim: true, isRedirectMode: true, isDebriefViewed: false, 
   isDiagnostic: false, isScheduled: false, alarms: [], themeMode: "system", 
-  batchCounter: 0, targetBatchSize: 5, currentSearch: 0, totalSearches: 50, 
+  batchCounter: 0, targetBatchSize: 5, currentSearch: 0, totalSearches: 30, 
   timeLeft: 0, totalWait: 0, minWait: 25, maxWait: 60, jitterFreq: 7, 
   accentColor: "#58a6ff", animationSkin: "dna", hudOpacity: 100, 
   hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
   hudPosition: "bottom-left", showScanlines: false, waveAmp: 15, 
   animSpeed: 100, glitchFreq: 5, logMono: false, bingTabId: null, 
   pendingTerm: null, isTypingStarted: false, runtime: 0, logs: [], 
-  sessionCategory: null
+  sessionCategory: null, isCooling: false
 };
 
 function triggerCompletionNotification(isManual = false) {
@@ -144,10 +144,6 @@ async function updateChronosAlarms() {
   } catch (e) {}
 }
 
-/**
- * FIX 1: RESILIENT ALARM ROUTER
- * Handles both mission ignition and the finalization navigation buffer.
- */
 chrome.alarms.onAlarm.addListener((alarm) => { 
   if (alarm.name === "FINAL_REDIRECT") {
     stopAutomation(true); 
@@ -170,16 +166,19 @@ async function cleanupBingTabs() {
 function resetTimer() {
   if (!state.isRunning || state.currentSearch >= state.totalSearches) return;
   
-  // FIX 2: BATCH THROTTLING COOLDOWN
   if (state.batchCounter >= state.targetBatchSize) {
-    addLog(`[SIGNAL]: Burst Complete. Cooling Systems (20s)...`);
-    state.totalWait = 20;
-    state.timeLeft = 20;
+    const coolingTime = Math.floor(Math.random() * 25) + 15;
+    addLog(`[SIGNAL]: Burst Complete. Cooling Systems (${coolingTime}s)...`);
+    state.totalWait = coolingTime;
+    state.timeLeft = coolingTime;
     state.batchCounter = 0;
+    state.targetBatchSize = Math.floor(Math.random() * 4) + 3;
+    state.isCooling = true;
   } else {
     const waitRange = parseInt(state.maxWait) - parseInt(state.minWait) + 1;
     state.totalWait = Math.floor(Math.random() * waitRange) + parseInt(state.minWait);
     state.timeLeft = state.totalWait;
+    state.isCooling = false;
   }
   
   state.isTypingStarted = false;
@@ -188,7 +187,7 @@ function resetTimer() {
 }
 
 async function initiateMission() {
-  state.isRunning = true; state.isPaused = false; state.isHunting = true;
+  state.isRunning = true; state.isPaused = false; state.isHunting = true; state.isCooling = false;
   state.currentSearch = 0; state.runtime = 0; state.batchCounter = 0; huntCycleCounter = 0;
   state.isDebriefViewed = false; 
   
@@ -242,25 +241,23 @@ function startTick() {
           safePulse("SEARCH");
           
           if (state.isClickSim) { 
+            const clickDelay = Math.floor(Math.random() * 4000) + 3000;
             setTimeout(() => { 
               safePulse("ENGAGE", {}, () => {
                 addLog("[SIGNAL]: Engagement Pulse Secured.");
               }); 
-            }, 6000); 
+            }, clickDelay); 
           }
 
           if (state.isScrollSim) {
+             const scrollDelay = Math.floor(Math.random() * 5000) + 6000;
              setTimeout(() => {
                safePulse("SCROLL", { distance: Math.floor(Math.random() * 400) + 300 }, () => {
                  addLog("[SIGNAL]: Kinetic Scroll Initiated.");
                });
-             }, 8500);
+             }, scrollDelay);
           }
 
-          /**
-           * FIX 3: ALARM-BASED NAVIGATION BUFFER
-           * Prevents "Abandonment" glitch by using a browser alarm to fire the final nav.
-           */
           if (state.currentSearch >= state.totalSearches) {
             addLog("[PROTOCOL]: Synchronizing Rewards (5s Signal Delay)...");
             chrome.alarms.create("FINAL_REDIRECT", { delayInMinutes: 5 / 60 });
@@ -281,6 +278,7 @@ function stopAutomation(isComp = false) {
   state.isRunning = isComp; 
   state.isHunting = false; 
   state.isTypingStarted = false;
+  state.isCooling = false;
   
   if (state.bingTabId) {
     const targetId = parseInt(state.bingTabId, 10);
@@ -358,6 +356,7 @@ async function runInit() {
       if (stored.state) { 
         Object.assign(state, stored.state); 
         state.isRunning = false; state.isPaused = false; state.bingTabId = null; 
+        state.isCooling = false;
       }
       isStorageLoaded = true; 
       updateChronosAlarms(); 

@@ -1,14 +1,11 @@
 /**
- * Rewards Pro: Elite v5.0.4 - Content Script
+ * Rewards Pro: Elite v5.0.6 - Content Script
  * FULL LENGTH CODE - NO CONDENSING
- * IMPLEMENTS: CSP-Compliant Search Execution and HUD Telemetry.
+ * IMPLEMENTS: CSP-Compliant Search Execution, Dynamic Color Override (Amber State).
  */
 
 let shadowRootNode = null;
 
-/**
- * MANIFEST: HUD Anchor
- */
 function manifestHUD() {
   if (document.getElementById('rewards-elite-anchor')) {
     return;
@@ -139,9 +136,6 @@ function manifestHUD() {
   document.documentElement.appendChild(anchor);
 }
 
-/**
- * SYNC: Shadow Visuals
- */
 function updateShadowVisuals(s) {
   const host = document.getElementById('rewards-elite-anchor');
   if (!host || !shadowRootNode) {
@@ -153,7 +147,18 @@ function updateShadowVisuals(s) {
     return;
   }
 
-  host.style.setProperty('--accent', s.accentColor);
+  let displayColor = s.accentColor;
+  let timerLabel = s.timeLeft + 's';
+
+  if (s.isPaused) {
+    displayColor = "#ffbf00";
+    timerLabel = "PAUSED";
+  } else if (s.isCooling) {
+    displayColor = "#ffbf00";
+    timerLabel = "COOLING";
+  }
+
+  host.style.setProperty('--accent', displayColor);
   host.style.setProperty('--hud-blur', `${s.hudBlur}px`);
   host.style.setProperty('--hud-radius', `${s.hudRadius}px`);
   host.style.setProperty('--hud-glow', `${s.neonGlow}px`);
@@ -175,7 +180,7 @@ function updateShadowVisuals(s) {
   }
   
   if (timerText) {
-    timerText.innerText = s.timeLeft + 's';
+    timerText.innerText = timerLabel;
   }
   
   if (totalFill) {
@@ -188,9 +193,6 @@ function updateShadowVisuals(s) {
   }
 }
 
-/**
- * SIMULATION: Typing logic
- */
 async function startTyping(term) {
   const input = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]') || document.querySelector('#sb_form_q');
   if (!input) return;
@@ -203,14 +205,15 @@ async function startTyping(term) {
     input.value += char;
     input.dispatchEvent(new Event('input', { bubbles: true }));
     input.dispatchEvent(new KeyboardEvent('keyup', setup));
-    await new Promise(r => setTimeout(r, Math.random() * 60 + 30));
+    
+    let delay = Math.random() * 80 + 40;
+    if (Math.random() > 0.85) {
+      delay += Math.random() * 150 + 100;
+    }
+    await new Promise(r => setTimeout(r, delay));
   }
 }
 
-/**
- * SIMULATION: Search Execution
- * FIX: Uses requestSubmit() and Trusted MouseEvents to bypass CSP "JavaScript URL" blocks.
- */
 async function performSearch() {
   const input = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]') || document.querySelector('#sb_form_q');
   if (!input) {
@@ -218,9 +221,8 @@ async function performSearch() {
   }
   
   input.focus();
-  await new Promise(r => setTimeout(r, 200));
+  await new Promise(r => setTimeout(r, Math.random() * 400 + 300));
   
-  // 1. Dispatch Trusted Keyboard Simulation
   const enterPayload = { 
     key: 'Enter', 
     code: 'Enter', 
@@ -232,16 +234,13 @@ async function performSearch() {
   input.dispatchEvent(new KeyboardEvent('keydown', enterPayload));
   input.dispatchEvent(new KeyboardEvent('keypress', enterPayload));
   
-  // 2. Fallback to Form Submission (Fixes CSP error)
   setTimeout(() => {
     const go = document.querySelector('#sb_form_go') || document.querySelector('input[type="submit"]');
     const form = input.closest('form');
     
     if (form) {
-      // Use requestSubmit to trigger submission through the standard pipeline
       form.requestSubmit();
     } else if (go && go.isConnected) {
-      // If form structure is missing, use a trusted MouseEvent instead of .click()
       const clickEvent = new MouseEvent('click', {
         bubbles: true,
         cancelable: true,
@@ -249,12 +248,9 @@ async function performSearch() {
       });
       go.dispatchEvent(clickEvent);
     }
-  }, 500);
+  }, Math.random() * 300 + 400);
 }
 
-/**
- * INTERFACE: Message Router
- */
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.action === "PING") {
     sendResponse({ status: "alive" });
