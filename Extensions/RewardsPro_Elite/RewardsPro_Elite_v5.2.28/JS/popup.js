@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.4.4 - Master Popup Controller
+ * Rewards Pro: Elite v5.4.9 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FL: Fixed Search Goal persistence; Dynamic Amber Styling with LED override; Stopped State Color Reset.
- * BASEPLATE: RewardsPro_Elite_v5.4.3/JS/popup.js
+ * BUILD FL: Fixed Search Goal persistence; Dynamic Amber Styling; Mobile Toggles Unlocked; DOM ReadyState Protection; Slider Scope Fix.
+ * BASEPLATE: RewardsPro_Elite_v5.4.8/JS/popup.js
  */
 
 let globalHardwareState = null;
@@ -250,6 +250,7 @@ function updateUI(s) {
 
   const uiElements = [
     { id: 'mobileToggle', state: 'isMobile' }, 
+    { id: 'autoMobileToggle', state: 'isAutoMobile' }, 
     { id: 'clickSimToggle', state: 'isClickSim' }, 
     { id: 'scrollSimToggle', state: 'isScrollSim' }, 
     { id: 'hudToggle', state: 'isStealth' }, 
@@ -413,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
   randomizePulse();
   runAnimationEngine();
   
-  const toggles = ['mobileToggle', 'clickSimToggle', 'scrollSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector', 'customCountInput'];
+  const toggles = ['mobileToggle', 'autoMobileToggle', 'clickSimToggle', 'scrollSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector', 'customCountInput'];
   toggles.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -422,11 +423,9 @@ document.addEventListener('DOMContentLoaded', function() {
           if (chronosLockTimeout) clearTimeout(chronosLockTimeout);
           chronosLockTimeout = setTimeout(() => { chronosLockTimeout = null; }, 500);
           chrome.runtime.sendMessage({ action: "SAVE_SCHEDULE", isScheduled: e.target.checked, alarms: globalHardwareState.alarms || [] });
-        } else if (id === 'mobileToggle') {
-          e.target.checked = false;
         } else {
           let u = {};
-          const map = { 'customCountInput': 'totalSearches', 'mobileToggle':'isMobile', 'clickSimToggle':'isClickSim', 'scrollSimToggle':'isScrollSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
+          const map = { 'customCountInput': 'totalSearches', 'mobileToggle':'isMobile', 'autoMobileToggle':'isAutoMobile', 'clickSimToggle':'isClickSim', 'scrollSimToggle':'isScrollSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
           u[map[id] || id] = (el.type === 'checkbox') ? e.target.checked : (el.type === 'number' ? parseInt(e.target.value) : e.target.value);
           chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: u });
         }
@@ -475,7 +474,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function runInit() {
-  const stored = await chrome.storage.local.get("state");
-  if (stored.state) { updateUI(stored.state); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeState);
+  } else {
+    initializeState();
+  }
 }
+
+async function initializeState() {
+  try {
+    const stored = await chrome.storage.local.get("state");
+    if (stored && stored.state) { updateUI(stored.state); }
+  } catch (e) {}
+}
+
 runInit();
