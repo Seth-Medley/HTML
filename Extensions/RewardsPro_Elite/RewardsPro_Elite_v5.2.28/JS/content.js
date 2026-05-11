@@ -1,7 +1,7 @@
 /**
- * Rewards Pro: Elite v5.1.0 - Content Script
+ * Rewards Pro: Elite v5.1.7 - Content Script
  * FULL LENGTH CODE - NO CONDENSING
- * IMPLEMENTS: CSP-Compliant Search Execution, Unified Human Mimicry, Strict State Indicators.
+ * IMPLEMENTS: CSP-Compliant Search Execution, Unified Human Mimicry, Strict State Indicators, CSP Bypass Ready, Mobile Hover/Click Lock, Mobile UI Interaction Fix.
  */
 
 let shadowRootNode = null;
@@ -196,7 +196,20 @@ function updateShadowVisuals(s) {
 }
 
 async function startTyping(term) {
-  const input = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]') || document.querySelector('#sb_form_q');
+  window.eliteLastTerm = term; 
+  
+  // SCROLL FIX: Force scroll to top so the mobile nav bar drops down and becomes visible
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  await new Promise(r => setTimeout(r, 600));
+
+  // Click the mobile search icon to open the text box physically
+  const mobileSearchTrigger = document.querySelector('.bnp_btn_search') || document.querySelector('#mGlass') || document.querySelector('#sb_search');
+  if (mobileSearchTrigger && mobileSearchTrigger.offsetParent !== null) {
+    mobileSearchTrigger.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    await new Promise(r => setTimeout(r, 500));
+  }
+  
+  const input = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]') || document.querySelector('#sb_form_q') || document.querySelector('input[type="search"]');
   if (!input) return;
   input.focus();
   input.value = "";
@@ -217,8 +230,12 @@ async function startTyping(term) {
 }
 
 async function performSearch() {
-  const input = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]') || document.querySelector('#sb_form_q');
-  if (!input) {
+  const input = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]') || document.querySelector('#sb_form_q') || document.querySelector('input[type="search"]');
+  
+  if (!input || input.value.trim() === "") {
+    if (window.eliteLastTerm) {
+      window.location.href = "https://www.bing.com/search?q=" + encodeURIComponent(window.eliteLastTerm);
+    }
     return;
   }
   
@@ -249,6 +266,8 @@ async function performSearch() {
         view: window
       });
       go.dispatchEvent(clickEvent);
+    } else {
+      window.location.href = "https://www.bing.com/search?q=" + encodeURIComponent(window.eliteLastTerm || input.value);
     }
   }, Math.random() * 300 + 400);
 }
@@ -262,32 +281,32 @@ async function simulateHumanBehavior(doScroll, doClick) {
     }
   }
   
-  const links = Array.from(document.querySelectorAll('a')).filter(a => {
-    const rect = a.getBoundingClientRect();
-    return rect.top >= 0 && rect.bottom <= window.innerHeight && rect.width > 0 && a.href && a.href.startsWith('http');
-  });
+  if (doClick === true) {
+    const links = Array.from(document.querySelectorAll('a')).filter(a => {
+      const rect = a.getBoundingClientRect();
+      return rect.top >= 0 && rect.bottom <= window.innerHeight && rect.width > 0 && a.href && a.href.startsWith('http');
+    });
 
-  if (links.length > 0) {
-    const target = links[Math.floor(Math.random() * links.length)];
-    
-    target.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-    target.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-    target.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
-    
-    const originalOutline = target.style.outline;
-    const originalBg = target.style.backgroundColor;
-    target.style.outline = "2px solid rgba(88, 166, 255, 0.6)";
-    target.style.backgroundColor = "rgba(88, 166, 255, 0.1)";
-    target.style.transition = "all 0.3s ease";
-    
-    await new Promise(r => setTimeout(r, Math.random() * 1000 + 1000));
-    
-    target.style.outline = originalOutline;
-    target.style.backgroundColor = originalBg;
-    target.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
-    target.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+    if (links.length > 0) {
+      const target = links[Math.floor(Math.random() * links.length)];
+      
+      target.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      target.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+      target.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+      
+      const originalOutline = target.style.outline;
+      const originalBg = target.style.backgroundColor;
+      target.style.outline = "2px solid rgba(88, 166, 255, 0.6)";
+      target.style.backgroundColor = "rgba(88, 166, 255, 0.1)";
+      target.style.transition = "all 0.3s ease";
+      
+      await new Promise(r => setTimeout(r, Math.random() * 1000 + 1000));
+      
+      target.style.outline = originalOutline;
+      target.style.backgroundColor = originalBg;
+      target.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+      target.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
 
-    if (doClick) {
       chrome.runtime.sendMessage({ action: "OPEN_AND_CLOSE_TAB", url: target.href });
     }
   }
@@ -325,6 +344,5 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   return true;
 });
 
-window.onload = () => {
-  chrome.runtime.sendMessage({ action: "CONTENT_READY" });
-};
+// Immediately request state sync to bypass window load delays
+chrome.runtime.sendMessage({ action: "CONTENT_READY" });

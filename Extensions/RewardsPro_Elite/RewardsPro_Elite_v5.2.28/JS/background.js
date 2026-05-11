@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.8.4 - Master Background Logic
+ * Rewards Pro: Elite v5.9.8 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FO: Batch Throttling; Alarm Nav; Strict Cooling; Mobile UA; Massive Database; Tab Tracker; Startup Purge; Active Window Focus.
- * BASEPLATE: RewardsPro_Elite_v5.8.3/JS/background.js
+ * BUILD FO: Batch Throttling; Alarm Nav; Strict Cooling; Deep Mobile UA Hints; Tab Tracker; Startup Purge; CSP Bypass; WebGL Spoofing; Bi-Directional Smart Toggles.
+ * BASEPLATE: RewardsPro_Elite_v5.9.7/JS/background.js
  */
 
 const DEFAULT_HARDWARE = {
@@ -14,10 +14,10 @@ const DEFAULT_HARDWARE = {
   hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
   hudPosition: "bottom-left", logMono: false, totalSearches: 30, 
   animSpeed: 100, waveAmp: 15, glitchFreq: 5, isCooling: false,
-  isAutoMobile: false, isSimulating: false, searchHistory: [], simulatedTabIds: []
+  isAutoMobile: false, isSimulating: false, searchHistory: [], simulatedTabIds: [], preMobileState: null
 };
 
-const MOBILE_UA = "Mozilla/5.0 (Linux; Android 16; SM-S938U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"; 
+const MOBILE_UA = "Mozilla/5.0 (Linux; Android 16; SM-S938U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 EdgA/120.0.0.0"; 
 const DNR_RULE_ID = 999;
 
 // --- GLOBAL ENGINE STATE ---
@@ -39,7 +39,7 @@ let state = {
   pendingTerm: null, isTypingStarted: false, runtime: 0, logs: [], 
   sessionCategory: null, isCooling: false, isAutoMobile: false, 
   isMobilePhase: false, originalGoal: null, isSimulating: false, 
-  searchHistory: [], simulatedTabIds: []
+  searchHistory: [], simulatedTabIds: [], preMobileState: null
 };
 
 async function toggleMobileUserAgent(enable) {
@@ -56,9 +56,19 @@ async function toggleMobileUserAgent(enable) {
           priority: 1,
           action: {
             type: "modifyHeaders",
-            requestHeaders: [{ header: "user-agent", operation: "set", value: MOBILE_UA }]
+            requestHeaders: [
+              { header: "user-agent", operation: "set", value: MOBILE_UA },
+              { header: "sec-ch-ua", operation: "set", value: "\"Chromium\";v=\"120\", \"Microsoft Edge\";v=\"120\", \"Not?A_Brand\";v=\"99\"" },
+              { header: "sec-ch-ua-mobile", operation: "set", value: "?1" },
+              { header: "sec-ch-ua-platform", operation: "set", value: "\"Android\"" },
+              { header: "sec-ch-ua-model", operation: "set", value: "\"SM-S938U\"" },
+              { header: "sec-ch-ua-platform-version", operation: "set", value: "\"16.0.0\"" }
+            ]
           },
-          condition: { urlFilter: "https://*.bing.com/*", resourceTypes: ["main_frame", "sub_frame", "xmlhttprequest"] }
+          condition: { 
+            urlFilter: "https://*.bing.com/*", 
+            resourceTypes: ["main_frame", "sub_frame", "xmlhttprequest", "ping", "script", "image", "stylesheet", "other"] 
+          }
         }]
       });
       addLog("Mobile Parameters Enabled (S25 Ultra Protocol).");
@@ -102,7 +112,7 @@ const themeEngine = {
   aeronautics: { label: "AERONAUTICS", subjects: ["Supersonic Airfoil", "Laminar Flow", "Turbofan Bypass", "Avionics Bus", "Fuselage Stress", "VTOL Capabilities", "Hypersonic Scramjets", "Altimeter Calibration", "Mach Cone", "Delta Wing Dynamics"], descriptors: ["drag coefficient", "thrust-to-weight ratio", "pitch stability", "yaw control mechanisms", "fuel burn rates", "cabin pressurization", "radar cross-section"] },
   microbiology: { label: "MICRO-BIOLOGY", subjects: ["Ribosomal RNA", "Bacterial Flagella", "Viral Capsid", "Plasmids", "Phagocytosis", "Mitochondrial ATP", "CRISPR Cas9", "Antimicrobial Resistance", "Bacteriophages", "Endospores"], descriptors: ["genetic sequencing", "protein synthesis", "microbial metabolic pathway", "cellular mutation rates", "pathogenic virulence", "symbiotic flora", "enzyme catalysis"] },
   philosophy: { label: "CLASSICAL PHILOSOPHY", subjects: ["Stoic Ethics", "Categorical Imperative", "Dialectical Materialism", "Existentialism", "Nihilism", "Utilitarianism", "Platonic Idealism", "Cartesian Dualism", "Epistemological Doubt", "Phenomenology"], descriptors: ["epistemological framework", "ethical construct", "ontological inquiry", "metaphysical arguments", "logical fallacies", "moral relativism", "cognitive dissonance"] },
-  quantum: { label: "QUANTUM MECHANICS", subjects: ["Wave-Particle Duality", "Schrödinger's Cat", "Entanglement", "Planck's Constant", "Heisenberg Uncertainty", "Quantum Tunneling", "Fermions", "Bose-Einstein Condensate", "Spin Statistics", "Quantum Chromodynamics"], descriptors: ["probability density", "state superposition", "uncertainty principle", "wave function collapse", "particle spin alignment", "energy level quantization", "subatomic interaction"] },
+  quantum: { label: "QUANTUM MECHANICS", subjects: ["Wave-Particle Duality", "Schrödinger's Cat", "Entanglement", "Planck Constant", "Heisenberg Uncertainty", "Quantum Tunneling", "Fermions", "Bose-Einstein Condensate", "Spin Statistics", "Quantum Chromodynamics"], descriptors: ["probability density", "state superposition", "uncertainty principle", "wave function collapse", "particle spin alignment", "energy level quantization", "subatomic interaction"] },
   civil: { label: "CIVIL ENGINEERING", subjects: ["Suspension Bridge", "Geotechnical Survey", "Reinforced Masonry", "Hydraulic Head", "Tunnel Boring", "Aqueduct Fluid Dynamics", "Retaining Walls", "Asphalt Binders", "Steel Rebar Tensile", "Foundation Footings"], descriptors: ["tensile stress distribution", "seismic resistance", "static load limit", "shear force resistance", "soil compaction testing", "hydrostatic pressure", "material strain yields"] },
   organic_chem: { label: "ORGANIC CHEMISTRY", subjects: ["Hydrocarbon Isomers", "Covalent Bonding", "Aromatic Ring", "Catalytic Hydrogenation", "Peptide Bonds", "Stereochemistry", "Aliphatic Chains", "Nucleophilic Substitution", "Polymerization", "Chiral Centers"], descriptors: ["molecular geometry", "reaction kinetics", "valence shell configuration", "electronegativity", "activation energy barriers", "dipole moments", "spectroscopic analysis"] },
   cryptography: { label: "CRYPTOGRAPHY", subjects: ["Elliptic Curve", "Zero-Knowledge Proof", "Public Key Infrastructure", "Salted Hashing", "RSA Encryption", "Block Ciphers", "Steganography", "Diffie-Hellman Key Exchange", "Quantum Key Distribution", "Symmetric Algorithms"], descriptors: ["entropy calculations", "encryption latency", "brute-force threshold", "hash collision resistance", "cryptanalysis vulnerabilities", "digital signature verification", "plaintext obfuscation"] },
@@ -181,9 +191,59 @@ function addLog(msg) {
   sync();
 }
 
+// CSP Bypass: Inject MAIN world script via background API
+// WebGL Spoofing Added for Deep Fingerprint Protection
+function injectMainWorldSpoof(tabId) {
+  if (!chrome.scripting) return;
+  chrome.scripting.executeScript({
+    target: { tabId: tabId, allFrames: true },
+    world: "MAIN",
+    injectImmediately: true,
+    func: () => {
+      try {
+        Object.defineProperty(navigator, 'userAgent', { get: () => "Mozilla/5.0 (Linux; Android 16; SM-S938U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 EdgA/120.0.0.0" });
+        Object.defineProperty(navigator, 'platform', { get: () => "Linux armv8l" });
+        Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 5 });
+        Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => 8 });
+        Object.defineProperty(navigator, 'deviceMemory', { get: () => 8 });
+        Object.defineProperty(window.screen, 'width', { get: () => 412 });
+        Object.defineProperty(window.screen, 'height', { get: () => 915 });
+        if (navigator.userAgentData) {
+          Object.defineProperty(navigator, 'userAgentData', {
+            get: () => ({
+              brands: [{brand: "Chromium", version: "120"}, {brand: "Microsoft Edge", version: "120"}, {brand: "Not?A_Brand", version: "99"}],
+              mobile: true,
+              platform: "Android"
+            })
+          });
+        }
+        
+        const getContext = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function(type, contextAttributes) {
+          const context = getContext.apply(this, arguments);
+          if (context && (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl')) {
+            const getParameter = context.getParameter;
+            context.getParameter = function(parameter) {
+              if (parameter === 37445) return 'Qualcomm'; 
+              if (parameter === 37446) return 'Adreno (TM) 750'; 
+              return getParameter.apply(this, arguments);
+            };
+          }
+          return context;
+        };
+      } catch(e) {}
+    }
+  }).catch(() => {});
+}
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (state.isRunning && tabId === state.bingTabId && changeInfo.status === "complete") {
-    if (state.isHunting) { state.isHunting = false; addLog("Handshake: Breach Successful."); sync(); }
+  if (state.isRunning && tabId === state.bingTabId) {
+    if (changeInfo.status === "loading" && state.isMobile) {
+      injectMainWorldSpoof(tabId);
+    }
+    if (changeInfo.status === "complete") {
+      if (state.isHunting) { state.isHunting = false; addLog("Handshake: Breach Successful."); sync(); }
+    }
   }
 });
 
@@ -315,9 +375,6 @@ function startTick() {
         chrome.tabs.get(parseInt(state.bingTabId, 10), (tab) => {
           if (chrome.runtime.lastError) return;
           chrome.windows.update(tab.windowId, { focused: true, drawAttention: true });
-          if (tab.status === "complete" || huntCycleCounter > 10) {
-            state.isHunting = false; addLog("Breach Confirmed.");
-          }
         });
         state.timeLeft = state.totalWait; sync(); return; 
       }
@@ -396,10 +453,11 @@ function startTick() {
             }
           };
 
-          if (state.isScrollSim || state.isClickSim) {
+          const activeClickSim = state.isMobile ? false : state.isClickSim;
+          if (state.isScrollSim || activeClickSim) {
             const simDelay = Math.floor(Math.random() * 4000) + 3000;
             setTimeout(() => {
-              safePulse("HUMAN_BEHAVIOR", { doScroll: state.isScrollSim, doClick: state.isClickSim }, () => {
+              safePulse("HUMAN_BEHAVIOR", { doScroll: state.isScrollSim, doClick: activeClickSim }, () => {
                 addLog("[SIGNAL]: Human mimicry sequence complete.");
                 proceedToNext();
               });
@@ -461,6 +519,7 @@ function stopAutomation(isComp = false) {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!chrome.runtime?.id) return false; 
+  if (msg.action === "CONTENT_READY") { sync(); return false; }
   if (msg.action === "START") { initiateMission(); return false; } 
   if (msg.action === "STOP") { stopAutomation(false); return false; } 
   if (msg.action === "PAUSE") { state.isPaused = true; sync(); return false; }
@@ -475,6 +534,35 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     updateChronosAlarms(); sync(); return false;
   } 
   if (msg.action === "UPDATE_STATE") { 
+    // Handle Auto-Mobile overriding Mobile Mode
+    if (msg.data.hasOwnProperty('isAutoMobile') && msg.data.isAutoMobile === true) {
+      if (state.isMobile === true) {
+        msg.data.isMobile = false;
+        state.preMobileState = null; // Purge memory to prevent toggle wars
+      }
+    }
+
+    // Handle Mobile Mode overriding Auto-Mobile/ClickSim
+    if (msg.data.hasOwnProperty('isMobile') && msg.data.isMobile !== state.isMobile) {
+      if (msg.data.isMobile) {
+        state.preMobileState = {
+          isAutoMobile: state.isAutoMobile,
+          isClickSim: state.isClickSim
+        };
+        msg.data.isAutoMobile = false;
+        msg.data.isClickSim = false;
+      } else {
+        if (state.preMobileState) {
+          if (!msg.data.hasOwnProperty('isAutoMobile')) msg.data.isAutoMobile = state.preMobileState.isAutoMobile;
+          if (!msg.data.hasOwnProperty('isClickSim')) msg.data.isClickSim = state.preMobileState.isClickSim;
+          state.preMobileState = null;
+        } else {
+          if (!msg.data.hasOwnProperty('isAutoMobile')) msg.data.isAutoMobile = true;
+          if (!msg.data.hasOwnProperty('isClickSim')) msg.data.isClickSim = true;
+        }
+      }
+    }
+
     Object.assign(state, msg.data); 
     if (msg.data.hasOwnProperty('isMobile')) {
       toggleMobileUserAgent(state.isMobile && state.isRunning);
@@ -547,6 +635,7 @@ async function runInit() {
         state.isRunning = false; state.isPaused = false; state.bingTabId = null; 
         state.isCooling = false; state.isMobilePhase = false; state.isSimulating = false;
         state.simulatedTabIds = [];
+        if (state.preMobileState === undefined) state.preMobileState = null;
         if (!state.searchHistory) state.searchHistory = [];
       }
       isStorageLoaded = true; 
