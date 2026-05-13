@@ -1,8 +1,8 @@
 /**
- * Rewards Pro: Elite v5.9.8 - Master Background Logic
+ * Rewards Pro: Elite v6.1.0 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FO: Batch Throttling; Alarm Nav; Strict Cooling; Deep Mobile UA Hints; Tab Tracker; Startup Purge; CSP Bypass; WebGL Spoofing; Bi-Directional Smart Toggles.
- * BASEPLATE: RewardsPro_Elite_v5.9.7/JS/background.js
+ * BUILD FO: Batch Throttling; Strict Cooling; Pure HTTP Header Spoofing; Zero JS Injection (Ghost Protocol).
+ * BASEPLATE: RewardsPro_Elite_v6.0.8/JS/background.js
  */
 
 const DEFAULT_HARDWARE = {
@@ -17,7 +17,7 @@ const DEFAULT_HARDWARE = {
   isAutoMobile: false, isSimulating: false, searchHistory: [], simulatedTabIds: [], preMobileState: null
 };
 
-const MOBILE_UA = "Mozilla/5.0 (Linux; Android 16; SM-S938U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 EdgA/120.0.0.0"; 
+const MOBILE_UA = "Mozilla/5.0 (Linux; Android 14; SM-S928U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"; 
 const DNR_RULE_ID = 999;
 
 // --- GLOBAL ENGINE STATE ---
@@ -58,11 +58,9 @@ async function toggleMobileUserAgent(enable) {
             type: "modifyHeaders",
             requestHeaders: [
               { header: "user-agent", operation: "set", value: MOBILE_UA },
-              { header: "sec-ch-ua", operation: "set", value: "\"Chromium\";v=\"120\", \"Microsoft Edge\";v=\"120\", \"Not?A_Brand\";v=\"99\"" },
+              { header: "sec-ch-ua", operation: "set", value: "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"" },
               { header: "sec-ch-ua-mobile", operation: "set", value: "?1" },
-              { header: "sec-ch-ua-platform", operation: "set", value: "\"Android\"" },
-              { header: "sec-ch-ua-model", operation: "set", value: "\"SM-S938U\"" },
-              { header: "sec-ch-ua-platform-version", operation: "set", value: "\"16.0.0\"" }
+              { header: "sec-ch-ua-platform", operation: "set", value: "\"Android\"" }
             ]
           },
           condition: { 
@@ -71,7 +69,7 @@ async function toggleMobileUserAgent(enable) {
           }
         }]
       });
-      addLog("Mobile Parameters Enabled (S25 Ultra Protocol).");
+      addLog("Ghost Protocol: Pure HTTP Mobile Headers Engaged.");
     } else {
       await chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds: [DNR_RULE_ID]
@@ -191,62 +189,6 @@ function addLog(msg) {
   sync();
 }
 
-// CSP Bypass: Inject MAIN world script via background API
-// WebGL Spoofing Added for Deep Fingerprint Protection
-function injectMainWorldSpoof(tabId) {
-  if (!chrome.scripting) return;
-  chrome.scripting.executeScript({
-    target: { tabId: tabId, allFrames: true },
-    world: "MAIN",
-    injectImmediately: true,
-    func: () => {
-      try {
-        Object.defineProperty(navigator, 'userAgent', { get: () => "Mozilla/5.0 (Linux; Android 16; SM-S938U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 EdgA/120.0.0.0" });
-        Object.defineProperty(navigator, 'platform', { get: () => "Linux armv8l" });
-        Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 5 });
-        Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => 8 });
-        Object.defineProperty(navigator, 'deviceMemory', { get: () => 8 });
-        Object.defineProperty(window.screen, 'width', { get: () => 412 });
-        Object.defineProperty(window.screen, 'height', { get: () => 915 });
-        if (navigator.userAgentData) {
-          Object.defineProperty(navigator, 'userAgentData', {
-            get: () => ({
-              brands: [{brand: "Chromium", version: "120"}, {brand: "Microsoft Edge", version: "120"}, {brand: "Not?A_Brand", version: "99"}],
-              mobile: true,
-              platform: "Android"
-            })
-          });
-        }
-        
-        const getContext = HTMLCanvasElement.prototype.getContext;
-        HTMLCanvasElement.prototype.getContext = function(type, contextAttributes) {
-          const context = getContext.apply(this, arguments);
-          if (context && (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl')) {
-            const getParameter = context.getParameter;
-            context.getParameter = function(parameter) {
-              if (parameter === 37445) return 'Qualcomm'; 
-              if (parameter === 37446) return 'Adreno (TM) 750'; 
-              return getParameter.apply(this, arguments);
-            };
-          }
-          return context;
-        };
-      } catch(e) {}
-    }
-  }).catch(() => {});
-}
-
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (state.isRunning && tabId === state.bingTabId) {
-    if (changeInfo.status === "loading" && state.isMobile) {
-      injectMainWorldSpoof(tabId);
-    }
-    if (changeInfo.status === "complete") {
-      if (state.isHunting) { state.isHunting = false; addLog("Handshake: Breach Successful."); sync(); }
-    }
-  }
-});
-
 function getNextAlarmTime(timeStr) {
   const now = new Date();
   const [hrs, mins] = timeStr.split(':').map(Number);
@@ -355,7 +297,9 @@ async function initiateMission() {
   if (tickInterval) clearInterval(tickInterval);
   startTick();
   
-  chrome.tabs.create({ url: "https://www.bing.com/" }, (tab) => { 
+  const targetUrl = state.isMobile ? "https://www.bing.com/#elite-mobile" : "https://www.bing.com/#elite-pc";
+  
+  chrome.tabs.create({ url: targetUrl }, (tab) => { 
     state.bingTabId = tab.id; 
     if (state.isMobile) {
       chrome.windows.update(tab.windowId, { state: "normal", focused: true, width: 412, height: 915, drawAttention: true });
@@ -375,6 +319,10 @@ function startTick() {
         chrome.tabs.get(parseInt(state.bingTabId, 10), (tab) => {
           if (chrome.runtime.lastError) return;
           chrome.windows.update(tab.windowId, { focused: true, drawAttention: true });
+          if (tab.status === "complete") {
+             state.isHunting = false; 
+             addLog("Handshake: Tab loaded.");
+          }
         });
         state.timeLeft = state.totalWait; sync(); return; 
       }
@@ -439,7 +387,7 @@ function startTick() {
                 }
                 
                 resetTimer();
-                chrome.tabs.create({ url: "https://www.bing.com/" }, (tab) => { 
+                chrome.tabs.create({ url: "https://www.bing.com/#elite-mobile" }, (tab) => { 
                   state.bingTabId = tab.id; 
                   chrome.windows.update(tab.windowId, { state: "normal", focused: true, width: 412, height: 915, drawAttention: true });
                   sync(); 
@@ -534,15 +482,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     updateChronosAlarms(); sync(); return false;
   } 
   if (msg.action === "UPDATE_STATE") { 
-    // Handle Auto-Mobile overriding Mobile Mode
     if (msg.data.hasOwnProperty('isAutoMobile') && msg.data.isAutoMobile === true) {
       if (state.isMobile === true) {
         msg.data.isMobile = false;
-        state.preMobileState = null; // Purge memory to prevent toggle wars
+        state.preMobileState = null; 
       }
     }
 
-    // Handle Mobile Mode overriding Auto-Mobile/ClickSim
     if (msg.data.hasOwnProperty('isMobile') && msg.data.isMobile !== state.isMobile) {
       if (msg.data.isMobile) {
         state.preMobileState = {
@@ -602,7 +548,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     stopAutomation(false); state.isRunning = true; state.isDiagnostic = true; state.isHunting = true;
     state.totalSearches = 1; state.totalWait = 5; state.timeLeft = 5; 
     state.pendingTerm = "Hardware Test Pulse"; startTick();
-    chrome.tabs.create({ url: "https://www.bing.com/" }, (tab) => { state.bingTabId = tab.id; sync(); });
+    chrome.tabs.create({ url: "https://www.bing.com/#elite-pc" }, (tab) => { state.bingTabId = tab.id; sync(); });
     return false;
   }
   if (msg.action === "TEST_NOTIFICATION") { triggerCompletionNotification(true); return false; }
@@ -623,7 +569,6 @@ async function runInit() {
     try {
       const stored = await chrome.storage.local.get("state");
       if (stored.state) { 
-        // ORPHAN TAB CLEANUP ON RELOAD
         if (stored.state.bingTabId) {
           chrome.tabs.remove(parseInt(stored.state.bingTabId, 10)).catch(() => {});
         }

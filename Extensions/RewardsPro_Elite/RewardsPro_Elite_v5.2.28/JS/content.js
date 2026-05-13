@@ -1,7 +1,7 @@
 /**
- * Rewards Pro: Elite v5.1.7 - Content Script
+ * Rewards Pro: Elite v6.1.0 - Content Script
  * FULL LENGTH CODE - NO CONDENSING
- * IMPLEMENTS: CSP-Compliant Search Execution, Unified Human Mimicry, Strict State Indicators, CSP Bypass Ready, Mobile Hover/Click Lock, Mobile UI Interaction Fix.
+ * IMPLEMENTS: Naked Navigation Protocol. Zero JS Spoofing. 
  */
 
 let shadowRootNode = null;
@@ -197,79 +197,20 @@ function updateShadowVisuals(s) {
 
 async function startTyping(term) {
   window.eliteLastTerm = term; 
-  
-  // SCROLL FIX: Force scroll to top so the mobile nav bar drops down and becomes visible
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  await new Promise(r => setTimeout(r, 600));
-
-  // Click the mobile search icon to open the text box physically
-  const mobileSearchTrigger = document.querySelector('.bnp_btn_search') || document.querySelector('#mGlass') || document.querySelector('#sb_search');
-  if (mobileSearchTrigger && mobileSearchTrigger.offsetParent !== null) {
-    mobileSearchTrigger.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-    await new Promise(r => setTimeout(r, 500));
-  }
-  
-  const input = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]') || document.querySelector('#sb_form_q') || document.querySelector('input[type="search"]');
-  if (!input) return;
-  input.focus();
-  input.value = "";
-  for (let i = 0; i < term.length; i++) {
-    const char = term[i];
-    const setup = { key: char, code: `Key${char.toUpperCase()}`, bubbles: true };
-    input.dispatchEvent(new KeyboardEvent('keydown', setup));
-    input.value += char;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    input.dispatchEvent(new KeyboardEvent('keyup', setup));
-    
-    let delay = Math.random() * 80 + 40;
-    if (Math.random() > 0.85) {
-      delay += Math.random() * 150 + 100;
-    }
-    await new Promise(r => setTimeout(r, delay));
-  }
 }
 
 async function performSearch() {
-  const input = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]') || document.querySelector('#sb_form_q') || document.querySelector('input[type="search"]');
+  const targetTerm = window.eliteLastTerm || "";
   
-  if (!input || input.value.trim() === "") {
-    if (window.eliteLastTerm) {
-      window.location.href = "https://www.bing.com/search?q=" + encodeURIComponent(window.eliteLastTerm);
-    }
+  if (!targetTerm || targetTerm.trim() === "") {
     return;
   }
   
-  input.focus();
-  await new Promise(r => setTimeout(r, Math.random() * 400 + 300));
-  
-  const enterPayload = { 
-    key: 'Enter', 
-    code: 'Enter', 
-    keyCode: 13, 
-    which: 13, 
-    bubbles: true, 
-    cancelable: true 
-  };
-  input.dispatchEvent(new KeyboardEvent('keydown', enterPayload));
-  input.dispatchEvent(new KeyboardEvent('keypress', enterPayload));
-  
-  setTimeout(() => {
-    const go = document.querySelector('#sb_form_go') || document.querySelector('input[type="submit"]');
-    const form = input.closest('form');
-    
-    if (form) {
-      form.requestSubmit();
-    } else if (go && go.isConnected) {
-      const clickEvent = new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-      });
-      go.dispatchEvent(clickEvent);
-    } else {
-      window.location.href = "https://www.bing.com/search?q=" + encodeURIComponent(window.eliteLastTerm || input.value);
-    }
-  }, Math.random() * 300 + 400);
+  // Ghost Protocol Navigation: Zero untrusted events, pure native redirection
+  const isMobile = window.location.hash.includes('elite-mobile');
+  const trackingParams = isMobile ? "&PC=MOBN&form=QBRE" : "&form=QBLH";
+  window.location.href = "https://www.bing.com/search?q=" + encodeURIComponent(targetTerm) + trackingParams;
 }
 
 async function simulateHumanBehavior(doScroll, doClick) {
@@ -280,36 +221,6 @@ async function simulateHumanBehavior(doScroll, doClick) {
       await new Promise(r => setTimeout(r, Math.random() * 800 + 700));
     }
   }
-  
-  if (doClick === true) {
-    const links = Array.from(document.querySelectorAll('a')).filter(a => {
-      const rect = a.getBoundingClientRect();
-      return rect.top >= 0 && rect.bottom <= window.innerHeight && rect.width > 0 && a.href && a.href.startsWith('http');
-    });
-
-    if (links.length > 0) {
-      const target = links[Math.floor(Math.random() * links.length)];
-      
-      target.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-      target.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-      target.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
-      
-      const originalOutline = target.style.outline;
-      const originalBg = target.style.backgroundColor;
-      target.style.outline = "2px solid rgba(88, 166, 255, 0.6)";
-      target.style.backgroundColor = "rgba(88, 166, 255, 0.1)";
-      target.style.transition = "all 0.3s ease";
-      
-      await new Promise(r => setTimeout(r, Math.random() * 1000 + 1000));
-      
-      target.style.outline = originalOutline;
-      target.style.backgroundColor = originalBg;
-      target.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
-      target.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-
-      chrome.runtime.sendMessage({ action: "OPEN_AND_CLOSE_TAB", url: target.href });
-    }
-  }
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -318,7 +229,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   } else if (msg.action === "TYPE") {
     startTyping(msg.term);
   } else if (msg.action === "JITTER") {
-    window.scrollBy({ top: Math.floor(Math.random() * 200) - 100, behavior: 'smooth' });
+    const distance = Math.floor(Math.random() * 200) - 100;
+    window.scrollBy({ top: distance, behavior: 'smooth' });
   } else if (msg.action === "SEARCH") {
     performSearch();
   } else if (msg.action === "HUMAN_BEHAVIOR") {
