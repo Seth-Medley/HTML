@@ -1,7 +1,7 @@
 /**
- * Rewards Pro: Elite v6.1.0 - Content Script
+ * Rewards Pro: Elite v7.0.1 - Content Script
  * FULL LENGTH CODE - NO CONDENSING
- * IMPLEMENTS: Naked Navigation Protocol. Zero JS Spoofing. 
+ * IMPLEMENTS: Native Navigation Protocol. Zero Hash Spoofing. Smart Hardware Detection (Click Hard-Block).
  */
 
 let shadowRootNode = null;
@@ -207,18 +207,51 @@ async function performSearch() {
     return;
   }
   
-  // Ghost Protocol Navigation: Zero untrusted events, pure native redirection
   const isMobile = window.location.hash.includes('elite-mobile');
   const trackingParams = isMobile ? "&PC=MOBN&form=QBRE" : "&form=QBLH";
   window.location.href = "https://www.bing.com/search?q=" + encodeURIComponent(targetTerm) + trackingParams;
 }
 
 async function simulateHumanBehavior(doScroll, doClick) {
+  // NATIVE HARDWARE DETECTION: Dynamically checks the physical device running the script
+  const isMobileHardware = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
+
   if (doScroll) {
     const scrollSteps = Math.floor(Math.random() * 3) + 2; 
     for (let i = 0; i < scrollSteps; i++) {
       window.scrollBy({ top: Math.floor(Math.random() * 300) + 200, behavior: 'smooth' });
       await new Promise(r => setTimeout(r, Math.random() * 800 + 700));
+    }
+  }
+  
+  // HARD-BLOCK: Only execute if doClick is enabled AND we are NOT on mobile hardware
+  if (doClick === true && !isMobileHardware) {
+    const links = Array.from(document.querySelectorAll('a')).filter(a => {
+      const rect = a.getBoundingClientRect();
+      return rect.top >= 0 && rect.bottom <= window.innerHeight && rect.width > 0 && a.href && a.href.startsWith('http');
+    });
+
+    if (links.length > 0) {
+      const target = links[Math.floor(Math.random() * links.length)];
+      
+      target.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      target.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+      target.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+      
+      const originalOutline = target.style.outline;
+      const originalBg = target.style.backgroundColor;
+      target.style.outline = "2px solid rgba(88, 166, 255, 0.6)";
+      target.style.backgroundColor = "rgba(88, 166, 255, 0.1)";
+      target.style.transition = "all 0.3s ease";
+      
+      await new Promise(r => setTimeout(r, Math.random() * 1000 + 1000));
+      
+      target.style.outline = originalOutline;
+      target.style.backgroundColor = originalBg;
+      target.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+      target.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+
+      chrome.runtime.sendMessage({ action: "OPEN_AND_CLOSE_TAB", url: target.href });
     }
   }
 }

@@ -1,12 +1,11 @@
 /**
- * Rewards Pro: Elite v6.1.0 - Master Background Logic
+ * Rewards Pro: Elite v7.0.0 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FO: Batch Throttling; Strict Cooling; Pure HTTP Header Spoofing; Zero JS Injection (Ghost Protocol).
- * BASEPLATE: RewardsPro_Elite_v6.0.8/JS/background.js
+ * BUILD FO: Batch Throttling; Strict Cooling; Tab Tracker; Native PC Execution. (Mobile Spoofing Gutted).
  */
 
 const DEFAULT_HARDWARE = {
-  isRunning: false, isPaused: false, isHunting: false, isMobile: false, 
+  isRunning: false, isPaused: false, isHunting: false, 
   isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
   isScrollSim: true, isRedirectMode: true, isScheduled: false, alarms: [], 
   themeMode: "system", minWait: 25, maxWait: 60, jitterFreq: 7, 
@@ -14,11 +13,8 @@ const DEFAULT_HARDWARE = {
   hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
   hudPosition: "bottom-left", logMono: false, totalSearches: 30, 
   animSpeed: 100, waveAmp: 15, glitchFreq: 5, isCooling: false,
-  isAutoMobile: false, isSimulating: false, searchHistory: [], simulatedTabIds: [], preMobileState: null
+  isSimulating: false, searchHistory: [], simulatedTabIds: []
 };
-
-const MOBILE_UA = "Mozilla/5.0 (Linux; Android 14; SM-S928U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"; 
-const DNR_RULE_ID = 999;
 
 // --- GLOBAL ENGINE STATE ---
 let tickInterval = null; 
@@ -26,7 +22,7 @@ let huntCycleCounter = 0;
 let isStorageLoaded = false; 
 
 let state = {
-  isRunning: false, isPaused: false, isHunting: false, isMobile: false, 
+  isRunning: false, isPaused: false, isHunting: false, 
   isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
   isScrollSim: true, isRedirectMode: true, isDebriefViewed: false, 
   isDiagnostic: false, isScheduled: false, alarms: [], themeMode: "system", 
@@ -37,48 +33,9 @@ let state = {
   hudPosition: "bottom-left", showScanlines: false, waveAmp: 15, 
   animSpeed: 100, glitchFreq: 5, logMono: false, bingTabId: null, 
   pendingTerm: null, isTypingStarted: false, runtime: 0, logs: [], 
-  sessionCategory: null, isCooling: false, isAutoMobile: false, 
-  isMobilePhase: false, originalGoal: null, isSimulating: false, 
-  searchHistory: [], simulatedTabIds: [], preMobileState: null
+  sessionCategory: null, isCooling: false, isSimulating: false, 
+  searchHistory: [], simulatedTabIds: []
 };
-
-async function toggleMobileUserAgent(enable) {
-  if (!chrome.declarativeNetRequest) {
-    addLog("WARNING: declarativeNetRequest permission missing in manifest.");
-    return;
-  }
-  try {
-    if (enable) {
-      await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds: [DNR_RULE_ID],
-        addRules: [{
-          id: DNR_RULE_ID,
-          priority: 1,
-          action: {
-            type: "modifyHeaders",
-            requestHeaders: [
-              { header: "user-agent", operation: "set", value: MOBILE_UA },
-              { header: "sec-ch-ua", operation: "set", value: "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"" },
-              { header: "sec-ch-ua-mobile", operation: "set", value: "?1" },
-              { header: "sec-ch-ua-platform", operation: "set", value: "\"Android\"" }
-            ]
-          },
-          condition: { 
-            urlFilter: "https://*.bing.com/*", 
-            resourceTypes: ["main_frame", "sub_frame", "xmlhttprequest", "ping", "script", "image", "stylesheet", "other"] 
-          }
-        }]
-      });
-      addLog("Ghost Protocol: Pure HTTP Mobile Headers Engaged.");
-    } else {
-      await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds: [DNR_RULE_ID]
-      });
-    }
-  } catch (e) {
-    addLog("DNR Update Failed. Check Permissions.");
-  }
-}
 
 function triggerCompletionNotification(isManual = false) {
   if (!chrome.notifications) { return; }
@@ -252,7 +209,7 @@ async function cleanupAllBingTabs() {
 
 function resetTimer() {
   if (!state.isRunning) return;
-  if (!state.isAutoMobile && state.currentSearch >= state.totalSearches) return;
+  if (state.currentSearch >= state.totalSearches) return;
   
   if (state.isCooldownMode && !state.isCooling && state.batchCounter >= state.targetBatchSize) {
     const coolingTime = Math.floor(Math.random() * 25) + 15;
@@ -280,32 +237,20 @@ function resetTimer() {
 async function initiateMission() {
   state.isRunning = true; state.isPaused = false; state.isHunting = true; state.isCooling = false;
   state.currentSearch = 0; state.runtime = 0; state.batchCounter = 0; huntCycleCounter = 0;
-  state.isDebriefViewed = false; state.isMobilePhase = false; state.isSimulating = false;
-  
-  if (state.isAutoMobile) {
-    state.originalGoal = state.totalSearches; 
-    state.isMobile = false; 
-  }
+  state.isDebriefViewed = false; state.isSimulating = false;
   
   const categories = Object.keys(themeEngine);
   state.sessionCategory = categories[Math.floor(Math.random() * categories.length)];
   addLog(`Hardware Engaged. BREACHING OVERLAY: ${themeEngine[state.sessionCategory].label}`);
   
-  await toggleMobileUserAgent(state.isMobile);
   await cleanupAllBingTabs(); 
   resetTimer();
   if (tickInterval) clearInterval(tickInterval);
   startTick();
   
-  const targetUrl = state.isMobile ? "https://www.bing.com/#elite-mobile" : "https://www.bing.com/#elite-pc";
-  
-  chrome.tabs.create({ url: targetUrl }, (tab) => { 
+  chrome.tabs.create({ url: "https://www.bing.com/" }, (tab) => { 
     state.bingTabId = tab.id; 
-    if (state.isMobile) {
-      chrome.windows.update(tab.windowId, { state: "normal", focused: true, width: 412, height: 915, drawAttention: true });
-    } else {
-      chrome.windows.update(tab.windowId, { focused: true, state: "maximized", drawAttention: true });
-    }
+    chrome.windows.update(tab.windowId, { focused: true, state: "maximized", drawAttention: true });
     sync(); 
   });
 }
@@ -369,43 +314,17 @@ function startTick() {
           const proceedToNext = () => {
             state.isSimulating = false;
             if (state.currentSearch >= state.totalSearches) {
-              if (state.isAutoMobile && !state.isMobilePhase) {
-                addLog("[PROTOCOL]: PC Goal Met. Initiating Auto-Mobile Flow...");
-                state.isMobilePhase = true;
-                state.currentSearch = 0;
-                state.totalSearches = 20; 
-                state.isMobile = true; 
-                state.isHunting = true;
-                huntCycleCounter = 0;
-                state.isTypingStarted = false;
-                
-                toggleMobileUserAgent(true);
-                
-                if (state.bingTabId) {
-                  chrome.tabs.remove(parseInt(state.bingTabId, 10)).catch(() => {});
-                  state.bingTabId = null;
-                }
-                
-                resetTimer();
-                chrome.tabs.create({ url: "https://www.bing.com/#elite-mobile" }, (tab) => { 
-                  state.bingTabId = tab.id; 
-                  chrome.windows.update(tab.windowId, { state: "normal", focused: true, width: 412, height: 915, drawAttention: true });
-                  sync(); 
-                });
-              } else {
-                addLog("[PROTOCOL]: Synchronizing Rewards (5s Signal Delay)...");
-                chrome.alarms.create("FINAL_REDIRECT", { delayInMinutes: 5 / 60 });
-              }
+              addLog("[PROTOCOL]: Goal Met. Synchronizing Rewards (5s Signal Delay)...");
+              chrome.alarms.create("FINAL_REDIRECT", { delayInMinutes: 5 / 60 });
             } else {
               resetTimer();
             }
           };
 
-          const activeClickSim = state.isMobile ? false : state.isClickSim;
-          if (state.isScrollSim || activeClickSim) {
+          if (state.isScrollSim || state.isClickSim) {
             const simDelay = Math.floor(Math.random() * 4000) + 3000;
             setTimeout(() => {
-              safePulse("HUMAN_BEHAVIOR", { doScroll: state.isScrollSim, doClick: activeClickSim }, () => {
+              safePulse("HUMAN_BEHAVIOR", { doScroll: state.isScrollSim, doClick: state.isClickSim }, () => {
                 addLog("[SIGNAL]: Human mimicry sequence complete.");
                 proceedToNext();
               });
@@ -424,20 +343,12 @@ function stopAutomation(isComp = false) {
   const wasDiagnostic = state.isDiagnostic;
   if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
   
-  if (state.originalGoal) {
-    state.totalSearches = state.originalGoal;
-    state.originalGoal = null;
-  }
-  
   state.isRunning = isComp; 
   state.isHunting = false; 
   state.isTypingStarted = false;
   state.isCooling = false;
   state.isPaused = false;
-  state.isMobilePhase = false;
   state.isSimulating = false;
-  
-  toggleMobileUserAgent(false);
 
   if (state.simulatedTabIds && state.simulatedTabIds.length > 0) {
     state.simulatedTabIds.forEach(id => chrome.tabs.remove(id).catch(() => {}));
@@ -482,37 +393,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     updateChronosAlarms(); sync(); return false;
   } 
   if (msg.action === "UPDATE_STATE") { 
-    if (msg.data.hasOwnProperty('isAutoMobile') && msg.data.isAutoMobile === true) {
-      if (state.isMobile === true) {
-        msg.data.isMobile = false;
-        state.preMobileState = null; 
-      }
-    }
-
-    if (msg.data.hasOwnProperty('isMobile') && msg.data.isMobile !== state.isMobile) {
-      if (msg.data.isMobile) {
-        state.preMobileState = {
-          isAutoMobile: state.isAutoMobile,
-          isClickSim: state.isClickSim
-        };
-        msg.data.isAutoMobile = false;
-        msg.data.isClickSim = false;
-      } else {
-        if (state.preMobileState) {
-          if (!msg.data.hasOwnProperty('isAutoMobile')) msg.data.isAutoMobile = state.preMobileState.isAutoMobile;
-          if (!msg.data.hasOwnProperty('isClickSim')) msg.data.isClickSim = state.preMobileState.isClickSim;
-          state.preMobileState = null;
-        } else {
-          if (!msg.data.hasOwnProperty('isAutoMobile')) msg.data.isAutoMobile = true;
-          if (!msg.data.hasOwnProperty('isClickSim')) msg.data.isClickSim = true;
-        }
-      }
-    }
-
     Object.assign(state, msg.data); 
-    if (msg.data.hasOwnProperty('isMobile')) {
-      toggleMobileUserAgent(state.isMobile && state.isRunning);
-    }
     sync(); 
     return false; 
   }
@@ -548,7 +429,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     stopAutomation(false); state.isRunning = true; state.isDiagnostic = true; state.isHunting = true;
     state.totalSearches = 1; state.totalWait = 5; state.timeLeft = 5; 
     state.pendingTerm = "Hardware Test Pulse"; startTick();
-    chrome.tabs.create({ url: "https://www.bing.com/#elite-pc" }, (tab) => { state.bingTabId = tab.id; sync(); });
+    chrome.tabs.create({ url: "https://www.bing.com/" }, (tab) => { state.bingTabId = tab.id; sync(); });
     return false;
   }
   if (msg.action === "TEST_NOTIFICATION") { triggerCompletionNotification(true); return false; }
@@ -578,9 +459,8 @@ async function runInit() {
 
         Object.assign(state, stored.state); 
         state.isRunning = false; state.isPaused = false; state.bingTabId = null; 
-        state.isCooling = false; state.isMobilePhase = false; state.isSimulating = false;
+        state.isCooling = false; state.isSimulating = false;
         state.simulatedTabIds = [];
-        if (state.preMobileState === undefined) state.preMobileState = null;
         if (!state.searchHistory) state.searchHistory = [];
       }
       isStorageLoaded = true; 

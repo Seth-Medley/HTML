@@ -2,7 +2,40 @@
  * Rewards Pro: Elite - Final Viewport Calibration
  * Build: 5.1.54 - 320px Width / 560px Height / Center-Locked Footers
  * Implementation: Proportional Flex & Zero-Margin Center Protocol
+ * Update: Dynamic Theme Variable Overhaul
  */
+
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --card-alpha: rgba(22, 27, 34, 0.8);
+  --border: #30363d;
+  --text: #c9d1d9;
+  --muted-text: #8b949e;
+  --accent: #58a6ff;
+  --danger: #f85149;
+  --success: #3fb950;
+  --input-bg: #000000;
+  --badge-bg: #000000;
+  --scrollbar: #30363d;
+  --track-bg: #000000;
+}
+
+[data-theme="light"] {
+  --bg: #f6f8fa;
+  --card: #ffffff;
+  --card-alpha: rgba(255, 255, 255, 0.8);
+  --border: #d0d7de;
+  --text: #24292f;
+  --muted-text: #57606a;
+  --accent: #0969da;
+  --danger: #cf222e;
+  --success: #1a7f37;
+  --input-bg: #f0f2f5;
+  --badge-bg: #e1e4e8;
+  --scrollbar: #d0d7de;
+  --track-bg: #e1e4e8;
+}
 
 /* 1. ROOT VIEWPORT LOCK */
 html, body {
@@ -11,9 +44,9 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden !important; /* Force kills the outside scrollbar */
-  background: #0d1117;
+  background: var(--bg);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #c9d1d9;
+  color: var(--text);
 }
 
 /* 2. DASHBOARD FRAME ARCHITECTURE */
@@ -42,8 +75,8 @@ html, body {
   margin-bottom: 0 !important;
   padding: 4px 12px !important; 
   min-height: 0; /* Scaling safety for 560px frame */
-  background: rgba(22, 27, 34, 0.8);
-  border: 1px solid #30363d;
+  background: var(--card-alpha);
+  border: 1px solid var(--border);
   border-radius: 10px;
 }
 
@@ -104,8 +137,8 @@ html, body {
   text-transform: uppercase;
   border-radius: 8px;
   background: transparent;
-  border: 1px solid #30363d;
-  color: #c9d1d9;
+  border: 1px solid var(--border);
+  color: var(--text);
   margin: 0 !important;
   display: flex;
   align-items: center;
@@ -125,13 +158,14 @@ html, body {
   width: 4px;
 }
 .settings-scroll-area::-webkit-scrollbar-thumb {
-  background: #30363d;
+  background: var(--scrollbar);
   border-radius: 10px;
 }
 
 .hidden {
   display: none !important;
 }
+
 /* Dim cards containing disabled checkboxes or selects */
 .card:has(input[type="checkbox"]:disabled):not("#card-mission-logic"), 
 .card:has(select:disabled) {
@@ -145,14 +179,15 @@ html, body {
 .premium-input:disabled, 
 .premium-select:disabled, 
 .premium-color:disabled {
-  background-color: rgba(48, 54, 61, 0.5) !important;
-  color: #8b949e !important;
-  border-color: #30363d !important;
+  background-color: var(--input-bg) !important;
+  color: var(--muted-text) !important;
+  border-color: var(--border) !important;
+  opacity: 0.5;
 }
 
 /* Grey out the custom switch sliders for checkboxes */
 input[type="checkbox"]:disabled + .slider {
-  background-color: #30363d !important;
+  background-color: var(--border) !important;
   opacity: 0.5;
 }
 
@@ -161,29 +196,6 @@ input[type="range"] {
   opacity: 1.0 !important;
   filter: none !important;
   cursor: pointer !important;
-}
-:root {
-  --bg: #0d1117;
-  --card: #161b22;
-  --border: #30363d;
-  --text: #c9d1d9;
-  --accent: #58a6ff;
-  --danger: #f85149;
-  --success: #3fb950;
-  --input-bg: #000000;
-  --badge-bg: #000000;
-  --scrollbar: #30363d;
-}
-
-[data-theme="light"] {
-  --bg: #f6f8fa;
-  --card: #ffffff;
-  --border: #d0d7de;
-  --text: #24292f;
-  --accent: #0969da;
-  --input-bg: #f0f2f5;
-  --badge-bg: #e1e4e8;
-  --scrollbar: #d0d7de;
 }
 
 /* BASE RESET */
@@ -390,7 +402,7 @@ button:disabled,
   border-width: 1px;
   border-style: solid;
   border-color: var(--border);
-  color: #8b949e;
+  color: var(--muted-text);
   width: 100%;
   font-size: 11px;
 }
@@ -540,7 +552,7 @@ input:checked + .slider:before {
 label {
   font-size: 9px;
   text-transform: uppercase;
-  color: #8b949e;
+  color: var(--muted-text);
   font-weight: 800;
   display: block;
   margin-bottom: 15px; 
@@ -622,7 +634,7 @@ label {
   border-width: 1px;
   border-style: solid;
   border-color: var(--border);
-  color: #8b949e;
+  color: var(--muted-text);
   font-size: 8px;
   height: 22px !important;
   padding-left: 10px;
@@ -656,7 +668,7 @@ label {
 .settings-guide {
   margin-top: 8px;
   padding-left: 16px;
-  color: #8b949e;
+  color: var(--muted-text);
   font-size: 10px;
   line-height: 1.5;
   list-style-type: disc !important;
@@ -764,7 +776,7 @@ h1 span {
   font-family: monospace;
   font-size: 13px;
   font-weight: bold;
-  color: #8b949e;
+  color: var(--muted-text);
   line-height: 1;
 }
 
@@ -775,13 +787,13 @@ h1 span {
   flex-shrink: 0;
 }
 
-.dot-idle { background-color: #484f58; }
+.dot-idle { background-color: var(--muted-text); }
 .dot-active { background-color: var(--success); box-shadow: 0px 0px 8px var(--success); }
 .dot-paused { background-color: #d29922; }
 
 /* PROGRESS TRACKERS */
 .progress-bar-bg, .timer-bar-bg {
-  background-color: #000000;
+  background-color: var(--track-bg);
   height: 6px;
   border-radius: 3px;
   overflow-x: hidden;

@@ -1,8 +1,7 @@
 /**
- * Rewards Pro: Elite v5.4.9 - Master Popup Controller
+ * Rewards Pro: Elite v7.1.1 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FL: Fixed Search Goal persistence; Dynamic Amber Styling; Mobile Toggles Unlocked; DOM ReadyState Protection; Slider Scope Fix.
- * BASEPLATE: RewardsPro_Elite_v5.4.8/JS/popup.js
+ * BUILD FL: Fixed Search Goal persistence; Dynamic Amber Styling; Native Hardware Click-Lock; Strict Mobile Height Cap & Shrink-Wrap.
  */
 
 let globalHardwareState = null;
@@ -249,8 +248,6 @@ function updateUI(s) {
   }
 
   const uiElements = [
-    { id: 'mobileToggle', state: 'isMobile' }, 
-    { id: 'autoMobileToggle', state: 'isAutoMobile' }, 
     { id: 'clickSimToggle', state: 'isClickSim' }, 
     { id: 'scrollSimToggle', state: 'isScrollSim' }, 
     { id: 'hudToggle', state: 'isStealth' }, 
@@ -414,7 +411,99 @@ document.addEventListener('DOMContentLoaded', function() {
   randomizePulse();
   runAnimationEngine();
   
-  const toggles = ['mobileToggle', 'autoMobileToggle', 'clickSimToggle', 'scrollSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector', 'customCountInput'];
+  // Native Hardware Check for Popup UI Injection
+  const isMobileHardware = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
+  const clickSimToggle = document.getElementById('clickSimToggle');
+
+  if (isMobileHardware) {
+    // 1. Hardware Click Lock
+    if (clickSimToggle) {
+      clickSimToggle.checked = false; 
+      clickSimToggle.disabled = true; 
+      if (clickSimToggle.parentElement) {
+        clickSimToggle.parentElement.style.opacity = "0.4";
+        clickSimToggle.parentElement.title = "Click Simulation disabled on Mobile Hardware";
+      }
+    }
+
+    // 2. Strict Viewport Meta Tag (Prevents User Zooming)
+    const meta = document.createElement('meta');
+    meta.name = "viewport";
+    meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+    document.head.appendChild(meta);
+
+    // 3. Flexbox Height Cap & Shrink-Wrap
+    const safeStyle = document.createElement('style');
+    safeStyle.textContent = `
+      /* Allow the extension body to dynamically shrink-wrap itself */
+      html, body { 
+        width: 100% !important; 
+        min-width: 100% !important;
+        height: auto !important; 
+        box-sizing: border-box !important;
+        overflow: hidden !important; 
+        margin: 0 !important;
+        padding: 4px !important;
+        touch-action: none !important; 
+      }
+      
+      /* Enforce max-height and stack the cards to the top */
+      #mainDashboard {
+          display: flex !important; 
+          flex-direction: column !important;
+          align-items: stretch !important;
+          justify-content: flex-start !important; 
+          height: auto !important;
+          max-height: 70vh !important; /* Cap height to ensure it fits in the collapsed view */
+      }
+      
+      /* Keep the cards compressed and kill their ability to stretch */
+      #mainDashboard > div { 
+          flex: none !important;
+          min-height: 0 !important;
+          height: auto !important;
+          padding: 4px 8px !important; 
+          margin-bottom: 4px !important; 
+      }
+      
+      /* Safely hide non-essentials */
+      hr { display: none !important; }
+      
+      /* Squeeze spacing globally */
+      * { line-height: 1.1 !important; }
+      
+      /* Scale the main tracking numbers to fit safely */
+      #sessionProgress, #timerDisplay { 
+          font-size: 18px !important; 
+          margin: 0 !important;
+      }
+      
+      /* Explicitly target and shrink the header runtime clock */
+      #runtimeDisplay {
+          font-size: 11px !important;
+      }
+      
+      /* Compress buttons and SVGs */
+      button { 
+          padding: 6px !important; 
+          min-height: 30px !important; 
+          margin-top: 2px !important; 
+          font-size: 11px !important;
+      }
+      svg { max-height: 25px !important; }
+    `;
+    document.head.appendChild(safeStyle);
+
+    // 4. Safe JS DOM Target: Find the quote text and ONLY hide its immediate container
+    setTimeout(() => {
+        const quoteEl = document.getElementById('quoteDisplay');
+        if (quoteEl && quoteEl.parentElement) {
+            quoteEl.parentElement.style.display = 'none';
+        }
+    }, 50);
+  }
+  
+  const toggles = ['clickSimToggle', 'scrollSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector', 'customCountInput'];
   toggles.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -425,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function() {
           chrome.runtime.sendMessage({ action: "SAVE_SCHEDULE", isScheduled: e.target.checked, alarms: globalHardwareState.alarms || [] });
         } else {
           let u = {};
-          const map = { 'customCountInput': 'totalSearches', 'mobileToggle':'isMobile', 'autoMobileToggle':'isAutoMobile', 'clickSimToggle':'isClickSim', 'scrollSimToggle':'isScrollSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
+          const map = { 'customCountInput': 'totalSearches', 'clickSimToggle':'isClickSim', 'scrollSimToggle':'isScrollSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
           u[map[id] || id] = (el.type === 'checkbox') ? e.target.checked : (el.type === 'number' ? parseInt(e.target.value) : e.target.value);
           chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: u });
         }
@@ -449,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   sliders.forEach(cfg => {
     const el = document.getElementById(cfg.id);
-    if (el) {
+    if (el && document.activeElement !== el) {
       el.oninput = function(e) {
         const val = parseInt(e.target.value);
         const b = document.getElementById(cfg.badge);
