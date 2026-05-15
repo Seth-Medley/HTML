@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Rewards Pro: Elite",
-  "version": "5.2.29",
+  "version": "5.4.0",
   "description": "Set the gear, secure the points. Automate your daily mission with precision human-mimicry and Chronos scheduling logic.",
   "permissions": [
     "tabs",
