@@ -23,16 +23,16 @@
 
 [data-theme="light"] {
   --bg: #f6f8fa;
-  --card: #ffffff;
-  --card-alpha: rgba(255, 255, 255, 0.8);
-  --border: #d0d7de;
-  --text: #24292f;
-  --muted-text: #57606a;
+  --card: #ffffff; /* Pure white for the card face */
+  --card-alpha: rgba(255, 255, 255, 0.9);
+  --border: #d0d7de; /* Light grey border to define card edges */
+  --text: #1f2328; /* Near-black for primary text */
+  --muted-text: #636c76; /* Darker grey for labels/secondary text */
   --accent: #0969da;
   --danger: #cf222e;
   --success: #1a7f37;
-  --input-bg: #f0f2f5;
-  --badge-bg: #e1e4e8;
+  --input-bg: #ffffff;
+  --badge-bg: #eff2f5;
   --scrollbar: #d0d7de;
   --track-bg: #e1e4e8;
 }

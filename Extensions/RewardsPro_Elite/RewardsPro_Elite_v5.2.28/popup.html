@@ -9,46 +9,49 @@
        BUILD FO: MASTER GEOMETRIC PROTOCOL
        Strict viewport locking and spacing ventilation.
        ======================================================================== */
-    html, body {
-      width: 320px !important;
-      height: 560px !important; 
-      overflow: hidden !important;
-      margin: 0;
-      padding: 0;
-      background: #0d1117;
-      color: #c9d1d9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    }
+   /* ========================================================================
+   BUILD FO: MASTER GEOMETRIC PROTOCOL
+   Strict viewport locking and spacing ventilation.
+   ======================================================================== */
+html, body {
+  width: 320px !important;
+  height: 560px !important; 
+  overflow: hidden !important;
+  margin: 0;
+  padding: 0;
+  background: var(--bg); /* Use variable instead of #0d1117 */
+  color: var(--text);   /* Use variable instead of #c9d1d9 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
 
-    #mainDashboard {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-    }
+#mainDashboard {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
 
-    .dashboard-scroll-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 8px 12px;
-      gap: 10px; 
-      overflow: hidden !important;
-    }
+.dashboard-scroll-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  gap: 10px; 
+  overflow: hidden !important;
+}
 
-    #mainDashboard .card {
-      flex: 1; 
-      margin-bottom: 0 !important;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 0;
-      padding: 6px 12px !important;
-      background: rgba(22, 27, 34, 0.8);
-      border: 1px solid #30363d;
-      border-radius: 10px;
-    }
-
+#mainDashboard .card {
+  flex: 1; 
+  margin-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  padding: 6px 12px !important;
+  background: var(--card-alpha); /* Use variable instead of rgba(22, 27, 34, 0.8) */
+  border: 1px solid var(--border); /* Use variable instead of #30363d */
+  border-radius: 10px;
+}
     .dot-active { background: #3fb950; box-shadow: 0 0 8px #3fb950; }
     .dot-idle { background: #f85149; box-shadow: 0 0 8px #f85149; }
     #status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
@@ -83,20 +86,20 @@
     }
     .manual-collapsible.expanded::after { opacity: 0; }
 
-    .see-more-manual-btn {
-      width: 100%;
-      background: rgba(48, 54, 61, 0.3);
-      border: 1px solid #30363d;
-      color: #8b949e;
-      padding: 6px;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.2s;
-    }
+.see-more-manual-btn {
+  width: 100%;
+  background: var(--badge-bg); /* Shifts from dark grey to light grey/white */
+  border: 1px solid var(--border);
+  color: var(--muted-text);    /* Shifts from light grey to dark grey */
+  padding: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
 
     #addAlarmBtn {
       width: 32px;
@@ -127,15 +130,16 @@
       line-height: 1;
     }
 
-    .alarms-terminal {
-      background: #010409;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      height: 85px;
-      margin-top: 10px;
-      overflow-y: auto;
-      padding: 4px;
-    }
+/* Update: Chronos Alarms Terminal */
+.alarms-terminal {
+  background: var(--input-bg); /* Shifts from pitch black to white/off-white */
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  height: 85px;
+  margin-top: 10px;
+  overflow-y: auto;
+  padding: 4px;
+}
 
     .alarm-entry {
       display: flex;
@@ -165,7 +169,7 @@
       border-radius: 8px;
       background: transparent;
       border: 1px solid #30363d;
-      color: #c9d1d9;
+      color: --var(--text);
     }
 
     .settings-scroll-area {
