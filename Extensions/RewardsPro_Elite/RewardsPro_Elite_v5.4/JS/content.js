@@ -1,10 +1,22 @@
 /**
- * Rewards Pro: Elite v7.0.1 - Content Script
+ * Rewards Pro: Elite v7.2.0 - Content Script
  * FULL LENGTH CODE - NO CONDENSING
- * IMPLEMENTS: Native Navigation Protocol. Zero Hash Spoofing. Smart Hardware Detection (Click Hard-Block).
+ * IMPLEMENTS: Native Navigation Protocol. Zero Hash Spoofing. Smart Hardware Detection. Load Time Interceptor.
  */
 
 let shadowRootNode = null;
+
+// SMART THROTTLE PERFORMANCE INTERCEPTOR
+window.addEventListener('load', () => {
+  setTimeout(() => {
+     const navEntries = performance.getEntriesByType("navigation");
+     if (navEntries.length > 0) {
+       const p = navEntries[0];
+       const loadTime = p.loadEventEnd - p.startTime;
+       chrome.runtime.sendMessage({ action: "PAGE_METRICS", loadTime: loadTime });
+     }
+  }, 100);
+});
 
 function manifestHUD() {
   if (document.getElementById('rewards-elite-anchor')) {
@@ -38,68 +50,74 @@ function manifestHUD() {
   const style = document.createElement('style');
   style.textContent = `
     :host { 
-      --accent: #58a6ff; 
-      --hud-bg: rgba(13, 17, 23, 0.85); 
-      --hud-text: #ffffff; 
+      --accent: #D0BCFF; 
+      --hud-bg: rgba(43, 41, 48, 0.85); 
+      --hud-text: #E6E1E5; 
+      --hud-muted: #CAC4D0;
       --hud-blur: 10px; 
-      --hud-radius: 12px; 
+      --hud-radius: 20px; 
       --hud-glow: 5px; 
       --hud-scale: 1.0; 
+      --track-bg: rgba(73, 69, 79, 0.5);
     }
     
     :host([data-theme="light"]) { 
-      --hud-bg: rgba(255, 255, 255, 0.85); 
-      --hud-text: #24292f; 
+      --hud-bg: rgba(244, 239, 244, 0.85); 
+      --hud-text: #1D1B20; 
+      --hud-muted: #49454F;
+      --track-bg: rgba(231, 224, 236, 0.5);
     }
     
     #rewards-hud-container {
       position: fixed; 
       display: flex; 
       flex-direction: column; 
-      gap: 8px;
-      padding: 12px; 
+      gap: 10px;
+      padding: 16px; 
       background: var(--hud-bg); 
-      border: 1px solid var(--accent);
+      border: none;
       border-radius: var(--hud-radius); 
       backdrop-filter: blur(var(--hud-blur)); 
       color: var(--hud-text); 
-      font-family: -apple-system, sans-serif; 
+      font-family: 'Google Sans', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
       pointer-events: auto;
-      box-shadow: 0 0 var(--hud-glow) var(--accent); 
-      width: 140px; 
-      transition: all 0.3s ease; 
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15), 0 0 var(--hud-glow) var(--accent); 
+      width: 150px; 
+      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1); 
       z-index: 2147483647; 
       transform: scale(var(--hud-scale));
     }
 
     .hud-header { 
-      font-size: 8px; 
-      font-weight: 800; 
+      font-size: 10px; 
+      font-weight: 700; 
       text-transform: uppercase; 
-      color: #8b949e; 
+      color: var(--hud-muted); 
       display: flex; 
       justify-content: space-between; 
+      letter-spacing: 0.5px;
     }
 
     #hud-timer-text { 
-      font-size: 18px; 
-      font-weight: 900; 
+      font-size: 24px; 
+      font-weight: 400; 
       text-align: center; 
       margin-top: 4px;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
 
     .hud-label {
-      font-size: 6px;
-      font-weight: 800;
-      color: #8b949e;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--hud-muted);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .hud-progress-track { 
-      height: 4px; 
-      background: #000000; 
-      border-radius: 2px; 
+      height: 6px; 
+      background: var(--track-bg); 
+      border-radius: 3px; 
       overflow: hidden; 
     }
 
@@ -107,23 +125,25 @@ function manifestHUD() {
       height: 100%; 
       background: var(--accent); 
       width: 0%; 
+      border-radius: 3px;
     }
 
     #hud-progress-fill {
-      transition: width 0.4s ease; 
+      transition: width 0.4s cubic-bezier(0.2, 0, 0, 1); 
     }
 
     #hud-timer-fill {
-      background: #3fb950; 
+      background: #93D7A4; 
       transition: width 1s linear;
     }
 
     #hud-theme-tag { 
-      font-size: 6px; 
-      text-align: right; 
-      margin-top: 4px; 
+      font-size: 8px; 
+      text-align: center; 
+      margin-top: 6px; 
       color: var(--accent); 
-      opacity: 0.6; 
+      font-weight: 700;
+      opacity: 0.8; 
     }
 
     .pos-bottom-left { bottom: 20px; left: 20px; } 

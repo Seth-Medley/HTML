@@ -1,19 +1,20 @@
 /**
- * Rewards Pro: Elite v7.0.0 - Master Background Logic
+ * Rewards Pro: Elite v7.2.0 - Master Background Logic
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
- * BUILD FO: Batch Throttling; Strict Cooling; Tab Tracker; Native PC Execution. (Mobile Spoofing Gutted).
+ * BUILD FO: Batch Throttling; Strict Cooling; Tab Tracker; Native PC Execution; Hotkeys; Telemetry; Smart Throttle.
  */
 
 const DEFAULT_HARDWARE = {
   isRunning: false, isPaused: false, isHunting: false, 
   isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
   isScrollSim: true, isRedirectMode: true, isScheduled: false, alarms: [], 
+  isRemindersEnabled: false, reminderAlarms: [], isSmartThrottle: false,
   themeMode: "system", minWait: 25, maxWait: 60, jitterFreq: 7, 
   accentColor: "#58a6ff", animationSkin: "dna", hudOpacity: 100, 
   hudBlur: 10, neonGlow: 5, hudRadius: 10, hudScale: 100, 
   hudPosition: "bottom-left", logMono: false, totalSearches: 30, 
   animSpeed: 100, waveAmp: 15, glitchFreq: 5, isCooling: false,
-  isSimulating: false, searchHistory: [], simulatedTabIds: []
+  isSimulating: false, searchHistory: [], simulatedTabIds: [], telemetryHistory: []
 };
 
 // --- GLOBAL ENGINE STATE ---
@@ -25,7 +26,9 @@ let state = {
   isRunning: false, isPaused: false, isHunting: false, 
   isStealth: false, isCooldownMode: true, isKeepAwake: true, isClickSim: true,
   isScrollSim: true, isRedirectMode: true, isDebriefViewed: false, 
-  isDiagnostic: false, isScheduled: false, alarms: [], themeMode: "system", 
+  isDiagnostic: false, isScheduled: false, alarms: [], 
+  isRemindersEnabled: false, reminderAlarms: [], isSmartThrottle: false,
+  themeMode: "system", 
   batchCounter: 0, targetBatchSize: 5, currentSearch: 0, totalSearches: 30, 
   timeLeft: 0, totalWait: 0, minWait: 25, maxWait: 60, jitterFreq: 7, 
   accentColor: "#58a6ff", animationSkin: "dna", hudOpacity: 100, 
@@ -34,7 +37,7 @@ let state = {
   animSpeed: 100, glitchFreq: 5, logMono: false, bingTabId: null, 
   pendingTerm: null, isTypingStarted: false, runtime: 0, logs: [], 
   sessionCategory: null, isCooling: false, isSimulating: false, 
-  searchHistory: [], simulatedTabIds: []
+  searchHistory: [], simulatedTabIds: [], telemetryHistory: []
 };
 
 function triggerCompletionNotification(isManual = false) {
@@ -46,6 +49,17 @@ function triggerCompletionNotification(isManual = false) {
     iconUrl: "/Icon/icon.png", priority: 2
   };
   chrome.notifications.create("SIGNAL_" + Date.now(), options, (id) => {
+    if (chrome.runtime.lastError) {}
+  });
+}
+
+function triggerReminderNotification() {
+  if (!chrome.notifications) { return; }
+  const options = {
+    type: "basic", title: "STREAK REMINDER", message: "Time to secure your daily search streak.",
+    iconUrl: "/Icon/icon.png", priority: 2
+  };
+  chrome.notifications.create("REMINDER_" + Date.now(), options, (id) => {
     if (chrome.runtime.lastError) {}
   });
 }
@@ -155,10 +169,16 @@ function getNextAlarmTime(timeStr) {
   return scheduleDate.getTime();
 }
 
-async function updateChronosAlarms() {
+async function updateAlarmsEngine() {
   if (!chrome.alarms || !chrome.runtime?.id) return;
   try {
-    await chrome.alarms.clearAll();
+    const existingAlarms = await chrome.alarms.getAll();
+    for (const alarm of existingAlarms) {
+      if (alarm.name.startsWith("CHRONOS_") || alarm.name.startsWith("REMINDER_")) {
+        await chrome.alarms.clear(alarm.name);
+      }
+    }
+
     if (state.isScheduled && state.alarms && state.alarms.length > 0) {
       state.alarms.forEach(alarm => {
         const when = getNextAlarmTime(alarm.time);
@@ -166,14 +186,43 @@ async function updateChronosAlarms() {
       });
       addLog(`CHRONOS: ${state.alarms.length} windows armed.`);
     } else { addLog("CHRONOS: Disengaged."); }
+
+    if (state.isRemindersEnabled && state.reminderAlarms && state.reminderAlarms.length > 0) {
+      state.reminderAlarms.forEach(alarm => {
+        const when = getNextAlarmTime(alarm.time);
+        chrome.alarms.create(`REMINDER_${alarm.id}`, { when: when });
+      });
+      addLog(`REMINDERS: ${state.reminderAlarms.length} signals armed.`);
+    } else { addLog("REMINDERS: Disengaged."); }
+    
   } catch (e) {}
 }
 
 chrome.alarms.onAlarm.addListener((alarm) => { 
   if (alarm.name === "FINAL_REDIRECT") {
     stopAutomation(true); 
-  } else {
+  } else if (alarm.name.startsWith("REMINDER_")) {
+    triggerReminderNotification();
+    updateAlarmsEngine();
+  } else if (alarm.name.startsWith("CHRONOS_")) {
     ensureStorageReadyAndLaunch(); 
+    updateAlarmsEngine();
+  }
+});
+
+// GLOBAL HOTKEY LISTENER
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "toggle-mission") {
+    if (state.isRunning) stopAutomation(false);
+    else initiateMission();
+  } else if (command === "toggle-pause") {
+    if (state.isRunning) {
+      state.isPaused = !state.isPaused;
+      sync();
+    }
+  } else if (command === "toggle-hud") {
+    state.isStealth = !state.isStealth;
+    sync();
   }
 });
 
@@ -314,14 +363,19 @@ function startTick() {
           const proceedToNext = () => {
             state.isSimulating = false;
             if (state.currentSearch >= state.totalSearches) {
-              addLog("[PROTOCOL]: Goal Met. Synchronizing Rewards (5s Signal Delay)...");
-              chrome.alarms.create("FINAL_REDIRECT", { delayInMinutes: 5 / 60 });
+              if (state.isDiagnostic) {
+                stopAutomation(true); // Close immediately for hardware tests
+              } else {
+                addLog("[PROTOCOL]: Goal Met. Synchronizing Rewards (5s Signal Delay)...");
+                chrome.alarms.create("FINAL_REDIRECT", { delayInMinutes: 5 / 60 });
+              }
             } else {
               resetTimer();
             }
           };
 
-          if (state.isScrollSim || state.isClickSim) {
+          // Bypass human behavior sequence completely during diagnostic hardware tests
+          if ((state.isScrollSim || state.isClickSim) && !state.isDiagnostic) {
             const simDelay = Math.floor(Math.random() * 4000) + 3000;
             setTimeout(() => {
               safePulse("HUMAN_BEHAVIOR", { doScroll: state.isScrollSim, doClick: state.isClickSim }, () => {
@@ -343,6 +397,21 @@ function stopAutomation(isComp = false) {
   const wasDiagnostic = state.isDiagnostic;
   if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
   
+  // Save Telemetry Archive Data (Avoid logging 1-search diagnostic tests)
+  if (state.currentSearch > 0 && !wasDiagnostic) {
+    const today = new Date().toLocaleDateString('en-CA'); 
+    let hist = state.telemetryHistory || [];
+    let todayRecord = hist.find(r => r.date === today);
+    if (todayRecord) {
+      todayRecord.searches += state.currentSearch;
+      todayRecord.runtime += state.runtime;
+    } else {
+      hist.push({ date: today, searches: state.currentSearch, runtime: state.runtime });
+    }
+    if (hist.length > 7) hist.shift(); // Keep only last 7 days
+    state.telemetryHistory = hist;
+  }
+
   state.isRunning = isComp; 
   state.isHunting = false; 
   state.isTypingStarted = false;
@@ -379,6 +448,21 @@ function stopAutomation(isComp = false) {
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!chrome.runtime?.id) return false; 
   if (msg.action === "CONTENT_READY") { sync(); return false; }
+  
+  // SMART THROTTLE NETWORK INTERCEPTOR
+  if (msg.action === "PAGE_METRICS") {
+    if (state.isSmartThrottle && state.timeLeft > 0 && !state.isCooling && !state.isSimulating) {
+      const adjust = Math.floor(msg.loadTime / 1000);
+      let newWait = Math.max(state.minWait, adjust + 5); 
+      if (state.timeLeft > newWait) {
+         state.timeLeft = newWait;
+         addLog(`[THROTTLE]: Optimal Ping (${Math.round(msg.loadTime)}ms). Delay reduced.`);
+         sync();
+      }
+    }
+    return false;
+  }
+
   if (msg.action === "START") { initiateMission(); return false; } 
   if (msg.action === "STOP") { stopAutomation(false); return false; } 
   if (msg.action === "PAUSE") { state.isPaused = true; sync(); return false; }
@@ -390,7 +474,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.action === "SAVE_SCHEDULE") {
     state.isScheduled = msg.isScheduled; state.alarms = msg.alarms || [];
-    updateChronosAlarms(); sync(); return false;
+    updateAlarmsEngine(); sync(); return false;
+  } 
+  if (msg.action === "SAVE_REMINDERS") {
+    state.isRemindersEnabled = msg.isRemindersEnabled; state.reminderAlarms = msg.reminderAlarms || [];
+    updateAlarmsEngine(); sync(); return false;
   } 
   if (msg.action === "UPDATE_STATE") { 
     Object.assign(state, msg.data); 
@@ -413,16 +501,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
   if (msg.action === "FACTORY_RESET") {
     stopAutomation(false); cleanupTrackedTabs(); 
-    state.logs = []; state.alarms = []; state.searchHistory = []; state.simulatedTabIds = [];
+    state.logs = []; state.alarms = []; state.reminderAlarms = []; state.searchHistory = []; state.simulatedTabIds = []; state.telemetryHistory = [];
     addLog("TELEMETRY WIPE: Windows Purged.");
     if (chrome.alarms) chrome.alarms.clearAll(); sync(); return false;
   }
   if (msg.action === "RESET_SETTINGS") { 
     const currentLogs = [...state.logs]; const currentAlarms = [...state.alarms]; 
+    const currentReminderAlarms = [...(state.reminderAlarms || [])];
     const currentHistory = [...(state.searchHistory || [])]; const currentSimTabs = [...(state.simulatedTabIds || [])];
+    const currentTelemetry = [...(state.telemetryHistory || [])];
     Object.assign(state, JSON.parse(JSON.stringify(DEFAULT_HARDWARE))); 
-    state.logs = currentLogs; state.alarms = currentAlarms; 
-    state.searchHistory = currentHistory; state.simulatedTabIds = currentSimTabs;
+    state.logs = currentLogs; state.alarms = currentAlarms; state.reminderAlarms = currentReminderAlarms;
+    state.searchHistory = currentHistory; state.simulatedTabIds = currentSimTabs; state.telemetryHistory = currentTelemetry;
     addLog("HARDWARE REVERTED: Defaults Restored."); sync(); return false; 
   }
   if (msg.action === "START_DIAGNOSTIC") {
@@ -462,9 +552,11 @@ async function runInit() {
         state.isCooling = false; state.isSimulating = false;
         state.simulatedTabIds = [];
         if (!state.searchHistory) state.searchHistory = [];
+        if (!state.reminderAlarms) state.reminderAlarms = [];
+        if (!state.telemetryHistory) state.telemetryHistory = [];
       }
       isStorageLoaded = true; 
-      updateChronosAlarms(); 
+      updateAlarmsEngine(); 
       sync(); 
       addLog("Cold-Boot: Memory Link Verified. Orphaned tabs purged.");
     } catch (e) { isStorageLoaded = true; }

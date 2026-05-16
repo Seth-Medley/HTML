@@ -1,7 +1,8 @@
 /**
- * Rewards Pro: Elite v7.1.1 - Master Popup Controller
+ * Rewards Pro: Elite v7.2.0 - Master Popup Controller
  * FULL LENGTH CODE - NO CONDENSING - NO SHORTHAND
  * BUILD FL: Fixed Search Goal persistence; Dynamic Amber Styling; Native Hardware Click-Lock; Strict Mobile Height Cap & Shrink-Wrap.
+ * Material Update: Added dynamic Ripple Effect injection logic. Export/Import logic. Telemetry rendering.
  */
 
 let globalHardwareState = null;
@@ -27,6 +28,24 @@ function formatTime12hr(time24) {
   const hrs12 = hrs % 12 || 12;
   const minsStr = mins.toString().padStart(2, '0');
   return `${hrs12}:${minsStr} ${ampm}`;
+}
+
+// Material You Ripple Effect Logic
+function createRipple(event) {
+  const button = event.currentTarget;
+  const circle = document.createElement("span");
+  const diameter = Math.max(button.clientWidth, button.clientHeight);
+  const radius = diameter / 2;
+  circle.style.width = circle.style.height = `${diameter}px`;
+  circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+  circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+  circle.classList.add("ripple");
+  
+  const existingRipple = button.getElementsByClassName("ripple")[0];
+  if (existingRipple) {
+    existingRipple.remove();
+  }
+  button.appendChild(circle);
 }
 
 function runAnimationEngine() {
@@ -177,11 +196,40 @@ function updateUI(s) {
     }
   }
 
+  // Telemetry Chart Rendering
+  const chartEl = document.getElementById('telemetryChart');
+  if (chartEl && s.telemetryHistory) {
+    const hist = s.telemetryHistory;
+    if (hist.length === 0) {
+       chartEl.innerHTML = `<div style="width:100%; text-align:center; font-size:10px; color:var(--muted-text); margin-bottom: 10px;">NO DATA LOGGED</div>`;
+    } else {
+       const maxSearches = Math.max(...hist.map(r => r.searches), 1);
+       chartEl.innerHTML = hist.map(r => {
+         const heightPct = (r.searches / maxSearches) * 100;
+         const dayLabel = new Date(r.date + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short' });
+         return `
+           <div class="telemetry-bar-container" title="Runtime: ${Math.floor(r.runtime/60)}m">
+             <span class="telemetry-val">${r.searches}</span>
+             <div class="telemetry-bar" style="height: ${heightPct}%;"></div>
+             <span class="telemetry-label">${dayLabel}</span>
+           </div>
+         `;
+       }).join('');
+    }
+  }
+
   const logBox = document.getElementById('missionLog');
   if (logBox && s.logs) {
     logBox.innerHTML = s.logs.map(log => `<div class="log-entry">${log}</div>`).join('');
     if (s.logMono) { logBox.classList.add('log-mono'); }
     else { logBox.classList.remove('log-mono'); }
+  }
+  
+  // Terminal Font Visual Update Toggle
+  const fontToggleBtn = document.getElementById('fontToggle');
+  if (fontToggleBtn) {
+    if (s.logMono) { fontToggleBtn.classList.add('active'); }
+    else { fontToggleBtn.classList.remove('active'); }
   }
 
   const btns = document.querySelectorAll('.pos-btn');
@@ -209,7 +257,7 @@ function updateUI(s) {
   }
 
   const isMissionActive = s.isRunning === true && s.currentSearch < s.totalSearches;
-  const cardsToLock = ['card-chronos', 'card-search-params', 'card-mission-logic', 'card-engine-customization', 'card-dynamic-effects', 'card-maintenance'];
+  const cardsToLock = ['card-chronos', 'card-reminders', 'card-search-params', 'card-mission-logic', 'card-engine-customization', 'card-dynamic-effects', 'card-maintenance'];
   
   for (let i = 0; i < cardsToLock.length; i++) {
     const cardEl = document.getElementById(cardsToLock[i]);
@@ -241,6 +289,27 @@ function updateUI(s) {
     }
   }
 
+  const reminderGroup = document.getElementById('reminder-controls-group');
+  if (reminderGroup && !isMissionActive) {
+    reminderGroup.style.opacity = s.isRemindersEnabled ? "1" : "0.4";
+    reminderGroup.style.pointerEvents = s.isRemindersEnabled ? "auto" : "none";
+  }
+
+  const remListEl = document.getElementById('activeRemindersList');
+  if (remListEl) {
+    const activeReminders = s.reminderAlarms || []; 
+    if (activeReminders.length === 0) {
+      remListEl.innerHTML = '<div style="color:#484f58; text-align:center; padding:15px; font-size:10px;">NO REMINDERS QUEUED</div>';
+    } else {
+      remListEl.innerHTML = activeReminders.map(alarm => `
+        <div class="alarm-entry">
+          <span>SIGNAL: <span class="alarm-time">${formatTime12hr(alarm.time)}</span></span>
+          <button class="del-reminder-btn" data-id="${alarm.id}">×</button>
+        </div>
+      `).join('');
+    }
+  }
+
   if (displayColor) {
     document.documentElement.style.setProperty('--accent', displayColor, 'important');
     const wave = document.getElementById('wave-path');
@@ -255,6 +324,8 @@ function updateUI(s) {
     { id: 'awakeToggle', state: 'isKeepAwake' },
     { id: 'redirectToggle', state: 'isRedirectMode' },
     { id: 'scheduleToggle', state: 'isScheduled' }, 
+    { id: 'reminderToggle', state: 'isRemindersEnabled' },
+    { id: 'smartThrottleToggle', state: 'isSmartThrottle' },
     { id: 'themeSelector', state: 'themeMode' },
     { id: 'skinSelector', state: 'animationSkin' },
     { id: 'accentPicker', state: 'accentColor' },
@@ -263,7 +334,7 @@ function updateUI(s) {
   uiElements.forEach(item => {
     const el = document.getElementById(item.id);
     if (el && document.activeElement !== el) {
-      if (item.id === 'scheduleToggle' && chronosLockTimeout) return;
+      if ((item.id === 'scheduleToggle' || item.id === 'reminderToggle') && chronosLockTimeout) return;
       if (el.type === 'checkbox') { el.checked = s[item.state]; }
       else { el.value = s[item.state]; }
     }
@@ -378,6 +449,33 @@ document.addEventListener('click', function(event) {
     const updatedAlarms = (globalHardwareState.alarms || []).filter(a => a.id !== alarmId);
     chrome.runtime.sendMessage({ action: "SAVE_SCHEDULE", isScheduled: globalHardwareState.isScheduled, alarms: updatedAlarms });
   }
+  else if (target.closest('#addReminderBtn')) {
+    const timeEl = document.getElementById('reminderTime');
+    if (timeEl && timeEl.value) {
+      const currentAlarms = globalHardwareState.reminderAlarms || [];
+      const newAlarm = { id: Date.now(), time: timeEl.value };
+      const updatedAlarms = [...currentAlarms, newAlarm];
+      chrome.runtime.sendMessage({ action: "SAVE_REMINDERS", isRemindersEnabled: globalHardwareState.isRemindersEnabled, reminderAlarms: updatedAlarms });
+    }
+  }
+  else if (target.classList.contains('del-reminder-btn')) {
+    const alarmId = parseInt(target.getAttribute('data-id'), 10);
+    const updatedAlarms = (globalHardwareState.reminderAlarms || []).filter(a => a.id !== alarmId);
+    chrome.runtime.sendMessage({ action: "SAVE_REMINDERS", isRemindersEnabled: globalHardwareState.isRemindersEnabled, reminderAlarms: updatedAlarms });
+  }
+  else if (target.closest('#exportConfigBtn')) {
+    if (!globalHardwareState) return;
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(globalHardwareState, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "RewardsPro_Elite_Config.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
+  else if (target.closest('#importConfigBtn')) {
+    document.getElementById('importConfigInput').click();
+  }
   else if (target.closest('#dismissDebriefBtn')) { chrome.runtime.sendMessage({ action: "DISMISS_DEBRIEF" }); }
   else if (target.closest('#openSettingsBtn')) {
     document.getElementById('settingsPage').classList.remove('hidden');
@@ -404,12 +502,39 @@ document.addEventListener('click', function(event) {
   }
 });
 
+// Import Configuration File Handler
+const importInput = document.getElementById('importConfigInput');
+if (importInput) {
+  importInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      try {
+        const json = JSON.parse(event.target.result);
+        chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: json });
+        alert("Configuration imported successfully.");
+      } catch (err) {
+        alert("Invalid configuration file.");
+      }
+      e.target.value = ""; // Reset input
+    };
+    reader.readAsText(file);
+  });
+}
+
 chrome.runtime.onMessage.addListener(function(m) { if (m.type === "SYNC") { updateUI(m.state); } });
 
 document.addEventListener('DOMContentLoaded', function() {
   chrome.storage.local.get("state", function(data) { if (data.state) { updateUI(data.state); } });
   randomizePulse();
   runAnimationEngine();
+
+  // Attach Material Ripple to all buttons dynamically
+  const buttons = document.querySelectorAll('button');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', createRipple);
+  });
   
   // Native Hardware Check for Popup UI Injection
   const isMobileHardware = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
@@ -475,7 +600,8 @@ document.addEventListener('DOMContentLoaded', function() {
       /* Scale the main tracking numbers to fit safely */
       #sessionProgress, #timerDisplay { 
           font-size: 18px !important; 
-          margin: 0 !important;
+          margin-top: 4px !important;
+          margin-bottom: 12px !important;
       }
       
       /* Explicitly target and shrink the header runtime clock */
@@ -503,7 +629,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 50);
   }
   
-  const toggles = ['clickSimToggle', 'scrollSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'themeSelector', 'skinSelector', 'customCountInput'];
+  const toggles = ['clickSimToggle', 'scrollSimToggle', 'hudToggle', 'cooldownToggle', 'awakeToggle', 'redirectToggle', 'scheduleToggle', 'reminderToggle', 'smartThrottleToggle', 'themeSelector', 'skinSelector', 'customCountInput'];
   toggles.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -512,9 +638,13 @@ document.addEventListener('DOMContentLoaded', function() {
           if (chronosLockTimeout) clearTimeout(chronosLockTimeout);
           chronosLockTimeout = setTimeout(() => { chronosLockTimeout = null; }, 500);
           chrome.runtime.sendMessage({ action: "SAVE_SCHEDULE", isScheduled: e.target.checked, alarms: globalHardwareState.alarms || [] });
+        } else if (id === 'reminderToggle') {
+          if (chronosLockTimeout) clearTimeout(chronosLockTimeout);
+          chronosLockTimeout = setTimeout(() => { chronosLockTimeout = null; }, 500);
+          chrome.runtime.sendMessage({ action: "SAVE_REMINDERS", isRemindersEnabled: e.target.checked, reminderAlarms: globalHardwareState.reminderAlarms || [] });
         } else {
           let u = {};
-          const map = { 'customCountInput': 'totalSearches', 'clickSimToggle':'isClickSim', 'scrollSimToggle':'isScrollSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
+          const map = { 'customCountInput': 'totalSearches', 'clickSimToggle':'isClickSim', 'scrollSimToggle':'isScrollSim', 'hudToggle':'isStealth', 'cooldownToggle':'isCooldownMode', 'awakeToggle':'isKeepAwake', 'redirectToggle': 'isRedirectMode', 'smartThrottleToggle': 'isSmartThrottle', 'themeSelector': 'themeMode', 'skinSelector': 'animationSkin' };
           u[map[id] || id] = (el.type === 'checkbox') ? e.target.checked : (el.type === 'number' ? parseInt(e.target.value) : e.target.value);
           chrome.runtime.sendMessage({ action: "UPDATE_STATE", data: u });
         }

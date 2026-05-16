@@ -4,200 +4,6 @@
   <meta charset="UTF-8">
   <title>Rewards Pro: Elite</title>
   <link rel="stylesheet" href="CSS/popup.css">
-  <style>
-    /* ========================================================================
-       BUILD FO: MASTER GEOMETRIC PROTOCOL
-       Strict viewport locking and spacing ventilation.
-       ======================================================================== */
-   /* ========================================================================
-   BUILD FO: MASTER GEOMETRIC PROTOCOL
-   Strict viewport locking and spacing ventilation.
-   ======================================================================== */
-html, body {
-  width: 320px !important;
-  height: 560px !important; 
-  overflow: hidden !important;
-  margin: 0;
-  padding: 0;
-  background: var(--bg); /* Use variable instead of #0d1117 */
-  color: var(--text);   /* Use variable instead of #c9d1d9 */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-}
-
-#mainDashboard {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.dashboard-scroll-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 8px 12px;
-  gap: 10px; 
-  overflow: hidden !important;
-}
-
-#mainDashboard .card {
-  flex: 1; 
-  margin-bottom: 0 !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 0;
-  padding: 6px 12px !important;
-  background: var(--card-alpha); /* Use variable instead of rgba(22, 27, 34, 0.8) */
-  border: 1px solid var(--border); /* Use variable instead of #30363d */
-  border-radius: 10px;
-}
-    .dot-active { background: #3fb950; box-shadow: 0 0 8px #3fb950; }
-    .dot-idle { background: #f85149; box-shadow: 0 0 8px #f85149; }
-    #status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-
-    .pos-btn.active {
-      background: rgba(88, 166, 255, 0.1) !important;
-      color: var(--accent, #58a6ff) !important;
-      border: 1px solid var(--accent, #58a6ff) !important;
-      box-shadow: 0 0 15px rgba(88, 166, 255, 0.4) !important;
-      font-weight: 600 !important;
-    }
-
-    .manual-collapsible {
-      max-height: 190px;
-      overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-    }
-    .manual-collapsible.expanded {
-      max-height: 1200px;
-    }
-    .manual-collapsible::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 40px;
-      background: linear-gradient(transparent, rgba(22, 27, 34, 0.9));
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-    .manual-collapsible.expanded::after { opacity: 0; }
-
-.see-more-manual-btn {
-  width: 100%;
-  background: var(--badge-bg); /* Shifts from dark grey to light grey/white */
-  border: 1px solid var(--border);
-  color: var(--muted-text);    /* Shifts from light grey to dark grey */
-  padding: 6px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.2s;
-}
-
-    #addAlarmBtn {
-      width: 32px;
-      height: 32px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: bold;
-      line-height: 1;
-    }
-
-    .del-alarm-btn {
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      background: rgba(248, 81, 73, 0.1);
-      border: 1px solid rgba(248, 81, 73, 0.3);
-      color: #f85149;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: bold;
-      transition: all 0.2s ease;
-      line-height: 1;
-    }
-
-/* Update: Chronos Alarms Terminal */
-.alarms-terminal {
-  background: var(--input-bg); /* Shifts from pitch black to white/off-white */
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  height: 85px;
-  margin-top: 10px;
-  overflow-y: auto;
-  padding: 4px;
-}
-
-    .alarm-entry {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 8px;
-      border-bottom: 1px solid #21262d;
-      font-family: var(--font-mono, monospace);
-      font-size: 11px;
-      color: #8b949e;
-    }
-
-    .dashboard-footer, .overlay-footer {
-      height: 60px;
-      padding: 0px 12px !important;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-
-    .footer-nav-btn {
-      height: 40px !important;
-      width: 100%;
-      font-weight: 600;
-      text-transform: uppercase;
-      border-radius: 8px;
-      background: transparent;
-      border: 1px solid #30363d;
-      color: --var(--text);
-    }
-
-    .settings-scroll-area {
-      height: 450px !important;
-      overflow-y: auto !important;
-      overflow-x: hidden;
-      padding: 10px 12px;
-    }
-
-    .settings-guide {
-      list-style-type: disc;
-      padding-left: 18px; 
-      margin: 10px 0 0 0;
-      font-size: 11px;
-    }
-    .settings-guide li {
-      margin-bottom: 10px;
-      padding-left: 4px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #21262d;
-      line-height: 1.4;
-      color: #c9d1d9;
-    }
-    .settings-guide li:last-child { border-bottom: none; }
-    .settings-guide strong { color: var(--accent); display: block; margin-bottom: 2px; }
-
-    .hidden { display: none !important; }
-  </style>
 </head>
 <body>
 
@@ -229,12 +35,13 @@ html, body {
       </div>
 
       <div id="card-manual" class="card info-card">
-        <label>Operator's Manual: Hardware Reference</label>
+        <label>Operator's Manual</label>
         <div id="manual-content" class="manual-collapsible">
           <ul class="settings-guide">
             <li><strong>Min/Max Delay:</strong> Sets the randomized temporal range (seconds) between search queries.</li>
             <li><strong>Jitter Freq:</strong> Calibrates the human-mimicry mouse movement frequency during waits.</li>
             <li><strong>Enable Scheduler:</strong> Arms the Chronos window to trigger automation at set clock times.</li>
+            <li><strong>Enable Reminders:</strong> Triggers a push notification to remind you of your daily streak.</li>
             <li><strong>Hide HUD:</strong> Physically masks the telemetry overlay during active search cycles.</li>
             <li><strong>Click Simulation:</strong> Fires an engagement pulse 6s after result population for point tracking.</li>
             <li><strong>Scroll Mimicry:</strong> Randomizes vertical page kinetic pulses to simulate user scanning.</li>
@@ -287,6 +94,23 @@ html, body {
           </div>
           <div class="alarms-terminal">
             <div id="activeAlarmsList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="card-reminders" class="card settings">
+        <label>Daily Streak Reminders</label>
+        <div class="toggle-row">
+          <span>Enable Reminders</span>
+          <label class="switch"><input type="checkbox" id="reminderToggle"><span class="slider round"></span></label>
+        </div>
+        <div id="reminder-controls-group">
+          <div class="input-group-row">
+            <input type="time" id="reminderTime" class="premium-input" style="flex: 1;">
+            <button id="addReminderBtn" class="btn-compact btn-outline-primary" style="margin-left: 8px;">+</button>
+          </div>
+          <div class="alarms-terminal">
+            <div id="activeRemindersList"></div>
           </div>
         </div>
       </div>
